@@ -1,3 +1,3 @@
-# StubbornNetwork
+# The Stubborn Network
 
-A description of this package.
+A Swifty clean stubbing machine.
