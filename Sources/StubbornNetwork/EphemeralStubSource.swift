@@ -34,7 +34,7 @@ class EphemeralStubSource: StubSourceProtocol {
     }
 
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        return URLSessionDataTaskMock(request: request,
+        return URLSessionDataTaskStub(request: request,
                                       data: expectedDatas[request] ?? nil,
                                       response: expectedResponses[request] ?? nil,
                                       error:expectedErrors[request] ?? nil,

@@ -31,7 +31,7 @@ struct StubSource: StubSourceProtocol {
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         let s = stub(forRequest: request)
         precondition(s != nil, "Unable to find a request stub for the given request: \(request.url?.absoluteString ?? "") in stub source at \(url.absoluteString).")
-        return URLSessionDataTaskMock(request: request, data: s?.data, response: s?.response, error:s?.error, resumeCompletion: completionHandler)
+        return URLSessionDataTaskStub(request: request, data: s?.data, response: s?.response, error:s?.error, resumeCompletion: completionHandler)
     }
 
     mutating func setupStubs(from data: Data) {

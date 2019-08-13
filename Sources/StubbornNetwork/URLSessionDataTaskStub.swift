@@ -7,7 +7,7 @@
 
 import Foundation
 
-class URLSessionDataTaskMock: URLSessionDataTask {
+class URLSessionDataTaskStub: URLSessionDataTask {
     var resumeCompletion: ((Data?, URLResponse?, Error?) -> Void)
     let data: Data?
 

@@ -57,5 +57,20 @@ override func setUp() {
 The stubs are stored as plain json to make the behaviour of the stubs transparent.
 
 ```json
-[{"request":{"url":"https:\/\/zones.buecherhallen.de\/app_webuser\/WebUserSvc.asmx","headerFields":["Accept-Language[:::]en-us","Accept[:::]*\/*","SOAPAction[:::]http:\/\/bibliomondo.com\/websevices\/webuser\/CheckBorrower","Content-Type[:::]text\/xml; charset=utf-8","Accept-Encoding[:::]br, gzip, deflate"],"method":"POST"},"data":"PD94bWwgdmVyc2lvbj0","response":{"statusCode":200,"headerFields":["X-Powered-By[:::]ASP.NET","Content-Type[:::]text\/xml; charset=utf-8","Vary[:::]Accept-Encoding","Content-Length[:::]617","Content-Encoding[:::]gzip","Server[:::]Microsoft-IIS\/8.0","Cache-Control[:::]private, max-age=0","X-AspNet-Version[:::]2.0.50727","Date[:::]Mon, 12 Aug 2019 18:28:29 GMT"]}},{"request":{"url":"https:\/\/zones.buecherhallen.de\/app_webuser\/WebUserSvc.asmx","headerFields":["Accept-Language[:::]en-us","Accept[:::]*\/*","Content-Type[:::]text\/xml; charset=utf-8","Accept-Encoding[:::]br, gzip, deflate","SOAPAction[:::]http:\/\/bibliomondo.com\/websevices\/webuser\/GetBorrowerLoans"],"method":"POST"},"data":"PD94bWwgdmVyc","response":{"statusCode":200,"headerFields":["X-Powered-By[:::]ASP.NET","Content-Type[:::]text\/xml; charset=utf-8","Vary[:::]Accept-Encoding","Content-Length[:::]377","Content-Encoding[:::]gzip","Server[:::]Microsoft-IIS\/8.0","Cache-Control[:::]private, max-age=0","X-AspNet-Version[:::]2.0.50727","Date[:::]Mon, 12 Aug 2019 18:28:30 GMT"]}}]
+[{
+    "request": {
+        "url": "https://api.abc.com",
+        "headerFields": [
+            "Accept-Encoding[:::]br, gzip, deflate"
+        ],
+        "method": "POST"
+    },
+    "data": "YWJj",
+    "response": {
+        "statusCode": 200,
+        "headerFields": [
+            "Content-Type[:::]text\/xml; charset=utf-8"
+        ]
+    }
+}]
 ```
