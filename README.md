@@ -33,11 +33,11 @@ if let env = Environment.current, env.testing {
 
 ## Usage in UI Tests
 
-3 parameters are passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place them:
+3 parameters are passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place them. Some of these will be handled more elegantly in the future:
 
 - each test assigns its function name like `testWaveVisibleAfterSignIn` to create dedicated stubs for every individual test case
 - the _stub path_ points to the directory where the stubs are stored for `.playback` / will be recorded to with `.recording`
-- the _TESTING_ parameter simply makes sure that we are in a testing environment. This could be handles more elegantly
+- the _TESTING_ parameter simply makes sure that we are in a testing environment.
 
 ```Swift
 override func setUp() {
