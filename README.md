@@ -31,9 +31,9 @@ if let env = Environment.current, env.testing {
 }
 ```
 
-## Usage in UITest
+## Usage in UI Tests
 
-Using stubbed responses inside UITests. 3 parameters are passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place it:
+3 parameters are passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place them:
 
 - each test assigns its function name like `testWaveVisibleAfterSignIn` to create dedicated stubs for every individual test case
 - the _stub path_ points to the directory where the stubs are stored for `.playback` / will be recorded to with `.recording`
