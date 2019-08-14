@@ -1,8 +1,27 @@
 # The Stubborn Network
 
-A Swifty clean stubbing machine.
+> A Swifty clean stubbing machine.
 
----
+**The Stubborn Network** makes your UI tests more reliable by stubbing responses of your network requests. It makes it easy to record new stubs to lower the burdon to take pressure from your backend during UI testing and to gate any actual network issues during your test runs.
+
+In order to make use of **The Stubborn Network** in your app you need to make a change to a single point in your app's sources as well as your UI tests:
+
+- the client needs to be configured to use the stubbed `URLSession` in its network layer when running tests
+- the UI tests need to inform **The Stubborn Network** which stubs to use for which test case
+
+Since it's a Swift Package you need to add **The Stubborn Network** as a dependency to a Swift package manifest's build target. If you only have an app without any Swift packages so far, create a Swift package local to your workspace, add **The Stubborn Network** and link your local package in the app's _"Link Binary with Libraries"_ _Build Phase_.
+
+Package manifest:
+
+```Swift
+dependencies: [
+    .package(url: "https://github.com/q231950/the-stubborn-network.git",
+        .branch("master")
+    ),
+],
+```
+
+The following setup with **Client Configuration** and **Usage in UI Tests** should show you the basic usage. Better guides are yet to come!
 
 ## Client Configuration
 
