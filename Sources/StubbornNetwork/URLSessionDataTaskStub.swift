@@ -1,5 +1,5 @@
 //
-//  URLSessionDataTaskMock.swift
+//  URLSessionDataTaskStub.swift
 //  
 //
 //  Created by Martin Kim Dung-Pham on 14.07.19.

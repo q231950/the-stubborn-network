@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum Keys: String {
+    case testing = "TESTING"
+    case stubName = "STUB_NAME"
+    case stubPath = "STUB_PATH"
+}
+
 ///
 /// An environment can be queried for whether or not the app has been launched in a testing environment.
 ///
@@ -19,27 +25,25 @@ public struct Environment {
     public let stubSourceName: String?
     public let stubSourcePath: URL?
 
-    init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: URL? = nil) {
+    public init(processInfo: ProcessInfo = ProcessInfo()) {
+        let testing = processInfo.environment[Keys.testing.rawValue] != nil
+        guard let stubSourceName = processInfo.environment[Keys.stubName.rawValue],
+            let stubSourcePath = processInfo.environment[Keys.stubPath.rawValue] else {
+                self.init(testing: testing)
+                return
+        }
+
+        var url = URL(string: stubSourcePath)
+        url?.appendPathComponent("com.q231950.StubbornNetworkStubs")
+        self.init(testing: testing,
+                  stubSourceName: stubSourceName,
+                  stubSourcePath: url)
+    }
+
+    internal init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: URL? = nil) {
         self.testing = testing
         self.stubSourceName = stubSourceName
         self.stubSourcePath = stubSourcePath
     }
 
-    public static var current: Environment? {
-        get {
-            let p = ProcessInfo()
-
-            let testing = p.environment["TESTING"] != nil
-            guard let stubSourceName = p.environment["STUB_NAME"],
-                let stubSourcePath = p.environment["STUB_PATH"] else {
-                    return Environment(testing: testing)
-            }
-
-            var url = URL(string: stubSourcePath)
-            url?.appendPathComponent("com.q23.StubbornNetworkStubs")
-            return Environment(testing: testing,
-                               stubSourceName: stubSourceName,
-                               stubSourcePath: url)
-        }
-    }
 }

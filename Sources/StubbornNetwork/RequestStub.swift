@@ -89,3 +89,14 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         }
     }
 }
+
+extension RequestStub: Equatable {
+    static func == (lhs: RequestStub, rhs: RequestStub) -> Bool {
+        return lhs.data == rhs.data &&
+            lhs.request == rhs.request &&
+            lhs.error?.localizedDescription == rhs.error?.localizedDescription &&
+            lhs.response == rhs.response
+    }
+
+
+}

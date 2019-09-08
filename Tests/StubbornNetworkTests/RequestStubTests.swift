@@ -10,15 +10,16 @@ import XCTest
 
 final class RequestStubTests: XCTestCase {
 
-    func testProperlyEncodesURL() throws {
-        let request = URLRequest(url: URL(string: "123.4.5.6")!)
+    func testProperlyEncodesRequests() throws {
+        var request = URLRequest(url: URL(string: "123.4.5.6")!)
+        request.httpMethod = "POST"
         let requestStub = RequestStub(request: request)
 
         let encoder = JSONEncoder()
         let result = try encoder.encode(requestStub)
         let json = String(data:result, encoding: .utf8)
         XCTAssertEqual(json, """
-        {\"request\":{\"url\":\"123.4.5.6\",\"headerFields\":null,\"method\":\"GET\"},\"data\":null,\"response\":{}}
+        {\"request\":{\"url\":\"123.4.5.6\",\"headerFields\":[],\"method\":\"POST\"},\"data\":null,\"response\":{}}
         """)
     }
 
@@ -26,6 +27,12 @@ final class RequestStubTests: XCTestCase {
         let decoder = JSONDecoder()
         let stub = try decoder.decode(RequestStub.self, from: jsonMockData)
         XCTAssertEqual(stub.data, "abc".data(using: .utf8)!)
+    }
+
+    func testDecodesHTTPMethod() throws {
+        let decoder = JSONDecoder()
+        let stub = try decoder.decode(RequestStub.self, from: jsonMockData)
+        XCTAssertEqual(stub.request.httpMethod, "POST")
     }
 
     var jsonMockData: Data {
@@ -51,6 +58,8 @@ final class RequestStubTests: XCTestCase {
     }
     
     static var allTests = [
-        ("properlyEncodesStubbedRequest", testProperlyEncodesURL),
+        ("properlyEncodesStubbedRequest", testProperlyEncodesRequests),
+        ("testDecodesData", testDecodesData),
+        ("testDecodesHTTPMethod", testDecodesHTTPMethod),
     ]
 }
