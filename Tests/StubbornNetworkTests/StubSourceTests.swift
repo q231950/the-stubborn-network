@@ -9,6 +9,7 @@ import XCTest
 @testable import StubbornNetwork
 
 class StubSourceTests: XCTestCase {
+
     func testLoadsStubForRequest() {
         var stubSource = StubSource(url: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
@@ -20,6 +21,23 @@ class StubSourceTests: XCTestCase {
         let loadedStub = stubSource.stub(forRequest: request)
 
         XCTAssertNotNil(loadedStub)
+    }
+
+    func testStoresStubResponse() {
+        let url = URL(string: "127.0.0.1")!
+
+        var stubSource = StubSource(url: url)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = ["B":"BBB"]
+
+        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        stubSource.store(stub)
+
+        let loadedStub = stubSource.stub(forRequest: request)
+
+        XCTAssertEqual(stub, loadedStub)
     }
 
     var prerecordedStubMockData: Data {
@@ -74,4 +92,9 @@ class StubSourceTests: XCTestCase {
             """).data(using: .utf8)!
         }
     }
+
+    static var allTests = [
+        ("testLoadsStubForRequest", testLoadsStubForRequest),
+        ("testStoresStubResponse", testStoresStubResponse),
+    ]
 }

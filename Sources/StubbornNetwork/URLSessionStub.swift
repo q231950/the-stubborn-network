@@ -7,35 +7,6 @@
 
 import Foundation
 
-public protocol StubbornURLSession: URLSession {
-
-
-    /**
-     Stub a single request. When the session is asked for a `URLSession` task of a similar request, the task will complete with the prerecorded response, error and data.
-
-     - Parameters:
-         - request: The request to stub
-         - data: The data to return when the request is fulfilled
-         - response: The response when the request is fulfilled
-         - error: A potential error when the request is fulfilled
-    */
-    func stub(_ request: URLRequest, data: Data?, response: URLResponse?, error: Error?)
-
-    /**
-     The record mode defines the way the StubbornURLSession behaves. It can record or playback stubs.
-     */
-    var recordMode: RecordMode {get set}
-
-    /**
-     Stub a potentially big series of requests with a prerecorded StubSource at the given path.
-
-     - Parameters:
-        - name: The name the `StubSource` should carry
-        - path: The path to the StubSource
-     */
-    func setupStubSource(name: String, path: URL)
-}
-
 enum NetworkStubError: Error {
     case unexpectedRequest(String)
 }
@@ -50,15 +21,9 @@ class URLSessionStub: URLSession, StubbornURLSession {
     var recordMode: RecordMode = .playback
     private let endToEndURLSession: URLSession
 
-    init(configuration: URLSessionConfiguration, stubSource: StubSourceProtocol = EphemeralStubSource()) {
-        endToEndURLSession = URLSession(configuration: configuration)
+    init(configuration: URLSessionConfiguration, stubSource: StubSourceProtocol = EphemeralStubSource(), endToEndURLSession: URLSession? = nil) {
+        self.endToEndURLSession = endToEndURLSession ?? URLSession(configuration: configuration)
         self.stubSource = stubSource
-    }
-
-    /// TODO: implement delegate calls
-    init(configuration: URLSessionConfiguration, delegate: URLSessionDelegate?, delegateQueue queue: OperationQueue?, mode: RecordMode = .playback) {
-        endToEndURLSession = URLSession(configuration: .ephemeral)
-        recordMode = mode
     }
 
     func stub(_ request: URLRequest, data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
@@ -86,6 +51,7 @@ class URLSessionStub: URLSession, StubbornURLSession {
             try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
         }
         catch let e {
+            print("\(path.absoluteURL)")
             assertionFailure("Unable to create stub directory. \(e.localizedDescription)")
         }
     }

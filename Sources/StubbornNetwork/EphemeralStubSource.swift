@@ -16,9 +16,7 @@ class EphemeralStubSource: StubSourceProtocol {
         self.init(url: URL(string: "127.0.0.1")!)
     }
 
-    required init(url: URL) {
-
-    }
+    required init(url: URL) {}
 
     func store(_ stub: RequestStub) {
         if let data = stub.data {
