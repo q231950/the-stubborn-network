@@ -2,7 +2,7 @@
 
 > A Swifty clean stubbing machine.
 
-**The Stubborn Network** makes your UI tests more reliable by stubbing responses of your network requests. It makes it easy to record new stubs to lower the burdon to take pressure from your backend during UI testing and to gate any actual network issues during your test runs. You can find usage examples in [The Stubborn Network Demo](https://github.com/q231950/the-stubborn-network-demo).
+**The Stubborn Network** makes your SwiftUI development more efficient and UI tests more reliable by stubbing responses of your network requests. It makes it easy to record new stubs to lower the burdon to take pressure from your backend during UI testing and to gate any actual network issues during your test runs. You can find usage examples in [The Stubborn Network Demo](https://github.com/q231950/the-stubborn-network-demo).
 
 In order to make use of **The Stubborn Network** in your app you need to make a change to a single point in your app's sources as well as your UI tests:
 
