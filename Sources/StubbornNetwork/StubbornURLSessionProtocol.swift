@@ -25,12 +25,5 @@ public protocol StubbornURLSession: URLSession {
      */
     var recordMode: RecordMode {get set}
 
-    /**
-     Stub a potentially big series of requests with a prerecorded StubSource at the given path.
-
-     - Parameters:
-        - name: The name the `StubSource` should carry
-        - path: The path to the StubSource
-     */
-    func setupStubSource(name: String, path: URL)
+    var stubSource: StubSourceProtocol? {get set}
 }

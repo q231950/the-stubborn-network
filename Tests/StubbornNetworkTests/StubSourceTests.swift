@@ -11,7 +11,7 @@ import XCTest
 class StubSourceTests: XCTestCase {
 
     func testLoadsStubForRequest() {
-        var stubSource = StubSource(url: URL(string: "127.0.0.1")!)
+        var stubSource = PersistentStubSource(url: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         let url = URL(string: "https://api.abc.com")
@@ -26,7 +26,7 @@ class StubSourceTests: XCTestCase {
     func testStoresStubResponse() {
         let url = URL(string: "127.0.0.1")!
 
-        var stubSource = StubSource(url: url)
+        var stubSource = PersistentStubSource(url: url)
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"

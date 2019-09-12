@@ -42,7 +42,7 @@ class URLSessionStub: URLSession, StubbornURLSession {
         sanitizedName = sanitizedName.replacingOccurrences(of: "]", with: "")
         sanitizedName = sanitizedName.replacingOccurrences(of: "-", with: "")
         let url = path.appendingPathComponent("\(sanitizedName).json")
-        stubSource = StubSource(url: url)
+        stubSource = PersistentStubSource(url: url)
     }
 
     private func createStubDirectory(at path: URL) {

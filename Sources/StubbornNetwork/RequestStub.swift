@@ -11,7 +11,7 @@ enum RequestStubCodableError: Error {
     case missingRequestURLError(String)
 }
 
-struct RequestStub: CustomDebugStringConvertible, Codable {
+public struct RequestStub: CustomDebugStringConvertible, Codable {
     let request: URLRequest
     let data: Data?
     let response: URLResponse?
@@ -35,7 +35,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         case headerFields
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         var requestContainer = container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
@@ -59,7 +59,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         self.error = error
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let requestContainer = try container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
@@ -83,7 +83,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         self.init(request: request, data: data)
     }
 
-    var debugDescription: String {
+    public var debugDescription: String {
         get {
             return "[RequestStub] \(String(describing: request.debugDescription)) \(String(describing: data?.count)) \(response.debugDescription)"
         }
@@ -91,7 +91,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 }
 
 extension RequestStub: Equatable {
-    static func == (lhs: RequestStub, rhs: RequestStub) -> Bool {
+    public static func == (lhs: RequestStub, rhs: RequestStub) -> Bool {
         return lhs.data == rhs.data &&
             lhs.request == rhs.request &&
             lhs.error?.localizedDescription == rhs.error?.localizedDescription &&

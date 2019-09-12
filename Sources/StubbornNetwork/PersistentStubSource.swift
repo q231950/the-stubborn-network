@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol StubSourceProtocol {
+public protocol StubSourceProtocol {
 
     init(url: URL)
 
@@ -16,7 +16,7 @@ protocol StubSourceProtocol {
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
 }
 
-struct StubSource: StubSourceProtocol {
+struct PersistentStubSource: StubSourceProtocol {
     let url: URL
     var stubs = [RequestStub]()
 

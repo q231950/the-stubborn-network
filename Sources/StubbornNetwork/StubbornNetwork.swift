@@ -23,7 +23,7 @@ public struct StubbornNetwork {
     //    }
 
     /// , type: StubSourceType = .ephemeral ? maybe ?
-    public static func stubbed(_ stub:((StubbornURLSession) -> Void)? = nil) -> StubbornURLSession {
+    public static func stubbed(_ stub:((StubbornURLSession) -> Void)? = nil) -> URLSession {
         let session = URLSessionStub(configuration: .ephemeral)
         if let stub = stub {
             stub(session)
