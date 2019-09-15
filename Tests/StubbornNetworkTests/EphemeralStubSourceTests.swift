@@ -11,8 +11,7 @@ import XCTest
 class EphemeralStubSourceTests: XCTestCase {
 
     func testInitializer() {
-        let url = URL(string: "127.0.0.1")!
-        let stubSource = EphemeralStubSource(url: url)
+        let stubSource = EphemeralStubSource()
 
         XCTAssertNotNil(stubSource)
     }
@@ -24,7 +23,7 @@ class EphemeralStubSourceTests: XCTestCase {
 
         let url = URL(string: "127.0.0.1")!
 
-        let stubSource = EphemeralStubSource(url: url)
+        let stubSource = EphemeralStubSource()
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"

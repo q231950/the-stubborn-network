@@ -10,6 +10,13 @@ import XCTest
 
 class StubSourceTests: XCTestCase {
 
+    func testPath() {
+        let url = URL(string:"127.0.0.1")!
+
+        let stubSource = PersistentStubSource(name: "a name", path: url)
+        XCTAssertEqual(stubSource.url.absoluteString, "127.0.0.1/a_name.json")
+    }
+
     func testLoadsStubForRequest() {
         var stubSource = PersistentStubSource(url: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
