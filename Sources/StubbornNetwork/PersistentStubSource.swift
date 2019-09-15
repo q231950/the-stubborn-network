@@ -68,7 +68,7 @@ public struct PersistentStubSource: StubSourceProtocol {
     }
 }
 
-extension PersistentStubSource {
+public extension PersistentStubSource {
     init(name: String, path: URL) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path.absoluteString) {
