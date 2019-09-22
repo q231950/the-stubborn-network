@@ -2,15 +2,17 @@
 
 > A Swifty clean stubbing machine.
 
-**The Stubborn Network** makes your SwiftUI development more efficient and UI tests more reliable by stubbing responses of your network requests. It makes it easy to record new stubs to lower the burdon to take pressure from your backend during UI testing and to gate any actual network issues during your test runs. You can find usage examples in [The Stubborn Network Demo](https://github.com/q231950/the-stubborn-network-demo).
+**The Stubborn Network** makes your SwiftUI development more efficient and UI tests more reliable by stubbing responses of your network requests. It makes it easy to record new stubs and takes the pressure from your backend during UI testing. It speeds things up! You can find usage examples in [The Stubborn Network Demo](https://github.com/q231950/the-stubborn-network-demo).
 
-Stub network responses and speed things up in
+Stub network responses for stability and speed things up in
 
-- 🕵🏽‍♂️ UI tests
-- 👮🏻‍♀️ unit tests
-- 👩🏻‍🎨 SwiftUI Previews
+- 👮🏻‍♀️ [Unit Tests](https://github.com/q231950/the-stubborn-network/tree/improve-api#unit-tests)
+- 🕵🏽‍♂️ [UI Tests](https://github.com/q231950/the-stubborn-network/tree/improve-api#ui-tests)
+- 👩🏻‍🎨 [SwiftUI Previews](https://github.com/q231950/the-stubborn-network/tree/improve-api#swiftui-preview)
 
-## Unit Tests
+## 👮🏻‍♀️ Unit Tests
+
+Unit Tests use "plain" stubs where each stub only lives for the duration of the test. This is called the _ephemeral_ configuration.
 
 ```swift
 /// given
@@ -29,9 +31,12 @@ completion = networkClient.objectDidChange.sink { networkClient in
 }
 ```
 
-## UI Tests
+## 🕵🏽‍♂️ UI Tests
 
-In order to make use of **The Stubborn Network** in UI tests you need to configure your app to use the stubbed `URLSession` in its network layer when running tests. The UI tests on the other hand are required to inform **The Stubborn Network** which stubs to use for which test case.
+UI Tests benefit from **The Stubborn Network**'s ability to easily record actual network requests and then play them back. This is done via the _persistent_ configuration and a `.recording` mode.
+In order to record and playback stubs you need to 
+- configure your app to use a stubbed `URLSession` in its network layer when running tests. 
+- the tests on the other hand are required to inform **The Stubborn Network** which stubs to use for which test case
 
 ### App Configuration
 
@@ -85,7 +90,7 @@ func testBytesText() {
 }
 ```
 
-## SwiftUI Preview
+## 👩🏻‍🎨 SwiftUI Preview
 
 ```swift
 static var previews: some View {
