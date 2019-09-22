@@ -42,13 +42,13 @@ let urlSession: URLSession
 let processInfo = ProcessInfo()
 
 if processInfo.testing == false {
-	/// Use the standard URLSession when not testing.
+    /// Use the standard URLSession when not testing.
     urlSession = URLSession(configuration: .ephemeral)
 } else {
-	/// Use a stubbed URLSession when testing.
+    /// Use a stubbed URLSession when testing.
     urlSession = StubbornNetwork.stubbed(withProcessInfo: processInfo, stub: { (stubbedURLSession) in
     
-    	 /// It is possible to record stubs instead of manually stubbing each request.
+        /// It is possible to record stubs instead of manually stubbing each request.
         stubbedURLSession.recordMode = .recording
     })
 }
@@ -58,7 +58,7 @@ if processInfo.testing == false {
 
 3 parameters are passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place them. Some of these will be handled more elegantly in the future:
 
-1. each test assigns its function name like `testBytesText ` to create dedicated stubs for every individual test case
+1. each test assigns its function name like `testBytesText` to create dedicated stubs for every individual test case
 2. the _stub path_ points to the directory where the stubs are stored for `.playback` / will be recorded to with `.recording`
 3. the _TESTING_ parameter simply makes sure that we are in a testing environment.
 
