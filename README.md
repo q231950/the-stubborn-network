@@ -35,7 +35,7 @@ In order to make use of **The Stubborn Network** in UI tests you need to configu
 
 ### App Configuration
 
-Instead of passing a standard `URLSession` to your network client a stubbed variant will be passed during UI test execution:
+Instead of passing a standard `URLSession` to your network client a stubbed variant will be passed during UI test execution. This happens inside your application, for example a `SceneDelegate.swift`:
 
 ```swift
 let urlSession: URLSession
@@ -60,7 +60,7 @@ if processInfo.testing == false {
 
 1. each test assigns its function name like `testBytesText` to create dedicated stubs for every individual test case
 2. the _stub path_ points to the directory where the stubs are stored for `.playback` / will be recorded to with `.recording`
-3. the _TESTING_ parameter simply makes sure that we are in a testing environment.
+3. the _TESTING_ parameter simply makes indicates to the application (see _App Configuration_ above) that we are in a test environment.
 
 ```swift
 override func setUp() {
@@ -89,14 +89,13 @@ func testBytesText() {
 
 ```swift
 static var previews: some View {
-        //        let urlSession = URLSession(configuration: .ephemeral)
         let urlSession = StubbornNetwork.stubbed(withConfiguration: .persistent(name: "ContentView_Previews", path: "\(ProcessInfo().environment["PROJECT_DIR"] ?? "")/stubs")!) { (session) in
             session.recordMode = .playback
         }
-        let networkClient = NetworkClient(urlSession: urlSession)
-        /// use the network client
+        /// Use the stubbed `urlSession`...
 }
 ```
+
 ## Stub structure
 
 The stubs are stored as plain json to make the behaviour of the stubs transparent.
