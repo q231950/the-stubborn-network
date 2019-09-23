@@ -47,7 +47,7 @@ UI tests benefit from **The Stubborn Network**'s ability to easily record actual
 
 Instead of passing a standard `URLSession` to your network client a stubbed variant will be passed during UI test execution. This happens inside your application, for example a `SceneDelegate.swift`:
 
-<details><summary>[Example App Configuration](https://github.com/q231950/the-stubborn-network-demo/blob/master/Demo/SceneDelegate.swift)</summary>
+<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/Demo/SceneDelegate.swift'>Example App Configuration</a></summary>
 <p>
 
 ```swift
@@ -80,7 +80,7 @@ There are 3 parameters passed in as environment variables to the application und
 2. the _stub path_ points to the directory where the stub source with the stubs is stored for `.playback` / where stubs will be recorded to when `.recording`
 3. the _TESTING_ parameter simply indicates to the application (see _App Configuration_ above) that we are in a test environment
 
-<details><summary>[UI Test Configuration](https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoUITests/DemoUITests.swift)</summary>
+<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoUITests/DemoUITests.swift'>UI Test Configuration</a></summary>
 <p>
 
 ```swift
@@ -113,7 +113,7 @@ func testBytesText() {
 
 A SwiftUI Preview utilizes **The Stubborn Network** mostly like a cache. You record and persist all network calls required to present a Preview and then have the responses available immediately for any successive Preview. This means you can record network calls and later show Previews without internet connection 🛩
 
-<details><summary>[SwiftUI Example](https://github.com/q231950/the-stubborn-network-demo/blob/master/Demo/ContentView.swift)</summary>
+<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/Demo/ContentView.swift'>SwiftUI Example</a></summary>
 <p>
 
 ```swift
