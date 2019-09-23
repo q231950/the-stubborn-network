@@ -23,24 +23,19 @@ enum Keys: String {
 public struct Environment {
     public let testing: Bool
     public let stubSourceName: String?
-    public let stubSourcePath: URL?
+    public let stubSourcePath: String?
 
     public init(processInfo: ProcessInfo = ProcessInfo()) {
         let testing = processInfo.environment[Keys.testing.rawValue] != nil
-        guard let stubSourceName = processInfo.environment[Keys.stubName.rawValue],
-            let stubSourcePath = processInfo.environment[Keys.stubPath.rawValue] else {
-                self.init(testing: testing)
-                return
-        }
+        let stubSourceName = processInfo.environment[Keys.stubName.rawValue]
+        let stubSourcePath = processInfo.environment[Keys.stubPath.rawValue]
 
-        var url = URL(string: stubSourcePath)
-        url?.appendPathComponent("com.q231950.StubbornNetworkStubs")
         self.init(testing: testing,
                   stubSourceName: stubSourceName,
-                  stubSourcePath: url)
+                  stubSourcePath: stubSourcePath)
     }
 
-    internal init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: URL? = nil) {
+    internal init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: String? = nil) {
         self.testing = testing
         self.stubSourceName = stubSourceName
         self.stubSourcePath = stubSourcePath

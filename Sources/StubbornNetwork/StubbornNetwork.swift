@@ -12,26 +12,6 @@ import Foundation
 /// more efficiently
 public struct StubbornNetwork {
 
-<<<<<<< HEAD
-    ///
-    /// Use the `stubbedURLSession` to get an instance of StubbornURLSession
-    ///
-    /// Then stub requests:
-    ///
-    /// ```
-    ///     let urlSession = StubbornNetwork.stubbedURLSession
-    ///     urlSession.stub(request, data: stubbedData, response: nil, error: nil)
-    /// ```
-    //    public static var stubbedURLSession: URLSession {
-    //        get {
-    //            return URLSessionStub(configuration: .ephemeral, mode: .recording)
-    //        }
-    //    }
-
-    /// , type: StubSourceType = .ephemeral ? maybe ?
-    public static func stubbed(_ stub:((StubbornURLSession) -> Void)? = nil) -> URLSession {
-        let session = URLSessionStub(configuration: .ephemeral)
-=======
 	///
     public static func stubbed(withProcessInfo processInfo: ProcessInfo, stub:((StubbornURLSession) -> Void)? = nil) -> URLSession {
 
@@ -59,7 +39,6 @@ public struct StubbornNetwork {
             session = URLSessionStub(configuration: .ephemeral, stubSource: stubSource)
         }
 
->>>>>>> Add documentation and leave some TODOs
         if let stub = stub {
             stub(session)
         }

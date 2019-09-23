@@ -58,9 +58,8 @@ class EnvironmentTests: XCTestCase {
 
     func testInitializesVariables() {
         let environment = Environment(testing: true,
-                                      stubSourceName:
-            "a name",
-                                      stubSourcePath: URL(string:"127.0.0.1")!)
+                                      stubSourceName: "a name",
+                                      stubSourcePath: "127.0.0.1")
         XCTAssertTrue(environment.testing)
         XCTAssertNotNil(environment.stubSourceName)
         XCTAssertNotNil(environment.stubSourcePath)
