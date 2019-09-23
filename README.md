@@ -14,7 +14,7 @@ You can stub:
 
 Unit tests use "plain" stubs where each stub only lives for the duration of the test. This is called the _ephemeral_ configuration.
 
-<details><summary>[Unit Test Example](https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoTests/DemoTests.swift)</summary>
+<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoTests/DemoTests.swift'>Unit Test Example</a></summary>
 <p>
 
 ```swift
