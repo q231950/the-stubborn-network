@@ -72,17 +72,8 @@ class URLSessionStubTests: XCTestCase {
         wait(for: [stubDidStoreExpectation], timeout: 0.1)
     }
 
-    /// TODO: the `setupStubSource` method does not make sense for the `EphemeralStubSource`. Think about it.
-    func testSetupStubSource() {
-        let urlSessionStub = URLSessionStub(configuration: .ephemeral)
-        let url = URL(string:"127.0.0.1")!
-
-        urlSessionStub.setupStubSource(name: "a name", path: url)
-    }
-
     static var allTests = [
         ("testStubsRequests", testStubsRequests),
         ("testDefaultRecordMode", testDefaultRecordMode),
-        ("testSetupStubSource", testSetupStubSource),
     ]
 }

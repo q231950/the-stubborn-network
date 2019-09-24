@@ -24,13 +24,4 @@ public protocol StubbornURLSession: URLSession {
      The record mode defines the way the StubbornURLSession behaves. It can record or playback stubs.
      */
     var recordMode: RecordMode {get set}
-
-    /**
-     Stub a potentially big series of requests with a prerecorded StubSource at the given path.
-
-     - Parameters:
-        - name: The name the `StubSource` should carry
-        - path: The path to the StubSource
-     */
-    func setupStubSource(name: String, path: URL)
 }

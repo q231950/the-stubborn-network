@@ -9,14 +9,12 @@ import Foundation
 
 protocol StubSourceProtocol {
 
-    init(url: URL)
-
     mutating func store(_ stub: RequestStub)
 
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
 }
 
-struct StubSource: StubSourceProtocol {
+struct PersistentStubSource: StubSourceProtocol {
     let url: URL
     var stubs = [RequestStub]()
 
@@ -66,6 +64,34 @@ struct StubSource: StubSourceProtocol {
             fileManager.createFile(atPath: url.absoluteString, contents: json, attributes: [FileAttributeKey.type: "json"])
         } catch {
             print("\(error)")
+        }
+    }
+}
+
+extension PersistentStubSource {
+    init(name: String, path: URL) {
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: path.absoluteString) {
+            PersistentStubSource.createStubDirectory(at: path)
+        }
+
+        var sanitizedName = name.replacingOccurrences(of: " ", with: "_")
+        sanitizedName = sanitizedName.replacingOccurrences(of: "[", with: "")
+        sanitizedName = sanitizedName.replacingOccurrences(of: "]", with: "")
+        sanitizedName = sanitizedName.replacingOccurrences(of: "-", with: "")
+        let url = path.appendingPathComponent("\(sanitizedName).json")
+
+        self.init(url: url)
+    }
+
+    static func createStubDirectory(at path: URL) {
+        do {
+            let fileManager = FileManager.default
+            try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
+        }
+        catch let e {
+            print("\(path.absoluteURL)")
+            assertionFailure("Unable to create stub directory. \(e.localizedDescription)")
         }
     }
 }

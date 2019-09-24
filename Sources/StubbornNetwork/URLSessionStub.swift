@@ -11,11 +11,6 @@ enum NetworkStubError: Error {
     case unexpectedRequest(String)
 }
 
-public enum RecordMode {
-    case recording
-    case playback
-}
-
 class URLSessionStub: URLSession, StubbornURLSession {
     var stubSource: StubSourceProtocol?
     var recordMode: RecordMode = .playback
@@ -29,31 +24,6 @@ class URLSessionStub: URLSession, StubbornURLSession {
     func stub(_ request: URLRequest, data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         let stub = RequestStub(request: request, data: data, response: response, error: error)
         stubSource?.store(stub)
-    }
-
-    func setupStubSource(name: String, path: URL) {
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: path.absoluteString) {
-            createStubDirectory(at: path)
-        }
-
-        var sanitizedName = name.replacingOccurrences(of: " ", with: "_")
-        sanitizedName = sanitizedName.replacingOccurrences(of: "[", with: "")
-        sanitizedName = sanitizedName.replacingOccurrences(of: "]", with: "")
-        sanitizedName = sanitizedName.replacingOccurrences(of: "-", with: "")
-        let url = path.appendingPathComponent("\(sanitizedName).json")
-        stubSource = StubSource(url: url)
-    }
-
-    private func createStubDirectory(at path: URL) {
-        do {
-            let fileManager = FileManager.default
-            try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
-        }
-        catch let e {
-            print("\(path.absoluteURL)")
-            assertionFailure("Unable to create stub directory. \(e.localizedDescription)")
-        }
     }
 }
 

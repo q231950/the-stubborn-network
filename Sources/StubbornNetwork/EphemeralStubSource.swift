@@ -12,11 +12,7 @@ class EphemeralStubSource: StubSourceProtocol {
     var expectedResponses = [URLRequest: URLResponse?]()
     var expectedErrors = [URLRequest: Error?]()
 
-    convenience init() {
-        self.init(url: URL(string: "127.0.0.1")!)
-    }
-
-    required init(url: URL) {}
+    init() {}
 
     func store(_ stub: RequestStub) {
         if let data = stub.data {
