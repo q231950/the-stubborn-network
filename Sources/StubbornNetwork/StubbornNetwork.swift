@@ -12,7 +12,6 @@ import Foundation
 /// more efficiently
 public struct StubbornNetwork {
 
-	///
     public static func stubbed(withProcessInfo processInfo: ProcessInfo, stub:((StubbornURLSession) -> Void)? = nil) -> URLSession {
 
 			/// TODO: Move this implementation to an internal static func on `URLSessionStub`
@@ -28,7 +27,7 @@ public struct StubbornNetwork {
 
         let session: URLSessionStub
 
-			/// TODO: Move this implementation to an internal static func on `URLSessionStub` and make `EphemeralStubSource` and `PersistentStubSource` internal
+			/// TODO: Move this implementation to an internal static func on `URLSessionStub`
         switch configuration {
         case .ephemeral:
             session = URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
@@ -45,13 +44,4 @@ public struct StubbornNetwork {
         return session
 
     }
-}
-
-/// TODO: Move `StubSourceConfiguration` to its own file
-///
-/// StubSourceConfiguration defines the `URLSessionStub`s’ lifetime. They can either be ephemeral or they can be persisted on disk.
-/// When persisting a stub source to disk, the path and name for the source have to be provided.
-public enum StubSourceConfiguration {
-    case ephemeral
-    case persistent(name: String, path: String)
 }
