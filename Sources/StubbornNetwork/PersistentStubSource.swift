@@ -14,7 +14,7 @@ public protocol StubSourceProtocol {
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
 }
 
-public struct PersistentStubSource: StubSourceProtocol {
+struct PersistentStubSource: StubSourceProtocol {
     let url: URL
     var stubs = [RequestStub]()
 
@@ -26,7 +26,7 @@ public struct PersistentStubSource: StubSourceProtocol {
         }
     }
 
-    public func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         let s = stub(forRequest: request)
         precondition(s != nil, "Unable to find a request stub for the given request: \(request.url?.absoluteString ?? "") in stub source at \(url.absoluteString).")
         return URLSessionDataTaskStub(request: request, data: s?.data, response: s?.response, error:s?.error, resumeCompletion: completionHandler)
@@ -52,7 +52,7 @@ public struct PersistentStubSource: StubSourceProtocol {
         return stubs.filter(request.matches()).first
     }
 
-    mutating public func store(_ stub: RequestStub) {
+    mutating func store(_ stub: RequestStub) {
         print("Storing stub: \(stub) at \(url.absoluteString).")
 
         stubs.append(stub)
@@ -68,7 +68,7 @@ public struct PersistentStubSource: StubSourceProtocol {
     }
 }
 
-public extension PersistentStubSource {
+extension PersistentStubSource {
     init(name: String, path: URL) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path.absoluteString) {

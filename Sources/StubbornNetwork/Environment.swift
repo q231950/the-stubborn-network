@@ -20,12 +20,12 @@ enum Keys: String {
 /// should not run against the production backend - a testing environment might provide an alternate server
 /// for network requests or stubbornly stub requests.
 ///
-public struct Environment {
-    public let testing: Bool
-    public let stubSourceName: String?
-    public let stubSourcePath: String?
+struct Environment {
+    let testing: Bool
+    let stubSourceName: String?
+    let stubSourcePath: String?
 
-    public init(processInfo: ProcessInfo = ProcessInfo()) {
+    init(processInfo: ProcessInfo = ProcessInfo()) {
         let testing = processInfo.environment[Keys.testing.rawValue] != nil
         let stubSourceName = processInfo.environment[Keys.stubName.rawValue]
         let stubSourcePath = processInfo.environment[Keys.stubPath.rawValue]
@@ -35,7 +35,7 @@ public struct Environment {
                   stubSourcePath: stubSourcePath)
     }
 
-    internal init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: String? = nil) {
+    init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: String? = nil) {
         self.testing = testing
         self.stubSourceName = stubSourceName
         self.stubSourcePath = stubSourcePath
