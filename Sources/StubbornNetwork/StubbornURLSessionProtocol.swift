@@ -24,6 +24,4 @@ public protocol StubbornURLSession: URLSession {
      The record mode defines the way the StubbornURLSession behaves. It can record or playback stubs.
      */
     var recordMode: RecordMode {get set}
-
-    var stubSource: StubSourceProtocol? {get set}
 }

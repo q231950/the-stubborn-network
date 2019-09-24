@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol StubSourceProtocol {
+protocol StubSourceProtocol {
 
     mutating func store(_ stub: RequestStub)
 

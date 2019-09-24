@@ -11,11 +11,6 @@ enum NetworkStubError: Error {
     case unexpectedRequest(String)
 }
 
-public enum RecordMode {
-    case recording
-    case playback
-}
-
 class URLSessionStub: URLSession, StubbornURLSession {
     var stubSource: StubSourceProtocol?
     var recordMode: RecordMode = .playback
