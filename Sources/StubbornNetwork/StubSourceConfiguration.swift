@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  StubSourceConfiguration.swift
 //  
 //
 //  Created by Martin Kim Dung-Pham on 24.09.19.
