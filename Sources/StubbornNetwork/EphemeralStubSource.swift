@@ -7,14 +7,18 @@
 
 import Foundation
 
-class EphemeralStubSource: StubSourceProtocol {
+/// This stub source only lives in memory. It is most useful for unit tests where a method
+/// is tested against a specific request.
+/// `EphemeralStubSource` is normally not used to stub a multitude of requests.
+struct EphemeralStubSource: StubSourceProtocol {
     var expectedDatas = [URLRequest: Data?]()
     var expectedResponses = [URLRequest: URLResponse?]()
     var expectedErrors = [URLRequest: Error?]()
+}
 
-    init() {}
-
-    func store(_ stub: RequestStub) {
+/// `EphemeralStubSource` conforms to `StubSourceProtocol`
+extension EphemeralStubSource {
+    mutating func store(_ stub: RequestStub) {
         if let data = stub.data {
             expectedDatas[stub.request] = data
         }
