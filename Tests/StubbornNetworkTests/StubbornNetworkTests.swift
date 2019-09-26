@@ -2,12 +2,28 @@ import XCTest
 @testable import StubbornNetwork
 
 final class StubbornNetworkTests: XCTestCase {
+
     func testEphemeralStubbedURLSessionNotNil() {
+        XCTAssertNotNil(StubbornNetwork.ephemeralStub())
+    }
+
+    func testStubbedURLSessionWithConfigurationNotNil() {
         XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .ephemeral))
     }
 
     func testPersistentStubbedURLSessionNotNil() {
-        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .persistent(name: "Stub", path: "127.0.0.1")))
+        let testProcessInfo = ProcessInfo()
+        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .persistent(
+            name: "Stub",
+            path: testProcessInfo.environment["XCTestConfigurationFilePath"]!)))
+    }
+
+    func testPersistentStubbedURLSessionFromProcessInfoNotNil() {
+        let testProcessInfo = ProcessInfo()
+
+        let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+
+        XCTAssertNotNil(StubbornNetwork.stubbed(withProcessInfo: processInfo))
     }
 
     func testCallsClosureWithStub() {
