@@ -15,22 +15,22 @@ class URLSessionStubTests: XCTestCase {
         let expectedData = "abc".data(using: .utf8)
         let expectedResponse = HTTPURLResponse()
 
-        let stubSource = EphemeralStubSource()
-        let urlSessionStub = URLSessionStub(configuration: .ephemeral, stubSource:stubSource)
+        let urlSessionStub = URLSessionStub(configuration: .ephemeral,
+                                            stubSource:EphemeralStubSource())
         var request = URLRequest(url: URL(string:"127.0.0.1")!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B":"BBB"]
 
         urlSessionStub.stub(request, data: "abc".data(using: .utf8), response: expectedResponse, error: TestError.expected)
 
-        let dataTask = stubSource.dataTask(with: request) { (data, response, error) in
+        let dataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(expectedData, data)
             XCTAssertEqual(expectedResponse, response)
             XCTAssertEqual(TestError.expected.localizedDescription, error?.localizedDescription)
 
             exp.fulfill()
         }
-        dataTask.resume()
+        dataTask?.resume()
 
         wait(for: [exp], timeout: 0.1)
     }
@@ -50,9 +50,9 @@ class URLSessionStubTests: XCTestCase {
 
         urlSessionStubStub.stub(request, data: "abc".data(using: .utf8))
 
-        let stubSource = EphemeralStubSource()
-
-        let urlSessionStub = URLSessionStub(configuration: .ephemeral, stubSource:stubSource, endToEndURLSession: urlSessionStubStub)
+        let urlSessionStub = URLSessionStub(configuration: .ephemeral,
+                                            stubSource: EphemeralStubSource(),
+                                            endToEndURLSession: urlSessionStubStub)
         urlSessionStub.recordMode = .recording
 
         let dataTask = urlSessionStub.dataTask(with: request) { (data, response, error) in
@@ -63,11 +63,11 @@ class URLSessionStubTests: XCTestCase {
         wait(for: [exp], timeout: 0.1)
 
         let stubDidStoreExpectation = expectation(description: "StubSource finds a record for the request")
-        let stubSourceDataTask = stubSource.dataTask(with: request) { (data, response, error) in
+        let stubSourceDataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(data, "abc".data(using: .utf8))
             stubDidStoreExpectation.fulfill()
         }
-        stubSourceDataTask.resume()
+        stubSourceDataTask?.resume()
 
         wait(for: [stubDidStoreExpectation], timeout: 0.1)
     }

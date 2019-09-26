@@ -7,36 +7,30 @@
 
 import Foundation
 
-enum Keys: String {
-    case testing = "TESTING"
+/// These keys are used by tests to setup the environment variables of the application under test.
+/// The values are read inside the application to identify the location of the current stub during test execution.
+enum EnvironmentVariableKeys: String {
     case stubName = "STUB_NAME"
     case stubPath = "STUB_PATH"
 }
 
-///
-/// An environment can be queried for whether or not the app has been launched in a testing environment.
-///
-/// Application logic can (carefully) take different code paths for testing purposes. For exampe, Xcode UI Tests
-/// should not run against the production backend - a testing environment might provide an alternate server
-/// for network requests or stubbornly stub requests.
-///
+/// An environment defines the location of a `StubSource`.
 struct Environment {
-    let testing: Bool
     let stubSourceName: String?
     let stubSourcePath: String?
 
+    /// The initializer takes a process info in order to read the environment variables
+    /// which define the location o the current stub source during test execution
+    /// - Parameter processInfo: The process info is setup by the test, using the `EnvironmentVariableKeys` to specify a path and a name of a stub source
     init(processInfo: ProcessInfo = ProcessInfo()) {
-        let testing = processInfo.environment[Keys.testing.rawValue] != nil
-        let stubSourceName = processInfo.environment[Keys.stubName.rawValue]
-        let stubSourcePath = processInfo.environment[Keys.stubPath.rawValue]
+        let stubSourceName = processInfo.environment[EnvironmentVariableKeys.stubName.rawValue]
+        let stubSourcePath = processInfo.environment[EnvironmentVariableKeys.stubPath.rawValue]
 
-        self.init(testing: testing,
-                  stubSourceName: stubSourceName,
+        self.init(stubSourceName: stubSourceName,
                   stubSourcePath: stubSourcePath)
     }
 
-    init(testing: Bool, stubSourceName: String? = nil, stubSourcePath: String? = nil) {
-        self.testing = testing
+    private init(stubSourceName: String? = nil, stubSourcePath: String? = nil) {
         self.stubSourceName = stubSourceName
         self.stubSourcePath = stubSourcePath
     }
