@@ -13,9 +13,13 @@ final class StubbornNetworkTests: XCTestCase {
 
     func testPersistentStubbedURLSessionNotNil() {
         let testProcessInfo = ProcessInfo()
-        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .persistent(
-            name: "Stub",
-            path: testProcessInfo.environment["XCTestConfigurationFilePath"]!)))
+        let processInfo = ProcessInfoStub(
+            stubName: "Stub",
+            stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+
+        let location = StubSourceLocation(processInfo: processInfo)
+
+        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .persistent(location: location)))
     }
 
     func testPersistentStubbedURLSessionFromProcessInfoNotNil() {

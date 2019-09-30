@@ -32,7 +32,9 @@ public struct StubbornNetwork {
         switch configuration {
         case .ephemeral:
             session = URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
-        case .persistent(let name, let path):
+        case .persistent(let location):
+            let name = location.stubSourceName
+            let path = location.stubSourcePath
             let url = URL(string: path)
             assert(url != nil, "The path to the stub source is not a valid path. Choose a valid path in the stub source configuration.")
             let stubSource = PersistentStubSource(name: name, path: url!)
@@ -51,11 +53,7 @@ public struct StubbornNetwork {
     static func stubbed(withProcessInfo processInfo: ProcessInfo, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
 
         /// TODO: Move this implementation to an internal static func on `URLSessionStub`
-        let env = Environment(processInfo: processInfo)
-        let name = env.stubSourceName
-        let path = env.stubSourcePath
-        assert(name != nil, "You have provided a process info but you are missing an environment variable called `\(EnvironmentVariableKeys.stubName)` that specifies the name of the current stub. Use the `stubbed(withConfiguration: .ephemeral)` if you are not intending to store stubs and keep them in memory instead.")
-        assert(path != nil, "You have provided a process info but you are missing an environment variable called `\(EnvironmentVariableKeys.stubPath)` that specifies the path to the stub source. Use the `stubbed(withConfiguration: .ephemeral)` if you are not intending to store stubs and keep them in memory instead.")
-        return stubbed(withConfiguration: .persistent(name: name!, path: path!), stubbornURLSession)
+        let location = StubSourceLocation(processInfo: processInfo)
+        return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
     }
 }
