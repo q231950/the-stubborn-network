@@ -11,7 +11,7 @@ import XCTest
 /**
  A stubbable `ProcessInfo` subclass
 
- `Environment` expects a `ProcessInfo` to derive information about the name and location of the stub source. The `ProcessInfoStub` subclass of `ProcessInfo` is used to stub values into the otherwise immutable `ProcessInfo` to be able to test for the location and name.
+ `StubSourceLocation` expects a `ProcessInfo` to derive information about the name and location of the stub source. The `ProcessInfoStub` subclass of `ProcessInfo` is used to stub values into the otherwise immutable `ProcessInfo` to be able to test for the location and name.
  */
 final class ProcessInfoStub: ProcessInfo {
 
@@ -42,7 +42,7 @@ class EnvironmentTests: XCTestCase {
 
     func testInitializesWithProcessInfo() {
         let processInfo = ProcessInfoStub(stubName: "a stub source", stubPath: "127.0.0.1")
-        let environment = Environment(processInfo: processInfo)
+        let environment = StubSourceLocation(processInfo: processInfo)
 
         XCTAssertEqual(environment.stubSourceName, "a stub source")
         XCTAssertNotNil(environment.stubSourcePath)
