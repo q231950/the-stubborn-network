@@ -21,7 +21,7 @@ public struct StubbornNetwork {
     /// Create a stubbed `URLSession` by providing a `ProcessInfo` that contains information about the location of the source for the stubs
     /// - Parameter processInfo: The process info that contains `EnvironmentVariableKeys` specifying the location of the stub source.
     /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
-    public static func persistedStubbedURLSession(withProcessInfo processInfo: ProcessInfo, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
+    public static func persistedStubbedURLSession(withProcessInfo processInfo: ProcessInfo = ProcessInfo(), _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
 
         /// TODO: Move this implementation to an internal static func on `URLSessionStub`
         let location = StubSourceLocation(processInfo: processInfo)
