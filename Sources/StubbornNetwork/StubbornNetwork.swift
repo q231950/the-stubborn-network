@@ -12,18 +12,32 @@ import Foundation
 /// more efficiently where the stubs act like a cache.
 public struct StubbornNetwork {
 
-    /// Create a stubbed `URLSession`. The current `ProcessInfo`'s environment variables need to be setup for The Stubborn Network to know where the source of the stubs it should use have been persisted to.
+    /// Shorthand for a `StubbornURLSession` with a `.ephemeral` configutation. Creates a stubbed `URLSession` that lives in memory only. The stubs of this `StubbornURLSession` are not persisted anywhere. This factory method is useful in unit tests.
     /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
-    public static func stubbed(_ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
-        return stubbed(withProcessInfo: ProcessInfo(), stubbornURLSession)
-    }
-
-    /// Create a stubbed `URLSession` that lives in memory only. The stubs of this `StubbornURLSession` are not persisted anywhere. This factory method is useful in unit tests.
-    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
-    public static func ephemeralStub(_ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
+    public static func ephemeralStubbedURLSession(_ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
         return stubbed(withConfiguration: .ephemeral, stubbornURLSession)
     }
 
+    /// Create a stubbed `URLSession` by providing a `ProcessInfo` that contains information about the location of the source for the stubs
+    /// - Parameter processInfo: The process info that contains `EnvironmentVariableKeys` specifying the location of the stub source.
+    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
+    public static func persistedStubbedURLSession(withProcessInfo processInfo: ProcessInfo, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
+
+        /// TODO: Move this implementation to an internal static func on `URLSessionStub`
+        let location = StubSourceLocation(processInfo: processInfo)
+        return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
+    }
+
+    static func persistedStubbedURLSession(withName name: String, path: String, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
+
+        /// TODO: Move this implementation to an internal static func on `URLSessionStub`
+        let location = StubSourceLocation(name: name, path: path)
+        return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
+    }
+
+    ///    Creates a stubbed `URLSession` with a configuration.
+    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
+    /// - Parameter configuration
     static func stubbed(withConfiguration configuration: StubSourceConfiguration = .ephemeral, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
 
         let session: URLSessionStub
@@ -45,15 +59,5 @@ public struct StubbornNetwork {
             stubbornURLSession(session)
         }
         return session
-    }
-
-    /// Create a stubbed `URLSession` by providing a `ProcessInfo` that contains information about the location of the source for the stubs
-    /// - Parameter processInfo: The process info that contains `EnvironmentVariableKeys` specifying the location of the stub source.
-    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
-    static func stubbed(withProcessInfo processInfo: ProcessInfo, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
-
-        /// TODO: Move this implementation to an internal static func on `URLSessionStub`
-        let location = StubSourceLocation(processInfo: processInfo)
-        return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
     }
 }
