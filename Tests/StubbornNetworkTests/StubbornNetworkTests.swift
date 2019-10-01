@@ -11,35 +11,35 @@ final class StubbornNetworkTests: XCTestCase {
         XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .ephemeral))
     }
 
-    func testPersistentStubbedURLSessionNotNil() {
-        let testProcessInfo = ProcessInfo()
-        let processInfo = ProcessInfoStub(
-            stubName: "Stub",
-            stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+//    func testPersistentStubbedURLSessionNotNil() {
+//        let testProcessInfo = ProcessInfo()
+//        let processInfo = ProcessInfoStub(
+//            stubName: "Stub",
+//            stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+//
+//        let location = StubSourceLocation(processInfo: processInfo)
+//
+//        XCTAssertNotNil(StubbornNetwork.stubbed(
+//            withConfiguration: .persistent(location: location))
+//        )
+//    }
 
-        let location = StubSourceLocation(processInfo: processInfo)
+//    func testPersistentStubbedURLSessionFromProcessInfoNotNil() {
+//        let testProcessInfo = ProcessInfo()
+//
+//        let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+//
+//        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withProcessInfo: processInfo))
+//    }
 
-        XCTAssertNotNil(StubbornNetwork.stubbed(
-            withConfiguration: .persistent(location: location))
-        )
-    }
-
-    func testPersistentStubbedURLSessionFromProcessInfoNotNil() {
-        let testProcessInfo = ProcessInfo()
-
-        let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
-
-        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withProcessInfo: processInfo))
-    }
-
-    func testPersistentStubbedURLSessionWithNameAndPathNotNil() {
-        let testProcessInfo = ProcessInfo()
-
-        XCTAssertNotNil(StubbornNetwork.makePersistentSession(
-            withName: "Stub",
-            path: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
-        )
-    }
+//    func testPersistentStubbedURLSessionWithNameAndPathNotNil() {
+//        let testProcessInfo = ProcessInfo()
+//
+//        XCTAssertNotNil(StubbornNetwork.makePersistentSession(
+//            withName: "Stub",
+//            path: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+//        )
+//    }
 
     func testCallsClosureWithStub() {
         let exp = expectation(description: "Closure was called")
@@ -51,7 +51,6 @@ final class StubbornNetworkTests: XCTestCase {
 
     static var allTests = [
         ("testEphemeralStubbedURLSessionNotNil", testEphemeralStubbedURLSessionNotNil),
-        ("testPersistentStubbedURLSessionNotNil", testPersistentStubbedURLSessionNotNil),
         ("testCallsClosureWithStub", testCallsClosureWithStub),
     ]
 }
