@@ -22,7 +22,7 @@ public struct StubSourceLocation {
     /// The initializer takes a process info in order to read the environment variables
     /// which define the path and name of the current stub source during test execution
     /// - Parameter processInfo: The process info is setup by the test, using the `EnvironmentVariableKeys` to specify a path and a name of a stub source
-    init(processInfo: ProcessInfo = ProcessInfo()) {
+    public init(processInfo: ProcessInfo = ProcessInfo()) {
         let name = processInfo.environment[EnvironmentVariableKeys.stubName.rawValue]
 
         assert(name != nil, "A stub source must have a name. Specify one in the environment variables with the key `\(EnvironmentVariableKeys.stubName.rawValue)`")
@@ -32,7 +32,7 @@ public struct StubSourceLocation {
         self.init(name: name!, path: path!)
     }
 
-    init(name: String, path: String) {
+    public init(name: String, path: String) {
         stubSourceName = name
         stubSourcePath = path
     }
