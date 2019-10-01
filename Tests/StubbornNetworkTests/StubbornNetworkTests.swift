@@ -4,7 +4,7 @@ import XCTest
 final class StubbornNetworkTests: XCTestCase {
 
     func testEphemeralStubbedURLSessionNotNil() {
-        XCTAssertNotNil(StubbornNetwork.ephemeralStub())
+        XCTAssertNotNil(StubbornNetwork.makeEphemeralSession())
     }
 
     func testStubbedURLSessionWithConfigurationNotNil() {
@@ -19,7 +19,9 @@ final class StubbornNetworkTests: XCTestCase {
 
         let location = StubSourceLocation(processInfo: processInfo)
 
-        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .persistent(location: location)))
+        XCTAssertNotNil(StubbornNetwork.stubbed(
+            withConfiguration: .persistent(location: location))
+        )
     }
 
     func testPersistentStubbedURLSessionFromProcessInfoNotNil() {
@@ -27,7 +29,16 @@ final class StubbornNetworkTests: XCTestCase {
 
         let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
 
-        XCTAssertNotNil(StubbornNetwork.stubbed(withProcessInfo: processInfo))
+        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withProcessInfo: processInfo))
+    }
+
+    func testPersistentStubbedURLSessionWithNameAndPathNotNil() {
+        let testProcessInfo = ProcessInfo()
+
+        XCTAssertNotNil(StubbornNetwork.makePersistentSession(
+            withName: "Stub",
+            path: testProcessInfo.environment["XCTestConfigurationFilePath"]!)
+        )
     }
 
     func testCallsClosureWithStub() {

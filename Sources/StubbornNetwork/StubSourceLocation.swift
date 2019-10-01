@@ -15,7 +15,7 @@ public enum EnvironmentVariableKeys: String {
 }
 
 /// A `StubSourceLocation` defines where to find a `StubSource`.
-public struct StubSourceLocation {
+struct StubSourceLocation {
     let stubSourceName: String
     let stubSourcePath: String
 
@@ -26,10 +26,14 @@ public struct StubSourceLocation {
         let name = processInfo.environment[EnvironmentVariableKeys.stubName.rawValue]
 
         assert(name != nil, "A stub source must have a name. Specify one in the environment variables with the key `\(EnvironmentVariableKeys.stubName.rawValue)`")
-        stubSourceName = name!
-
         let path = processInfo.environment[EnvironmentVariableKeys.stubPath.rawValue]
         assert(path != nil, "A stub source must have a path. Specify one in the environment variables with the key `\(EnvironmentVariableKeys.stubPath.rawValue)`")
-        stubSourcePath = path!
+
+        self.init(name: name!, path: path!)
+    }
+
+    init(name: String, path: String) {
+        stubSourceName = name
+        stubSourcePath = path
     }
 }
