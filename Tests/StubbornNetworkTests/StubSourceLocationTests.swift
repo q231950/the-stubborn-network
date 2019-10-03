@@ -23,8 +23,8 @@ final class ProcessInfoStub: ProcessInfo {
         super.init()
     }
 
-    override var environment: [String : String] {
-        var pairs = [String:String]()
+    override var environment: [String: String] {
+        var pairs = [String: String]()
         if stubName != nil {
             pairs[EnvironmentVariableKeys.stubName.rawValue] = stubName
         }
