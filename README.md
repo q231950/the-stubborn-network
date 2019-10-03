@@ -21,9 +21,9 @@ Unit tests use "plain" stubs where each stub only lives for the duration of the 
 
 ```swift
 /// given
-let session = StubbornNetwork.stubbed(withConfiguration: .ephemeral) { (stubbedSession) in
+let session = StubbornNetwork.makeEphemeralSession({ (stubbedSession) in
     stubbedSession.stub(NetworkClient.request, data: self.stubData, response: HTTPURLResponse(), error: nil)
-}
+})
 let networkClient = NetworkClient(urlSession: session)
 
 /// when
@@ -57,14 +57,10 @@ let urlSession: URLSession
 let processInfo = ProcessInfo()
 
 if processInfo.testing == false {
-    /// Use the standard URLSession when not testing.
     urlSession = URLSession(configuration: .ephemeral)
 } else {
-    /// Use a stubbed URLSession when testing.
-    urlSession = StubbornNetwork.stubbed(withProcessInfo: processInfo, stub: { (stubbedURLSession) in
-    
-        /// It is possible to record stubs instead of manually stubbing each request.
-        stubbedURLSession.recordMode = .recording
+    urlSession = StubbornNetwork.makePersistentSession({ (stubbedURLSession) in
+        stubbedURLSession.recordMode = .playback
     })
 }
 
@@ -120,12 +116,11 @@ A SwiftUI Preview utilizes **The Stubborn Network** mostly like a cache. You rec
 
 ```swift
 static var previews: some View {
-        let urlSession = StubbornNetwork.stubbed(withConfiguration: .persistent(name: "ContentView_Previews", path: "\(ProcessInfo().environment["PROJECT_DIR"] ?? "")/stubs")!) { (session) in
-            session.recordMode = .playback
-        }
-
-        let networkClient = NetworkClient(urlSession: urlSession)
-        /// Use the stubbed `networkClient`...
+    let urlSession = StubbornNetwork.makePersistentSession(withName: "ContentView_Previews", path: "some_path_to/stubs", { (session) in
+        session.recordMode = .playback
+    })
+    let networkClient = NetworkClient(urlSession: urlSession)
+    /// Use the stubbed `networkClient`...
 }
 ```
 
