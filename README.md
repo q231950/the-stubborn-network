@@ -1,3 +1,5 @@
+![Travis](https://travis-ci.org/q231950/the-stubborn-network.svg?branch=master) [![SourceLevel](https://app.sourcelevel.io/github/q231950/the-stubborn-network.svg)](https://app.sourcelevel.io/github/q231950/the-stubborn-network)
+
 # The Stubborn Network
 
 > A Swifty and clean stubbing machine.
