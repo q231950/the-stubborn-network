@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// This is an error used for unit testing purposes
 enum TestError: Error {
     case expected
 }

@@ -38,14 +38,14 @@ final class ProcessInfoStub: ProcessInfo {
     }
 }
 
-class EnvironmentTests: XCTestCase {
+class StubSourceLocationTests: XCTestCase {
 
     func testInitializesWithProcessInfo() {
         let processInfo = ProcessInfoStub(stubName: "a stub source", stubPath: "127.0.0.1")
-        let environment = StubSourceLocation(processInfo: processInfo)
+        let stubSourceLocation = StubSourceLocation(processInfo: processInfo)
 
-        XCTAssertEqual(environment.stubSourceName, "a stub source")
-        XCTAssertNotNil(environment.stubSourcePath)
+        XCTAssertEqual(stubSourceLocation.stubSourceName, "a stub source")
+        XCTAssertNotNil(stubSourceLocation.stubSourcePath)
     }
 
     static var allTests = [(

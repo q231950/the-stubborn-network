@@ -62,5 +62,10 @@ final class StubbornNetworkTests: XCTestCase {
     static var allTests = [
         ("testEphemeralStubbedURLSessionNotNil", testEphemeralStubbedURLSessionNotNil),
         ("testCallsClosureWithStub", testCallsClosureWithStub),
+        ("testStubbedURLSessionWithConfigurationNotNil", testStubbedURLSessionWithConfigurationNotNil),
+        ("testPersistentStubbedURLSessionNotNil", testPersistentStubbedURLSessionNotNil),
+        ("testPersistentStubbedURLSessionFromProcessInfoNotNil", testPersistentStubbedURLSessionFromProcessInfoNotNil),
+        ("testPersistentStubbedURLSessionWithNameAndPathNotNil", testPersistentStubbedURLSessionWithNameAndPathNotNil),
+        ("testCallsClosureWithStub", testCallsClosureWithStub),
     ]
 }
