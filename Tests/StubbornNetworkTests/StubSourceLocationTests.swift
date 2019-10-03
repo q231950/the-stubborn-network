@@ -8,11 +8,11 @@
 import XCTest
 @testable import StubbornNetwork
 
-/**
- A stubbable `ProcessInfo` subclass
-
- `StubSourceLocation` expects a `ProcessInfo` to derive information about the name and location of the stub source. The `ProcessInfoStub` subclass of `ProcessInfo` is used to stub values into the otherwise immutable `ProcessInfo` to be able to test for the location and name.
- */
+/// A stubbable `ProcessInfo` subclass
+///
+/// `StubSourceLocation` expects a `ProcessInfo` to derive information about the name and location of the stub source.
+/// The `ProcessInfoStub` subclass of `ProcessInfo` is used to stub values into the otherwise immutable `ProcessInfo`
+/// to be able to test for the location and name.
 final class ProcessInfoStub: ProcessInfo {
 
     let stubName: String?
