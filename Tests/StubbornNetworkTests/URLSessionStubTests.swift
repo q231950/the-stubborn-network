@@ -75,5 +75,6 @@ class URLSessionStubTests: XCTestCase {
     static var allTests = [
         ("testStubsRequests", testStubsRequests),
         ("testDefaultRecordMode", testDefaultRecordMode),
+        ("testRecordsInRecordMode", testRecordsInRecordMode),
     ]
 }
