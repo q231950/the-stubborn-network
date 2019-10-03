@@ -24,17 +24,15 @@ final class ProcessInfoStub: ProcessInfo {
     }
 
     override var environment: [String : String] {
-        get {
-            var pairs: [String:String] = [:]
-            if stubName != nil {
-                pairs[EnvironmentVariableKeys.stubName.rawValue] = stubName
-            }
-
-            if stubPath != nil {
-                pairs[EnvironmentVariableKeys.stubPath.rawValue] = stubPath
-            }
-            return pairs
+        var pairs = [String:String]()
+        if stubName != nil {
+            pairs[EnvironmentVariableKeys.stubName.rawValue] = stubName
         }
+
+        if stubPath != nil {
+            pairs[EnvironmentVariableKeys.stubPath.rawValue] = stubPath
+        }
+        return pairs
     }
 }
 
