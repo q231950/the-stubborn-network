@@ -53,7 +53,7 @@ final class StubbornNetworkTests: XCTestCase {
 
     func testCallsClosureWithStub() {
         let exp = expectation(description: "Closure was called")
-        _ = StubbornNetwork.stubbed(withConfiguration: .ephemeral,  { _ in
+        _ = StubbornNetwork.stubbed(withConfiguration: .ephemeral, { _ in
             exp.fulfill()
         })
         wait(for: [exp], timeout: 0.1)
