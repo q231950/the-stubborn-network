@@ -55,7 +55,7 @@ class URLSessionStubTests: XCTestCase {
                                             endToEndURLSession: urlSessionStubStub)
         urlSessionStub.recordMode = .recording
 
-        let dataTask = urlSessionStub.dataTask(with: request) { (data, response, error) in
+        let dataTask = urlSessionStub.dataTask(with: request) { (_, _, _) in
             exp.fulfill()
         }
         dataTask.resume()
