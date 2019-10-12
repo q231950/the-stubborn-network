@@ -65,6 +65,7 @@ class URLSessionStubTests: XCTestCase {
         let stubDidStoreExpectation = expectation(description: "StubSource finds a record for the request")
         let stubSourceDataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(data, "abc".data(using: .utf8))
+            XCTAssertNil(response)
             XCTAssertNil(error)
             stubDidStoreExpectation.fulfill()
         }
