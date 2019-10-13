@@ -28,7 +28,7 @@ struct PersistentStubSource: StubSourceProtocol {
     
     init(path: URL) {
         self.path = path
-        
+
         if let data = try? stubRecordData() {
             setupStubs(from: data)
         }
