@@ -7,22 +7,6 @@
 
 import Foundation
 
-typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
-
-protocol StubSourceProtocol {
-
-    /// Store a stub into the stub source.
-    /// - Parameter stub: The stub to store
-    mutating func store(_ stub: RequestStub)
-
-    /// This function loads a stub for the for a given request and returns a `URLSessionTask`
-    /// and will execute the closure with the previously stubbed data/response/error
-    /// once the data task is resumed.
-    /// - Parameter request: The request to find a matching stub for
-    /// - Parameter completionHandler: The closure to execute once the data task is resumed
-    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask
-}
-
 struct PersistentStubSource: StubSourceProtocol {
     let path: URL
     var stubs = [RequestStub]()
@@ -109,8 +93,7 @@ extension PersistentStubSource {
         do {
             let fileManager = FileManager.default
             try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
-        }
-        catch let error {
+        } catch let error {
             print("\(path.absoluteURL)")
             assertionFailure("Unable to create stub directory. \(error.localizedDescription)")
         }

@@ -31,11 +31,11 @@ extension EphemeralStubSource {
         }
     }
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         return URLSessionDataTaskStub(request: request,
                                       data: expectedDatas[request] ?? nil,
                                       response: expectedResponses[request] ?? nil,
-                                      error:expectedErrors[request] ?? nil,
+                                      error: expectedErrors[request] ?? nil,
                                       resumeCompletion: completionHandler)
     }
 }
