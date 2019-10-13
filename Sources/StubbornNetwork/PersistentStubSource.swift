@@ -27,9 +27,9 @@ struct PersistentStubSource: StubSourceProtocol {
     }
 
     func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        let s = stub(forRequest: request)
-        precondition(s != nil, "Unable to find a request stub for the given request: \(request.url?.absoluteString ?? "") in stub source at \(url.absoluteString).")
-        return URLSessionDataTaskStub(request: request, data: s?.data, response: s?.response, error:s?.error, resumeCompletion: completionHandler)
+        let requestStub = stub(forRequest: request)
+        precondition(requestStub != nil, "Unable to find a request stub for the given request: \(request.url?.absoluteString ?? "") in stub source at \(path.absoluteString).")
+        return URLSessionDataTaskStub(request: request, data: requestStub?.data, response: requestStub?.response, error:requestStub?.error, resumeCompletion: completionHandler)
     }
 
     mutating func setupStubs(from data: Data) {
@@ -89,9 +89,9 @@ extension PersistentStubSource {
             let fileManager = FileManager.default
             try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
         }
-        catch let e {
+        catch let error {
             print("\(path.absoluteURL)")
-            assertionFailure("Unable to create stub directory. \(e.localizedDescription)")
+            assertionFailure("Unable to create stub directory. \(error.localizedDescription)")
         }
     }
 }
