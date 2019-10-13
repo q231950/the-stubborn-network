@@ -104,13 +104,13 @@ extension URLRequest {
     func matches() -> ((RequestStub) -> Bool) {
         let closure = { (requestStub: RequestStub) -> Bool in
             let sortedA = self.allHTTPHeaderFields?.map({ (key, value) -> String in
-                return key + value
+                return key.lowercased() + value
             }).sorted(by: { (a, b) -> Bool in
                 return a < b
             })
 
             let sortedB = requestStub.request.allHTTPHeaderFields?.map({ (key, value) -> String in
-                return key + value
+                return key.lowercased() + value
             }).sorted(by: { (a, b) -> Bool in
                 return a < b
             })
