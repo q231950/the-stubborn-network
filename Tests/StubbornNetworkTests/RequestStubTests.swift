@@ -54,7 +54,7 @@ final class RequestStubTests: XCTestCase {
         }
         """.data(using: .utf8)!
     }
-    
+
     static var allTests = [
         ("properlyEncodesStubbedRequest", testProperlyEncodesRequests),
         ("testDecodesData", testDecodesData),

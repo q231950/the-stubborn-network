@@ -27,7 +27,7 @@ struct PersistentStubSource: StubSourceProtocol {
             setupStubs(from: data)
         }
     }
-    
+
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         let requestStub = stub(forRequest: request)
         precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
@@ -37,7 +37,7 @@ struct PersistentStubSource: StubSourceProtocol {
                                       error:requestStub?.error,
                                       resumeCompletion: completionHandler)
     }
-    
+
     mutating func setupStubs(from data: Data) {
         do {
             let decoder = JSONDecoder()
@@ -47,22 +47,22 @@ struct PersistentStubSource: StubSourceProtocol {
             print("Failed to set up stubs with error: \(error)")
         }
     }
-    
+
     private func stubRecordData() throws -> Data {
         let url = URL(fileURLWithPath: path.absoluteString, isDirectory: false)
         return try Data(contentsOf: url)
     }
-    
+
     func stub(forRequest request: URLRequest) -> RequestStub? {
         print("Loading stub for request \(request.url?.absoluteString ?? "unknown")")
         return stubs.filter(request.matches()).first
     }
-    
+
     mutating func store(_ stub: RequestStub) {
         print("Storing stub: \(stub) at \(path.absoluteString).")
-        
+
         stubs.append(stub)
-        
+
         do {
             let encoder = JSONEncoder()
             let json = try encoder.encode(stubs)
@@ -88,16 +88,16 @@ extension PersistentStubSource {
         if !fileManager.fileExists(atPath: path.absoluteString) {
             PersistentStubSource.createStubDirectory(at: path)
         }
-        
+
         var sanitizedName = name.replacingOccurrences(of: " ", with: "_")
         sanitizedName = sanitizedName.replacingOccurrences(of: "[", with: "")
         sanitizedName = sanitizedName.replacingOccurrences(of: "]", with: "")
         sanitizedName = sanitizedName.replacingOccurrences(of: "-", with: "")
         let url = path.appendingPathComponent("\(sanitizedName).json")
-        
+
         self.init(path: url)
     }
-    
+
     static func createStubDirectory(at path: URL) {
         do {
             let fileManager = FileManager.default
@@ -118,13 +118,13 @@ extension URLRequest {
             }).sorted(by: { (a, b) -> Bool in
                 return a < b
             })
-            
+
             let sortedB = requestStub.request.allHTTPHeaderFields?.map({ (key, value) -> String in
                 return key + value
             }).sorted(by: { (a, b) -> Bool in
                 return a < b
             })
-            
+
             return self.url == requestStub.request.url &&
                 self.httpMethod == requestStub.request.httpMethod &&
                 sortedA == sortedB
