@@ -93,8 +93,7 @@ extension PersistentStubSource {
         do {
             let fileManager = FileManager.default
             try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
-        }
-        catch let error {
+        } catch let error {
             print("\(path.absoluteURL)")
             assertionFailure("Unable to create stub directory. \(error.localizedDescription)")
         }

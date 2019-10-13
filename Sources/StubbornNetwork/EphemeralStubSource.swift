@@ -35,7 +35,7 @@ extension EphemeralStubSource {
         return URLSessionDataTaskStub(request: request,
                                       data: expectedDatas[request] ?? nil,
                                       response: expectedResponses[request] ?? nil,
-                                      error:expectedErrors[request] ?? nil,
+                                      error: expectedErrors[request] ?? nil,
                                       resumeCompletion: completionHandler)
     }
 }

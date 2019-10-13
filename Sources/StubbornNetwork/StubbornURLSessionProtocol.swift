@@ -10,7 +10,8 @@ import Foundation
 public protocol StubbornURLSession: URLSession {
 
     /**
-     Stub a single request. When the session is asked for a `URLSession` task of a similar request, the task will complete with the prerecorded response, error and data.
+     Stub a single request. When the session is asked for a `URLSession` task of a similar request,
+     the task will complete with the prerecorded response, error and data.
 
      - Parameters:
          - request: The request to stub

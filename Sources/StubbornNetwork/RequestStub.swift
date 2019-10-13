@@ -68,14 +68,14 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
         let requestContainer = try container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
         let url = try requestContainer.decode(String.self, forKey: .url)
-        guard let decodedURL = URL(string:url) else {
+        guard let decodedURL = URL(string: url) else {
             throw RequestStubCodableError.missingRequestURLError("Unable to decode URL")
         }
         var request = URLRequest(url: decodedURL)
         request.httpMethod = try requestContainer.decode(String.self, forKey: .method)
 
         let headers = try requestContainer.decode([String].self, forKey: .headerFields)
-        request.allHTTPHeaderFields = headers.reduce(into: [String:String]()) { (result, field) in
+        request.allHTTPHeaderFields = headers.reduce(into: [String: String]()) { (result, field) in
             let keyValue = field.components(separatedBy: "[:::]")
             if let key = keyValue.first, let value = keyValue.last {
                 result[key] = value
