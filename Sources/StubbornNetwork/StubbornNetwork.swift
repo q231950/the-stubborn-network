@@ -37,8 +37,6 @@ extension StubbornNetwork {
     /// - Parameter processInfo: The process info that contains `EnvironmentVariableKeys` specifying the location of the stub source.
     /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
     public static func makePersistentSession(withProcessInfo processInfo: ProcessInfo = ProcessInfo(), _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
-
-        /// TODO: Move this implementation to an internal static func on `URLSessionStub`
         let location = StubSourceLocation(processInfo: processInfo)
         return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
     }
@@ -50,7 +48,6 @@ extension StubbornNetwork {
     /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
     public static func makePersistentSession(withName name: String, path: String, _ stubbornURLSession:((StubbornURLSession) -> Void)? = nil) -> URLSession {
 
-        /// TODO: Move this implementation to an internal static func on `URLSessionStub`
         let location = StubSourceLocation(name: name, path: path)
         return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
     }
@@ -68,7 +65,6 @@ extension StubbornNetwork {
 
         let session: URLSessionStub
 
-        /// TODO: Move this implementation to an internal static func on `URLSessionStub`
         switch configuration {
         case .ephemeral:
             session = URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
