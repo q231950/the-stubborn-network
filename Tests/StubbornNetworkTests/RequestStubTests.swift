@@ -36,25 +36,23 @@ final class RequestStubTests: XCTestCase {
     }
 
     var jsonMockData: Data {
-        get {
-            return """
-            {
-                "request": {
-                    "url": "https://api.abc.com",
-                    "headerFields": [
-                        "A[:::]AAA",
-                        "Content-Type[:::]text/xml; charset=utf-8",
-                        "Accept-Language[:::]en-us",
-                        "Accept[:::]*/*",
-                        "Accept-Encoding[:::]br, gzip, deflate"
-                    ],
-                    "method": "POST"
-                },
-                "data": "YWJj",
-                "response": {}
-            }
-            """.data(using: .utf8)!
+        """
+        {
+            "request": {
+                "url": "https://api.abc.com",
+                "headerFields": [
+                    "A[:::]AAA",
+                    "Content-Type[:::]text/xml; charset=utf-8",
+                    "Accept-Language[:::]en-us",
+                    "Accept[:::]*/*",
+                    "Accept-Encoding[:::]br, gzip, deflate"
+                ],
+                "method": "POST"
+            },
+            "data": "YWJj",
+            "response": {}
         }
+        """.data(using: .utf8)!
     }
     
     static var allTests = [
