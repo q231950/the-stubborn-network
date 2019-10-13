@@ -15,11 +15,11 @@ protocol StubSourceProtocol {
 }
 
 struct PersistentStubSource: StubSourceProtocol {
-    let url: URL
+    let path: URL
     var stubs = [RequestStub]()
 
-    init(url: URL) {
-        self.url = url
+    init(path: URL) {
+        self.path = path
 
         if let data = try? stubRecordData() {
             setupStubs(from: data)
@@ -43,8 +43,8 @@ struct PersistentStubSource: StubSourceProtocol {
     }
 
     private func stubRecordData() throws -> Data {
-        let u = URL(fileURLWithPath: url.absoluteString, isDirectory: false)
-        return try Data(contentsOf: u)
+        let url = URL(fileURLWithPath: path.absoluteString, isDirectory: false)
+        return try Data(contentsOf: url)
     }
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
@@ -53,7 +53,7 @@ struct PersistentStubSource: StubSourceProtocol {
     }
 
     mutating func store(_ stub: RequestStub) {
-        print("Storing stub: \(stub) at \(url.absoluteString).")
+        print("Storing stub: \(stub) at \(path.absoluteString).")
 
         stubs.append(stub)
 
@@ -61,7 +61,7 @@ struct PersistentStubSource: StubSourceProtocol {
             let encoder = JSONEncoder()
             let json = try encoder.encode(stubs)
             let fileManager = FileManager.default
-            fileManager.createFile(atPath: url.absoluteString, contents: json, attributes: [FileAttributeKey.type: "json"])
+            fileManager.createFile(atPath: path.absoluteString, contents: json, attributes: [FileAttributeKey.type: "json"])
         } catch {
             print("\(error)")
         }
@@ -81,7 +81,7 @@ extension PersistentStubSource {
         sanitizedName = sanitizedName.replacingOccurrences(of: "-", with: "")
         let url = path.appendingPathComponent("\(sanitizedName).json")
 
-        self.init(url: url)
+        self.init(path: url)
     }
 
     static func createStubDirectory(at path: URL) {
