@@ -84,9 +84,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
     }
 
     var debugDescription: String {
-        get {
-            return "[RequestStub] \(String(describing: request.debugDescription)) \(String(describing: data?.count)) \(response.debugDescription)"
-        }
+        return "[RequestStub] \(String(describing: request.debugDescription)) \(String(describing: data?.count)) \(response.debugDescription)"
     }
 }
 
@@ -97,6 +95,4 @@ extension RequestStub: Equatable {
             lhs.error?.localizedDescription == rhs.error?.localizedDescription &&
             lhs.response == rhs.response
     }
-
-
 }
