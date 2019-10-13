@@ -1,0 +1,14 @@
+# https://docs.sourcelevel.io/configuration
+---
+styleguide: sourcelevel/linters
+engines:
+  fixme:
+    enabled: true
+  swiftlint:
+    enabled: true
+  remark-lint:
+    enabled: true
+exclude_paths: []
+pull_requests:
+  comments: false
+

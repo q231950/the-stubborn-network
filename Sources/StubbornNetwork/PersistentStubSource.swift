@@ -7,29 +7,42 @@
 
 import Foundation
 
+typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
+
 protocol StubSourceProtocol {
 
+    /// Store a stub into the stub source.
+    /// - Parameter stub: The stub to store
     mutating func store(_ stub: RequestStub)
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+    /// This function loads a stub for the for a given request and returns a `URLSessionTask`
+    /// and will execute the closure with the previously stubbed data/response/error
+    /// once the data task is resumed.
+    /// - Parameter request: The request to find a matching stub for
+    /// - Parameter completionHandler: The closure to execute once the data task is resumed
+    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask
 }
 
 struct PersistentStubSource: StubSourceProtocol {
-    let url: URL
+    let path: URL
     var stubs = [RequestStub]()
 
-    init(url: URL) {
-        self.url = url
+    init(path: URL) {
+        self.path = path
 
         if let data = try? stubRecordData() {
             setupStubs(from: data)
         }
     }
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        let s = stub(forRequest: request)
-        precondition(s != nil, "Unable to find a request stub for the given request: \(request.url?.absoluteString ?? "") in stub source at \(url.absoluteString).")
-        return URLSessionDataTaskStub(request: request, data: s?.data, response: s?.response, error:s?.error, resumeCompletion: completionHandler)
+    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
+        let requestStub = stub(forRequest: request)
+        precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
+        return URLSessionDataTaskStub(request: request,
+                                      data: requestStub?.data,
+                                      response: requestStub?.response,
+                                      error: requestStub?.error,
+                                      resumeCompletion: completionHandler)
     }
 
     mutating func setupStubs(from data: Data) {
@@ -43,8 +56,8 @@ struct PersistentStubSource: StubSourceProtocol {
     }
 
     private func stubRecordData() throws -> Data {
-        let u = URL(fileURLWithPath: url.absoluteString, isDirectory: false)
-        return try Data(contentsOf: u)
+        let url = URL(fileURLWithPath: path.absoluteString, isDirectory: false)
+        return try Data(contentsOf: url)
     }
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
@@ -53,7 +66,7 @@ struct PersistentStubSource: StubSourceProtocol {
     }
 
     mutating func store(_ stub: RequestStub) {
-        print("Storing stub: \(stub) at \(url.absoluteString).")
+        print("Storing stub: \(stub) at \(path.absoluteString).")
 
         stubs.append(stub)
 
@@ -61,10 +74,18 @@ struct PersistentStubSource: StubSourceProtocol {
             let encoder = JSONEncoder()
             let json = try encoder.encode(stubs)
             let fileManager = FileManager.default
-            fileManager.createFile(atPath: url.absoluteString, contents: json, attributes: [FileAttributeKey.type: "json"])
+            fileManager.createFile(atPath: path.absoluteString,
+                                   contents: json,
+                                   attributes: [FileAttributeKey.type: "json"])
         } catch {
             print("\(error)")
         }
+    }
+}
+
+extension URLRequest {
+    var preconditionFailureDescription: String {
+        "Unable to find a request stub for the given request: \(url?.absoluteString ?? "")."
     }
 }
 
@@ -81,7 +102,7 @@ extension PersistentStubSource {
         sanitizedName = sanitizedName.replacingOccurrences(of: "-", with: "")
         let url = path.appendingPathComponent("\(sanitizedName).json")
 
-        self.init(url: url)
+        self.init(path: url)
     }
 
     static func createStubDirectory(at path: URL) {
@@ -89,9 +110,9 @@ extension PersistentStubSource {
             let fileManager = FileManager.default
             try fileManager.createDirectory(atPath: path.absoluteString, withIntermediateDirectories: true)
         }
-        catch let e {
+        catch let error {
             print("\(path.absoluteURL)")
-            assertionFailure("Unable to create stub directory. \(e.localizedDescription)")
+            assertionFailure("Unable to create stub directory. \(error.localizedDescription)")
         }
     }
 }

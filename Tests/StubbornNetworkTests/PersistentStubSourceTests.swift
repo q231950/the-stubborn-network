@@ -14,11 +14,11 @@ class StubSourceTests: XCTestCase {
         let url = URL(string:"127.0.0.1")!
 
         let stubSource = PersistentStubSource(name: "a name", path: url)
-        XCTAssertEqual(stubSource.url.absoluteString, "127.0.0.1/a_name.json")
+        XCTAssertEqual(stubSource.path.absoluteString, "127.0.0.1/a_name.json")
     }
 
     func testLoadsStubForRequest() {
-        var stubSource = PersistentStubSource(url: URL(string: "127.0.0.1")!)
+        var stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         let url = URL(string: "https://api.abc.com")
@@ -33,7 +33,7 @@ class StubSourceTests: XCTestCase {
     func testStoresStubResponse() {
         let url = URL(string: "127.0.0.1")!
 
-        var stubSource = PersistentStubSource(url: url)
+        var stubSource = PersistentStubSource(path: url)
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"

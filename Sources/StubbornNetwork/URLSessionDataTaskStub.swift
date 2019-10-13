@@ -13,16 +13,12 @@ class URLSessionDataTaskStub: URLSessionDataTask {
 
     let stubbedResponse: URLResponse?
     override var response: URLResponse? {
-        get {
-            return stubbedResponse
-        }
+        stubbedResponse
     }
 
     let stubbedError: Error?
     override var error: Error? {
-        get {
-            return stubbedError
-        }
+        stubbedError
     }
 
     init(request: URLRequest, data: Data?, response: URLResponse?, error: Error?, resumeCompletion: @escaping (Data?, URLResponse?, Error?) -> Void) {

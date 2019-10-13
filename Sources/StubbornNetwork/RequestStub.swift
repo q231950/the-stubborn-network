@@ -40,7 +40,10 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
         var requestContainer = container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
         try requestContainer.encode(request.url?.absoluteString, forKey: .url)
-        try requestContainer.encode(request.allHTTPHeaderFields?.compactMap({ (key, value) in "\(key)[:::]\(value)"}), forKey: .headerFields)
+        let requestHeaderFieldsAsStrings = request.allHTTPHeaderFields?.compactMap({ (key, value) in
+            "\(key)[:::]\(value)"
+        })
+        try requestContainer.encode(requestHeaderFieldsAsStrings, forKey: .headerFields)
         try requestContainer.encode(request.httpMethod, forKey: .method)
 
         try container.encode(data, forKey: .data)
@@ -48,7 +51,8 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         var responseContainer = container.nestedContainer(keyedBy: ResponseCodingKeys.self, forKey: .response)
         if let response = response as? HTTPURLResponse {
             try responseContainer.encode(response.statusCode, forKey: .statusCode)
-            try responseContainer.encode(response.allHeaderFields.map({ (key, value) in "\(key)[:::]\(value)"}), forKey: .headerFields)
+            try responseContainer.encode(response.allHeaderFields.map({ (key, value) in "\(key)[:::]\(value)"}),
+                                         forKey: .headerFields)
         }
     }
 
@@ -84,9 +88,9 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
     }
 
     var debugDescription: String {
-        get {
-            return "[RequestStub] \(String(describing: request.debugDescription)) \(String(describing: data?.count)) \(response.debugDescription)"
-        }
+        let requestDescription = String(describing: request.debugDescription)
+        let dataDescription = String(describing: data?.count)
+        return "[RequestStub] \(requestDescription) \(dataDescription) \(response.debugDescription)"
     }
 }
 
@@ -97,6 +101,4 @@ extension RequestStub: Equatable {
             lhs.error?.localizedDescription == rhs.error?.localizedDescription &&
             lhs.response == rhs.response
     }
-
-
 }
