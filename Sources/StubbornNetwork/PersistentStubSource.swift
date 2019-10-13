@@ -15,8 +15,9 @@ protocol StubSourceProtocol {
     /// - Parameter stub: The stub to store
     mutating func store(_ stub: RequestStub)
 
-    /// This function loads a stub for the for a given request and returns a `URLSessionTask` and will execute the closure
-    /// with the previously stubbed data/response/error once the data task is resumed.
+    /// This function loads a stub for the for a given request and returns a `URLSessionTask`
+    /// and will execute the closure with the previously stubbed data/response/error
+    /// once the data task is resumed.
     /// - Parameter request: The request to find a matching stub for
     /// - Parameter completionHandler: The closure to execute once the data task is resumed
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask
@@ -25,7 +26,7 @@ protocol StubSourceProtocol {
 struct PersistentStubSource: StubSourceProtocol {
     let path: URL
     var stubs = [RequestStub]()
-    
+
     init(path: URL) {
         self.path = path
 
