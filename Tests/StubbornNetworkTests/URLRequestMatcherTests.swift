@@ -47,10 +47,10 @@ class URLRequestMatcherTests: XCTestCase {
         requestWithDuplicatedHeader.addValue("alphabet", forHTTPHeaderField: "abc")
         requestWithDuplicatedHeader.addValue("алфавит", forHTTPHeaderField: "abc")
 
-        var requestWithDuplicatedHeaderDifferentOrder = URLRequest(url: try XCTUnwrap(URL(string: "127.0.0.1")))
-        requestWithDuplicatedHeaderDifferentOrder.addValue("алфавит", forHTTPHeaderField: "abc")
-        requestWithDuplicatedHeaderDifferentOrder.addValue("alphabet", forHTTPHeaderField: "abc")
+        var requestWithDuplicatedHeaderOtherOrder = URLRequest(url: try XCTUnwrap(URL(string: "127.0.0.1")))
+        requestWithDuplicatedHeaderOtherOrder.addValue("алфавит", forHTTPHeaderField: "abc")
+        requestWithDuplicatedHeaderOtherOrder.addValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestWithDuplicatedHeader.matches(request: requestWithDuplicatedHeaderDifferentOrder))
+        XCTAssertFalse(requestWithDuplicatedHeader.matches(request: requestWithDuplicatedHeaderOtherOrder))
     }
 }
