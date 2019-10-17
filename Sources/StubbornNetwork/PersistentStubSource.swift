@@ -103,22 +103,26 @@ extension PersistentStubSource {
 extension URLRequest {
     func matches() -> ((RequestStub) -> Bool) {
         let closure = { (requestStub: RequestStub) -> Bool in
-            let sortedA = self.allHTTPHeaderFields?.map({ (key, value) -> String in
-                return key + value
-            }).sorted(by: { (a, b) -> Bool in
-                return a < b
-            })
-
-            let sortedB = requestStub.request.allHTTPHeaderFields?.map({ (key, value) -> String in
-                return key + value
-            }).sorted(by: { (a, b) -> Bool in
-                return a < b
-            })
-
-            return self.url == requestStub.request.url &&
-                self.httpMethod == requestStub.request.httpMethod &&
-                sortedA == sortedB
+            return self.matches(request: requestStub.request)
         }
         return closure
+    }
+
+    func matches(request other: URLRequest) -> Bool {
+        let sortedA = self.allHTTPHeaderFields?.map({ (key, value) -> String in
+            return key.lowercased() + value
+        }).sorted(by: { (headerA, headerB) -> Bool in
+            return headerA < headerB
+        })
+
+        let sortedB = other.allHTTPHeaderFields?.map({ (key, value) -> String in
+            return key.lowercased() + value
+        }).sorted(by: { (headerA, headerB) -> Bool in
+            return headerA < headerB
+        })
+
+        return self.url == other.url &&
+            self.httpMethod == other.httpMethod &&
+            sortedA == sortedB
     }
 }
