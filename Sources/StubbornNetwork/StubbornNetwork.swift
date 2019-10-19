@@ -19,11 +19,8 @@ extension StubbornNetwork {
     /// Make a stubbed `URLSession` that is ephemeral.
     ///
     /// The stubs of this `StubbornURLSession` are not persisted anywhere. This factory method is useful in unit tests.
-    ///
-    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's
-    /// parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
-    public static func makeEphemeralSession(_ stubbornURLSession: ((StubbornURLSession) -> Void)? = nil) -> URLSession {
-        return stubbed(withConfiguration: .ephemeral, stubbornURLSession)
+    public static func makeEphemeralSession() -> StubbornURLSession {
+        return stubbed(withConfiguration: .ephemeral)
     }
 }
 
@@ -37,27 +34,21 @@ extension StubbornNetwork {
     ///
     /// - Parameter processInfo: The process info that contains `EnvironmentVariableKeys` specifying
     /// the location of the stub source.
-    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's
-    /// parameter to modify the record mode of the `StubbornURLSession` or to stub requests.
-    public static func makePersistentSession(withProcessInfo processInfo: ProcessInfo = ProcessInfo(),
-                                             _ stubbornURLSession: ((StubbornURLSession) -> Void)? = nil)
-        -> URLSession {
+    public static func makePersistentSession(withProcessInfo processInfo: ProcessInfo = ProcessInfo())
+        -> StubbornURLSession {
         let location = StubSourceLocation(processInfo: processInfo)
-        return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
+        return stubbed(withConfiguration: .persistent(location: location))
     }
 
     /// Make a stubbed `URLSession` by providing a name and a path to the source for the stubs to use.
     ///
     /// - Parameter name: The file name of the `StubSource`
     /// - Parameter path: The path to the `StubSource`
-    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter to
-    /// modify the record mode of the `StubbornURLSession` or to stub requests.
     public static func makePersistentSession(withName name: String,
-                                             path: String,
-                                             _ stubbornURLSession: ((StubbornURLSession) -> Void)? = nil)
-        -> URLSession {
+                                             path: String)
+        -> StubbornURLSession {
         let location = StubSourceLocation(name: name, path: path)
-        return stubbed(withConfiguration: .persistent(location: location), stubbornURLSession)
+        return stubbed(withConfiguration: .persistent(location: location))
     }
 }
 
@@ -68,17 +59,12 @@ extension StubbornNetwork {
     /// Make a stubbed `URLSession` with a `StubSourceConfiguration`.
     ///
     /// - Parameter configuration: The configuration of the stub source of the stubbed `URLSession`
-    /// - Parameter stubbornURLSession: The mutable `StubbornURLSession`. Use the closure's parameter
-    /// to modify the record mode of the `StubbornURLSession` or to stub requests.
-    static func stubbed(withConfiguration configuration: StubSourceConfiguration = .ephemeral,
-                        _ stubbornURLSession: ((StubbornURLSession) -> Void)? = nil)
-        -> URLSession {
-
-        let session: URLSessionStub
+    static func stubbed(withConfiguration configuration: StubSourceConfiguration = .ephemeral)
+        -> StubbornURLSession {
 
         switch configuration {
         case .ephemeral:
-            session = URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
+            return URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
         case .persistent(let location):
             let name = location.stubSourceName
             let path = location.stubSourcePath
@@ -88,12 +74,7 @@ extension StubbornNetwork {
                 Choose a valid path in the stub source configuration.
                 """)
             let stubSource = PersistentStubSource(name: name, path: url!)
-            session = URLSessionStub(configuration: .ephemeral, stubSource: stubSource)
+            return URLSessionStub(configuration: .ephemeral, stubSource: stubSource)
         }
-
-        if let stubbornURLSession = stubbornURLSession {
-            stubbornURLSession(session)
-        }
-        return session
     }
 }
