@@ -46,7 +46,7 @@ struct PersistentStubSource: StubSourceProtocol {
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
         print("Loading stub for request \(request.url?.absoluteString ?? "unknown")")
-        return stubs.filter(request.matches()).first
+        return stubs.first(where: request.matches(requestStub:))
     }
 
     mutating func store(_ stub: RequestStub) {
@@ -101,25 +101,18 @@ extension PersistentStubSource {
 }
 
 extension URLRequest {
-    func matches() -> ((RequestStub) -> Bool) {
-        let closure = { (requestStub: RequestStub) -> Bool in
-            return self.matches(request: requestStub.request)
-        }
-        return closure
+    func matches(requestStub: RequestStub) -> Bool {
+        return matches(request: requestStub.request)
     }
 
     func matches(request other: URLRequest) -> Bool {
         let sortedA = self.allHTTPHeaderFields?.map({ (key, value) -> String in
             return key.lowercased() + value
-        }).sorted(by: { (headerA, headerB) -> Bool in
-            return headerA < headerB
-        })
+        }).sorted(by: <)
 
         let sortedB = other.allHTTPHeaderFields?.map({ (key, value) -> String in
             return key.lowercased() + value
-        }).sorted(by: { (headerA, headerB) -> Bool in
-            return headerA < headerB
-        })
+        }).sorted(by: <)
 
         return self.url == other.url &&
             self.httpMethod == other.httpMethod &&
