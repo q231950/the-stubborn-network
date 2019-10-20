@@ -12,9 +12,10 @@ enum NetworkStubError: Error {
 }
 
 class URLSessionStub: URLSession, StubbornURLSession {
-    var stubSource: StubSourceProtocol?
+    var bodyDataProcessor: BodyDataProcessor?
     var recordMode: RecordMode = .playback
     private let endToEndURLSession: URLSession
+    private var stubSource: StubSourceProtocol?
 
     /// Initializes a URLSessionStub with a stub source and configures a `URLSession` for recording stubs.
     /// - Parameter configuration: When no `endToEndURLSession` is present, this configuration will
