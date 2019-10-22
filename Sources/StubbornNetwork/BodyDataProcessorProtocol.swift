@@ -11,8 +11,8 @@ public protocol BodyDataProcessor {
 
     /// This function allows to modify a request's body data before it gets written into a stub.
     ///
-    /// The function is called before the stub for the given request is stored. If the data of the given request should not be modified, the original `data`
-    ///  can be returned.
+    /// The function is called before the stub for the given request is stored. If the data of the given request
+    /// should not be modified, the original `data` can be returned.
     /// - Parameter data: The unmodified data of the request body
     /// - Parameter request: The request that will be stubbed
     func dataForStoringRequestBody(data: Data?, of request: URLRequest) -> Data?

@@ -45,7 +45,8 @@ class URLSessionStub: URLSession, StubbornURLSession {
         var preparedRequest = request
         preparedRequest.httpBody = preparedRequestBodyData
 
-        let stub = RequestStub(request: preparedRequest, data: preparedResponseBodyData, response: response, error: error)
+        let stub = RequestStub(request: preparedRequest,
+                               data: preparedResponseBodyData, response: response, error: error)
         stubSource?.store(stub)
     }
 }
@@ -65,7 +66,8 @@ extension URLSessionStub {
         case .playback:
             assert(stubSource != nil)
             return stubSource!.dataTask(with: request, completionHandler: {(data, response, error) in
-                let preparedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request) ?? data
+                let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
+                let preparedData = processedData ?? data
                 completionHandler(preparedData, response, error)
             })
         }

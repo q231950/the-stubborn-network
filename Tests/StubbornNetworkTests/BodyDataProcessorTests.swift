@@ -36,15 +36,15 @@ class BodyDataProcessorTests: XCTestCase {
     }
 
     func testPreparesResponseBodyBeforeDelivery() throws {
-        let x = expectation(description: "Wait for async completion")
+        let asyncExpectation = expectation(description: "Wait for async completion")
         let data = "123".data(using: .utf8)
         stubbedSession.stub(request, data: data, response: nil, error: nil)
         let task = stubbedSession?.dataTask(with: URL(string: "127.0.0.1")!, completionHandler: { (_, _, _) in
             XCTAssertEqual(self.bodyDataProcessor.collector.dataForDeliveringResponseBody, data)
-            x.fulfill()
+            asyncExpectation.fulfill()
         })
         task?.resume()
-        wait(for: [x], timeout: 0.001)
+        wait(for: [asyncExpectation], timeout: 0.001)
     }
 
     static var allTests = [

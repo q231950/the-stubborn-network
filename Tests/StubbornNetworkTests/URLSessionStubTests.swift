@@ -18,8 +18,6 @@ class TestingStubSource: StubSourceProtocol {
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         return URLSessionDataTask()
     }
-
-
 }
 
 class URLSessionStubTests: XCTestCase {
@@ -107,7 +105,7 @@ class URLSessionStubTests: XCTestCase {
                             response: nil,
                             error: nil)
 
-        let dataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, response, error) in
+        let dataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, _, _) in
             XCTAssertEqual("1111".data(using: .utf8), data)
 
             exp.fulfill()
