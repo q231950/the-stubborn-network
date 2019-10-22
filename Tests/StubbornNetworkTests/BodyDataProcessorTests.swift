@@ -46,4 +46,10 @@ class BodyDataProcessorTests: XCTestCase {
         task?.resume()
         wait(for: [x], timeout: 0.001)
     }
+
+    static var allTests = [
+        ("testPreparesRequestBodyBeforeStorage", testPreparesRequestBodyBeforeStorage),
+        ("testPreparesResponseBodyBeforeStorage", testPreparesResponseBodyBeforeStorage),
+        ("testPreparesResponseBodyBeforeDelivery", testPreparesResponseBodyBeforeDelivery),
+    ]
 }
