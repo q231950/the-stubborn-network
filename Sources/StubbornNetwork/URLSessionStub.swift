@@ -59,8 +59,7 @@ extension URLSessionStub {
         case .recording:
             assert(stubSource != nil)
             return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
-                let stub = RequestStub(request: request, data:data, response:response, error:error)
-                self.stubSource?.store(stub)
+                self.stub(request, data: data, response: response, error: error)
                 completionHandler(data, response, error)
             })
         case .playback:
