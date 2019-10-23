@@ -22,7 +22,8 @@ struct PersistentStubSource: StubSourceProtocol {
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         let requestStub = stub(forRequest: request)
         precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
-        return URLSessionDataTaskStub(data: requestStub?.data,
+        return URLSessionDataTaskStub(request: request,
+                                      data: requestStub?.data,
                                       response: requestStub?.response,
                                       error: requestStub?.error,
                                       resumeCompletion: completionHandler)

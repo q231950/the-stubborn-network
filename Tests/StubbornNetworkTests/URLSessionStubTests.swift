@@ -44,7 +44,7 @@ class URLSessionStubTests: XCTestCase {
         }
         dataTask?.resume()
 
-        wait(for: [exp], timeout: 0.001)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testDefaultRecordMode() {
@@ -68,7 +68,7 @@ class URLSessionStubTests: XCTestCase {
         }
         dataTask.resume()
 
-        wait(for: [exp], timeout: 0.001)
+        wait(for: [exp], timeout: 0.1)
 
         let stubDidStoreExpectation = expectation(description: "StubSource finds a record for the request")
         let stubSourceDataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, response, error) in
