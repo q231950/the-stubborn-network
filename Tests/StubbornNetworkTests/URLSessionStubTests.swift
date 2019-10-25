@@ -22,7 +22,7 @@ class TestingStubSource: StubSourceProtocol {
 
 class URLSessionStubTests: XCTestCase {
 
-    var request = URLRequest(url: URL(string:"127.0.0.1")!)
+    var request = URLRequest(url: URL(string: "127.0.0.1")!)
     let urlSessionStub = URLSessionStub(configuration: .ephemeral)
 
     func testStubsRequests() {
@@ -31,7 +31,7 @@ class URLSessionStubTests: XCTestCase {
         let expectedResponse = HTTPURLResponse()
 
         request.httpMethod = "POST"
-        request.allHTTPHeaderFields = ["B":"BBB"]
+        request.allHTTPHeaderFields = ["B": "BBB"]
 
         urlSessionStub.stub(request, data: "abc".data(using: .utf8), response: expectedResponse, error: TestError.expected)
 
@@ -55,7 +55,7 @@ class URLSessionStubTests: XCTestCase {
         let exp = expectation(description: "Wait for data task completion")
         let urlSessionStubStub = URLSessionStub(configuration: .ephemeral)
         request.httpMethod = "POST"
-        request.allHTTPHeaderFields = ["B":"BBB"]
+        request.allHTTPHeaderFields = ["B": "BBB"]
 
         urlSessionStubStub.stub(request, data: "abc".data(using: .utf8))
 
