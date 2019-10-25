@@ -32,23 +32,27 @@ class URLSessionStub: URLSession, StubbornURLSession {
     }
 
     func stub(_ request: URLRequest, data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
-        let (preparedRequestBodyData, preparedResponseBodyData) = prepareBodyData(requestBodyData: request.httpBody, responseBodyData: data, request: request)
+        let (preparedRequestBodyData, preparedResponseBodyData) = prepareBodyData(requestBodyData: request.httpBody,
+                                                                                  responseBodyData: data,
+                                                                                  request: request)
 
         var preparedRequest = request
         preparedRequest.httpBody = preparedRequestBodyData
 
-        let stub = RequestStub(request: preparedRequest,
+        stubSource?.store(RequestStub(request: preparedRequest,
                                data: preparedResponseBodyData,
                                response: response,
-                               error: error)
-        stubSource?.store(stub)
+                               error: error))
     }
 
-    func prepareBodyData(requestBodyData: Data?, responseBodyData: Data?, request: URLRequest) -> (preparedRequestBodyData: Data?, preparedResponseBodyData: Data?) {
+    private func prepareBodyData(requestBodyData: Data?, responseBodyData: Data?, request: URLRequest) ->
+        (preparedRequestBodyData: Data?, preparedResponseBodyData: Data?) {
         let preparedRequestBodyData, preparedResponseBodyData: Data?
         if let bodyDataProcessor = bodyDataProcessor {
-            preparedRequestBodyData = bodyDataProcessor.dataForStoringRequestBody(data: requestBodyData, of: request)
-            preparedResponseBodyData = bodyDataProcessor.dataForStoringResponseBody(data: responseBodyData, of: request)
+            preparedRequestBodyData = bodyDataProcessor.dataForStoringRequestBody(data: requestBodyData,
+                                                                                  of: request)
+            preparedResponseBodyData = bodyDataProcessor.dataForStoringResponseBody(data: responseBodyData,
+                                                                                    of: request)
         } else {
             preparedRequestBodyData = requestBodyData
             preparedResponseBodyData = responseBodyData
