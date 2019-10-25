@@ -21,8 +21,8 @@ class URLSessionDataTaskStub: URLSessionDataTask {
         stubbedError
     }
 
-    init(request: URLRequest, data: Data?, response: URLResponse?, error: Error?, resumeCompletion: @escaping (Data?, URLResponse?, Error?) -> Void) {
-
+    init(data: Data?, response: URLResponse?, error: Error?,
+         resumeCompletion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         self.resumeCompletion = resumeCompletion
         self.data = data
         self.stubbedResponse = response
