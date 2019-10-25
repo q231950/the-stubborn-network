@@ -58,11 +58,13 @@ class StubSourceTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: nil, error: nil)
+        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: URLResponse(), error: nil)
         stubSource.store(stub)
 
         let task = stubSource.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(self.prerecordedStubMockData, data)
+            XCTAssertNotNil(response)
+            XCTAssertNil(error)
             asyncExpectation.fulfill()
         }
         task.resume()
