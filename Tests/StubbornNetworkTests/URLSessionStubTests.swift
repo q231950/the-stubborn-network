@@ -8,16 +8,28 @@
 import XCTest
 @testable import StubbornNetwork
 
+class TestingStubSource: StubSourceProtocol {
+    var stored: RequestStub?
+
+    func store(_ stub: RequestStub) {
+        stored = stub
+    }
+
+    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
+        return URLSessionDataTask()
+    }
+}
+
 class URLSessionStubTests: XCTestCase {
+
+    var request = URLRequest(url: URL(string:"127.0.0.1")!)
+    let urlSessionStub = URLSessionStub(configuration: .ephemeral)
 
     func testStubsRequests() {
         let exp = expectation(description: "Wait for data task completion")
         let expectedData = "abc".data(using: .utf8)
         let expectedResponse = HTTPURLResponse()
 
-        let urlSessionStub = URLSessionStub(configuration: .ephemeral,
-                                            stubSource:EphemeralStubSource())
-        var request = URLRequest(url: URL(string:"127.0.0.1")!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B":"BBB"]
 
@@ -36,22 +48,18 @@ class URLSessionStubTests: XCTestCase {
     }
 
     func testDefaultRecordMode() {
-        let urlSessionStub = URLSessionStub(configuration: .ephemeral)
         XCTAssertEqual(urlSessionStub.recordMode, .playback)
     }
 
     func testRecordsInRecordMode() {
         let exp = expectation(description: "Wait for data task completion")
         let urlSessionStubStub = URLSessionStub(configuration: .ephemeral)
-        let url = URL(string: "127.0.0.1")!
-        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B":"BBB"]
 
         urlSessionStubStub.stub(request, data: "abc".data(using: .utf8))
 
         let urlSessionStub = URLSessionStub(configuration: .ephemeral,
-                                            stubSource: EphemeralStubSource(),
                                             endToEndURLSession: urlSessionStubStub)
         urlSessionStub.recordMode = .recording
 
@@ -71,12 +79,47 @@ class URLSessionStubTests: XCTestCase {
         }
         stubSourceDataTask?.resume()
 
-        wait(for: [stubDidStoreExpectation], timeout: 0.1)
+        wait(for: [stubDidStoreExpectation], timeout: 0.001)
+    }
+
+    func testStoresProcessedRequestBody() {
+        let stubSource = TestingStubSource()
+        let urlSessionStub = URLSessionStub(stubSource: stubSource)
+        urlSessionStub.bodyDataProcessor = TestingBodyDataProcessor()
+
+        request.httpBody = "11x11".data(using: .utf8)
+        urlSessionStub.stub(request,
+                            data: nil,
+                            response: nil,
+                            error: nil)
+
+        XCTAssertEqual(stubSource.stored?.request.httpBody, "1111".data(using: .utf8))
+    }
+
+    func testStoresProcessedResponseBody() {
+        let exp = expectation(description: "Wait for data task completion")
+        urlSessionStub.bodyDataProcessor = TestingBodyDataProcessor()
+
+        urlSessionStub.stub(request,
+                            data: "11y11".data(using: .utf8),
+                            response: nil,
+                            error: nil)
+
+        let dataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, _, _) in
+            XCTAssertEqual("1111".data(using: .utf8), data)
+
+            exp.fulfill()
+        }
+        dataTask?.resume()
+
+        wait(for: [exp], timeout: 0.001)
     }
 
     static var allTests = [
         ("testStubsRequests", testStubsRequests),
         ("testDefaultRecordMode", testDefaultRecordMode),
         ("testRecordsInRecordMode", testRecordsInRecordMode),
+        ("testStoresProcessedRequestBody", testStoresProcessedRequestBody),
+        ("testStoresProcessedResponseBody", testStoresProcessedResponseBody),
     ]
 }

@@ -25,4 +25,9 @@ public protocol StubbornURLSession: URLSession {
      The record mode defines the way the StubbornURLSession behaves. It can record or playback stubs.
      */
     var recordMode: RecordMode {get set}
+
+    /**
+     Set a BodyDataProcessor to get control over the body data of requests and responses
+     */
+    var bodyDataProcessor: BodyDataProcessor? {get set}
 }
