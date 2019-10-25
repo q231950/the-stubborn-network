@@ -47,6 +47,28 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stub, loadedStub)
     }
 
+    func testDataTaskStub() {
+        let asyncExpectation = expectation(description: "Wait for async completion")
+
+        let url = URL(string: "127.0.0.1")!
+
+        var stubSource = PersistentStubSource(path: url)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = ["B": "BBB"]
+
+        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: nil, error: nil)
+        stubSource.store(stub)
+
+        let task = stubSource.dataTask(with: request) { (data, response, error) in
+            XCTAssertEqual(self.prerecordedStubMockData, data)
+            asyncExpectation.fulfill()
+        }
+        task.resume()
+        wait(for: [asyncExpectation], timeout: 0.001)
+    }
+
     var prerecordedStubMockData: Data {
         String("""
             [
