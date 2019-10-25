@@ -40,24 +40,24 @@ class URLSessionStub: URLSession, StubbornURLSession {
         preparedRequest.httpBody = preparedRequestBodyData
 
         stubSource?.store(RequestStub(request: preparedRequest,
-                               data: preparedResponseBodyData,
-                               response: response,
-                               error: error))
+                                      data: preparedResponseBodyData,
+                                      response: response,
+                                      error: error))
     }
 
     private func prepareBodyData(requestBodyData: Data?, responseBodyData: Data?, request: URLRequest) ->
         (preparedRequestBodyData: Data?, preparedResponseBodyData: Data?) {
-        let preparedRequestBodyData, preparedResponseBodyData: Data?
-        if let bodyDataProcessor = bodyDataProcessor {
-            preparedRequestBodyData = bodyDataProcessor.dataForStoringRequestBody(data: requestBodyData,
-                                                                                  of: request)
-            preparedResponseBodyData = bodyDataProcessor.dataForStoringResponseBody(data: responseBodyData,
-                                                                                    of: request)
-        } else {
-            preparedRequestBodyData = requestBodyData
-            preparedResponseBodyData = responseBodyData
-        }
-        return (preparedRequestBodyData, preparedResponseBodyData)
+            let preparedRequestBodyData, preparedResponseBodyData: Data?
+            if let bodyDataProcessor = bodyDataProcessor {
+                preparedRequestBodyData = bodyDataProcessor.dataForStoringRequestBody(data: requestBodyData,
+                                                                                      of: request)
+                preparedResponseBodyData = bodyDataProcessor.dataForStoringResponseBody(data: responseBodyData,
+                                                                                        of: request)
+            } else {
+                preparedRequestBodyData = requestBodyData
+                preparedResponseBodyData = responseBodyData
+            }
+            return (preparedRequestBodyData, preparedResponseBodyData)
     }
 }
 

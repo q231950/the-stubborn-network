@@ -11,7 +11,7 @@ import XCTest
 class StubSourceTests: XCTestCase {
 
     func testPath() {
-        let url = URL(string:"127.0.0.1")!
+        let url = URL(string: "127.0.0.1")!
 
         let stubSource = PersistentStubSource(name: "a name", path: url)
         XCTAssertEqual(stubSource.path.absoluteString, "127.0.0.1/a_name.json")
@@ -24,7 +24,7 @@ class StubSourceTests: XCTestCase {
         let url = URL(string: "https://api.abc.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
-        request.allHTTPHeaderFields = ["B":"BBB"]
+        request.allHTTPHeaderFields = ["B": "BBB"]
         let loadedStub = stubSource.stub(forRequest: request)
 
         XCTAssertNotNil(loadedStub)
@@ -37,7 +37,7 @@ class StubSourceTests: XCTestCase {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.allHTTPHeaderFields = ["B":"BBB"]
+        request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
         stubSource.store(stub)
@@ -48,8 +48,7 @@ class StubSourceTests: XCTestCase {
     }
 
     var prerecordedStubMockData: Data {
-        get {
-            return String("""
+        String("""
             [
                 {
                     "request": {
@@ -97,7 +96,6 @@ class StubSourceTests: XCTestCase {
             ]
 
             """).data(using: .utf8)!
-        }
     }
 
     static var allTests = [

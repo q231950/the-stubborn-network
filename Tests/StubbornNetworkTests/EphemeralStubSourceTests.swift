@@ -27,9 +27,12 @@ class EphemeralStubSourceTests: XCTestCase {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.allHTTPHeaderFields = ["B":"BBB"]
+        request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: "abc".data(using: .utf8), response: expectedResponse, error: TestError.expected)
+        let stub = RequestStub(request: request,
+                               data: "abc".data(using: .utf8),
+                               response: expectedResponse,
+                               error: TestError.expected)
         stubSource.store(stub)
 
         let dataTask = stubSource.dataTask(with: request) { (data, response, error) in
