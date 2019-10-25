@@ -38,7 +38,9 @@ class URLSessionStub: URLSession, StubbornURLSession {
         preparedRequest.httpBody = preparedRequestBodyData
 
         let stub = RequestStub(request: preparedRequest,
-                               data: preparedResponseBodyData, response: response, error: error)
+                               data: preparedResponseBodyData,
+                               response: response,
+                               error: error)
         stubSource?.store(stub)
     }
 
@@ -59,27 +61,27 @@ extension URLSessionStub {
     override func dataTask(with request: URLRequest,
                            completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
         -> URLSessionDataTask {
-        switch recordMode {
-        case .recording:
-            assert(stubSource != nil)
-            return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
-                self.stub(request, data: data, response: response, error: error)
-                completionHandler(data, response, error)
-            })
-        case .playback:
-            assert(stubSource != nil)
-            return stubSource!.dataTask(with: request, completionHandler: {(data, response, error) in
-                let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
-                let preparedData = processedData ?? data
-                completionHandler(preparedData, response, error)
-            })
-        }
+            switch recordMode {
+            case .recording:
+                assert(stubSource != nil)
+                return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
+                    self.stub(request, data: data, response: response, error: error)
+                    completionHandler(data, response, error)
+                })
+            case .playback:
+                assert(stubSource != nil)
+                return stubSource!.dataTask(with: request, completionHandler: {(data, response, error) in
+                    let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
+                    let preparedData = processedData ?? data
+                    completionHandler(preparedData, response, error)
+                })
+            }
     }
 
     override func dataTask(with url: URL,
                            completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
         -> URLSessionDataTask {
-        let request = URLRequest(url: url)
-        return dataTask(with: request, completionHandler: completionHandler)
+            let request = URLRequest(url: url)
+            return dataTask(with: request, completionHandler: completionHandler)
     }
 }
