@@ -17,7 +17,7 @@ final class RequestStubTests: XCTestCase {
 
         let encoder = JSONEncoder()
         let result = try encoder.encode(requestStub)
-        let json = String(data:result, encoding: .utf8)
+        let json = String(data: result, encoding: .utf8)
         XCTAssertEqual(json, """
         {\"request\":{\"url\":\"123.4.5.6\",\"headerFields\":[],\"method\":\"POST\"},\"data\":null,\"response\":{}}
         """)
