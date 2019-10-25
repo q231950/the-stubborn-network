@@ -31,7 +31,7 @@ class StubSourceTests: XCTestCase {
     }
 
     func testStoresStubResponse() {
-        let url = URL(string: "127.0.0.1")!
+        let url = URL(string: "127.0.0.1/abc")!
 
         var stubSource = PersistentStubSource(path: url)
 
@@ -50,7 +50,7 @@ class StubSourceTests: XCTestCase {
     func testDataTaskStub() {
         let asyncExpectation = expectation(description: "Wait for async completion")
 
-        let url = URL(string: "127.0.0.1")!
+        let url = URL(string: "127.0.0.1/123")!
 
         var stubSource = PersistentStubSource(path: url)
 
