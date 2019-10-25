@@ -33,7 +33,10 @@ class URLSessionStubTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        urlSessionStub.stub(request, data: "abc".data(using: .utf8), response: expectedResponse, error: TestError.expected)
+        urlSessionStub.stub(request,
+                            data: "abc".data(using: .utf8),
+                            response: expectedResponse,
+                            error: TestError.expected)
 
         let dataTask = urlSessionStub.stubSource?.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(expectedData, data)
