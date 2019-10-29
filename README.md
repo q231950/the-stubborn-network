@@ -20,10 +20,12 @@ Unit tests use "plain" stubs where each stub only lives for the duration of the 
 <p>
 
 ```swift
-/// given
-let session = StubbornNetwork.makeEphemeralSession({ (stubbedSession) in
-    stubbedSession.stub(NetworkClient.request, data: self.stubData, response: HTTPURLResponse(), error: nil)
-})
+/// given we create an ephemeral stubbed session (the scope of the stubs stays within this test)
+let session = StubbornNetwork.makeEphemeralSession()
+
+/// and stub individual requests
+session.stub(NetworkClient.request, data: self.stubData, response: HTTPURLResponse(), error: nil)
+
 let networkClient = NetworkClient(urlSession: session)
 
 /// when
@@ -53,15 +55,12 @@ Instead of passing a standard `URLSession` to your network client a stubbed vari
 <p>
 
 ```swift
-let urlSession: URLSession
-let processInfo = ProcessInfo()
+if processInfo.testing == true {
+    /// The session is persistent, which means that stubs are stored
+    let urlSession = StubbornNetwork.makePersistentSession()
 
-if processInfo.testing == false {
-    urlSession = URLSession(configuration: .ephemeral)
-} else {
-    urlSession = StubbornNetwork.makePersistentSession({ (stubbedURLSession) in
-        stubbedURLSession.recordMode = .playback
-    })
+    /// `.playback` is the default, so after recording you can remove the following line or set it to .playback
+    urlSession.recordMode = .recording
 }
 
 let networkClient = NetworkClient(urlSession: urlSession)
@@ -116,9 +115,10 @@ A SwiftUI Preview utilizes **The Stubborn Network** mostly like a cache. You rec
 
 ```swift
 static var previews: some View {
-    let urlSession = StubbornNetwork.makePersistentSession(withName: "ContentView_Previews", path: "some_path_to/stubs", { (session) in
-        session.recordMode = .playback
-    })
+    let urlSession = StubbornNetwork.makePersistentSession(withName: "ContentView_Previews", path: "\(ProcessInfo().environment["PROJECT_DIR"] ?? "")/stubs")
+    /// `.playback` is the default, so after recording you can remove the following line or set it to .playback
+    urlSession.recordMode = .recording
+
     let networkClient = NetworkClient(urlSession: urlSession)
     /// Use the stubbed `networkClient`...
 }
