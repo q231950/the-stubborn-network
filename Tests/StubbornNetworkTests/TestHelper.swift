@@ -17,13 +17,17 @@ struct TestHelper {
     /// returns the file url to the stubs to use during testing
     static func testingStubSourceUrl() -> URL {
         let testProcessInfo = ProcessInfo()
-        let exportedDirectoryPath = testProcessInfo.environment["TRAVIS_BUILD_DIR"] ?? testProcessInfo.environment["STUB_DIR"]
+
+        let exportedDirectoryPath = testProcessInfo.environment["TRAVIS_BUILD_DIR"] ??
+            testProcessInfo.environment["STUB_DIR"]
+
         let stubDirectoryPath: String?
         if let path = exportedDirectoryPath {
             stubDirectoryPath = path
         } else {
             stubDirectoryPath = testProcessInfo.environment["XCTestConfigurationFilePath"]
         }
+
         assert(stubDirectoryPath != nil,
                """
                Incorrect Test Setup ⚠️
