@@ -60,7 +60,7 @@ if processInfo.testing == true {
     let urlSession = StubbornNetwork.makePersistentSession()
 
     /// `.playback` is the default, so after recording you can remove the following line or set it to .playback
-    urlSession.recordMode = .recording
+    urlSession.recordMode = .record
 }
 
 let networkClient = NetworkClient(urlSession: urlSession)

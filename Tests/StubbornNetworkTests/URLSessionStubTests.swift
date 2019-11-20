@@ -15,6 +15,10 @@ class TestingStubSource: StubSourceProtocol {
         stored = stub
     }
 
+    func hasStub(_ request: URLRequest) -> Bool {
+        stored != nil
+    }
+
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         return URLSessionDataTask()
     }
@@ -64,7 +68,7 @@ class URLSessionStubTests: XCTestCase {
 
         let urlSessionStub = URLSessionStub(configuration: .ephemeral,
                                             endToEndURLSession: urlSessionStubStub)
-        urlSessionStub.recordMode = .recording
+        urlSessionStub.recordMode = .record
 
         let dataTask = urlSessionStub.dataTask(with: request) { (_, _, _) in
             exp.fulfill()

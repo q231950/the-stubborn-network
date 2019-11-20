@@ -31,6 +31,10 @@ extension EphemeralStubSource {
         }
     }
 
+    func hasStub(_ request: URLRequest) -> Bool {
+        expectedDatas[request] != nil
+    }
+
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         return URLSessionDataTaskStub(data: expectedDatas[request] ?? nil,
                                       response: expectedResponses[request] ?? nil,

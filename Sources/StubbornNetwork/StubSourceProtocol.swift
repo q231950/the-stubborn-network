@@ -15,6 +15,10 @@ protocol StubSourceProtocol {
     /// - Parameter stub: The stub to store
     mutating func store(_ stub: RequestStub)
 
+    /// Get information about which requests have a stored stub
+    /// - Parameter request: The request to check
+    func hasStub(_ request: URLRequest) -> Bool
+
     /// This function loads a stub for the for a given request and returns a `URLSessionTask`
     /// and will execute the closure with the previously stubbed data/response/error
     /// once the data task is resumed.

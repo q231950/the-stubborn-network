@@ -64,6 +64,10 @@ struct PersistentStubSource: StubSourceProtocol {
             print("\(error)")
         }
     }
+
+    func hasStub(_ request: URLRequest) -> Bool {
+        stub(forRequest: request) != nil
+    }
 }
 
 extension URLRequest {
