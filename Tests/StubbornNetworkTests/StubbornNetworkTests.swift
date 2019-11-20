@@ -8,14 +8,7 @@ final class StubbornNetworkTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        let testProcessInfo = ProcessInfo()
-
-        let travisBuildDirectory = testProcessInfo.environment["TRAVIS_BUILD_DIR"]
-        if let directoryPath = travisBuildDirectory {
-            buildDirectory = directoryPath
-        } else {
-            buildDirectory = testProcessInfo.environment["XCTestConfigurationFilePath"]!
-        }
+        buildDirectory = TestHelper.testingStubSourcePath()
     }
 
     func testEphemeralStubbedURLSessionNotNil() {

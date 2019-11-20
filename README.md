@@ -127,28 +127,8 @@ static var previews: some View {
 </p>
 </details>
 
-## Stub structure
+## Contribute
 
-The stubs are stored as plain json to make the behaviour of the stubs transparent.
+### Run Tests
 
-<details><summary>Stub Source JSON Example</summary>
-```json
-[{
-    "request": {
-        "url": "https://api.abc.com",
-        "headerFields": [
-            "Accept-Encoding[:::]br, gzip, deflate"
-        ],
-        "method": "POST"
-    },
-    "data": "YWJj",
-    "response": {
-        "statusCode": 200,
-        "headerFields": [
-            "Content-Type[:::]text\/xml; charset=utf-8"
-        ]
-    }
-}]
-```
-</p>
-</details>
+You can run tests either from within Xcode (`cmd+U`) or from the command line: `export STUB_DIR='./stubs' && swift test`.

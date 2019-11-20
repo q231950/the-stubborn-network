@@ -10,11 +10,11 @@ import XCTest
 
 class StubSourceTests: XCTestCase {
 
-    func testPath() {
-        let url = URL(string: "127.0.0.1")!
+    var stubSourceUrl = TestHelper.testingStubSourceUrl()
 
-        let stubSource = PersistentStubSource(name: "a name", path: url)
-        XCTAssertEqual(stubSource.path.absoluteString, "127.0.0.1/a_name.json")
+    func testPath() {
+        let stubSource = PersistentStubSource(name: "a name", path: stubSourceUrl)
+        XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.path)/a_name.json")
     }
 
     func testLoadsStubForRequest() {
@@ -50,7 +50,7 @@ class StubSourceTests: XCTestCase {
     func testDataTaskStub() {
         let asyncExpectation = expectation(description: "Wait for async completion")
 
-        let url = URL(string: "127.0.0.1/123")!
+        let url = URL(string: "\(stubSourceUrl.path)/123")!
 
         var stubSource = PersistentStubSource(path: url)
 
