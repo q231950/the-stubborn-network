@@ -50,7 +50,7 @@ class StubSourceTests: XCTestCase {
     func testDataTaskStub() {
         let asyncExpectation = expectation(description: "Wait for async completion")
 
-        let url = URL(string: "\(stubSourceUrl.absoluteString)/123")!
+        let url = URL(string: "\(stubSourceUrl.path)/123")!
 
         var stubSource = PersistentStubSource(path: url)
 
