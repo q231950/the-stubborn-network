@@ -74,7 +74,7 @@ let networkClient = NetworkClient(urlSession: urlSession)
 There are 3 parameters passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place them. Some of these will be handled more elegantly in the future:
 
 1. each test assigns its function name like `testBytesText` to create a dedicated stub source with stubs for network requests of each individual test case
-2. the _stub path_ points to the directory where the stub source with the stubs is stored for `.playback` / where stubs will be recorded to when `.recording`
+2. the _stub path_ points to the directory where the stub source with the stubs is stored for `.playback` / where stubs will be recorded to when `.record`
 3. the _TESTING_ parameter simply indicates to the application (see _App Configuration_ above) that we are in a test environment
 
 <details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoUITests/DemoUITests.swift'>UI Test Configuration</a></summary>
@@ -117,7 +117,7 @@ A SwiftUI Preview utilizes **The Stubborn Network** mostly like a cache. You rec
 static var previews: some View {
     let urlSession = StubbornNetwork.makePersistentSession(withName: "ContentView_Previews", path: "\(ProcessInfo().environment["PROJECT_DIR"] ?? "")/stubs")
     /// `.playback` is the default, so after recording you can remove the following line or set it to .playback
-    urlSession.recordMode = .recording
+    urlSession.recordMode = .record
 
     let networkClient = NetworkClient(urlSession: urlSession)
     /// Use the stubbed `networkClient`...
