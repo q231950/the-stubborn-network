@@ -80,7 +80,8 @@ extension URLSessionStub {
                 if stubSource.hasStub(request) {
                     // return a stubbed data task if the request has been stubbed already
                     return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
-                        let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
+                        let processedData = self.bodyDataProcessor?
+                            .dataForDeliveringResponseBody(data: data, of: request)
                         let preparedData = processedData ?? data
                         completionHandler(preparedData, response, error)
                     })

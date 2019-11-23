@@ -121,7 +121,7 @@ class URLSessionStubTests: XCTestCase {
         }.resume()
 
         // and a never recorded request B
-        urlSessionStub.dataTask(with: requestB) { (data, response, error) in
+        urlSessionStub.dataTask(with: requestB) { (_, _, _) in
             asyncExpectation.fulfill()
         }.resume()
         wait(for: [asyncExpectation], timeout: 0.001)
