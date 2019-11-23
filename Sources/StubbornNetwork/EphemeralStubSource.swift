@@ -10,15 +10,15 @@ import Foundation
 /// This stub source only lives in memory. It is most useful for unit tests where a method
 /// is tested against a specific request.
 /// `EphemeralStubSource` is normally not used to stub a multitude of requests.
-struct EphemeralStubSource: StubSourceProtocol {
+class EphemeralStubSource: StubSourceProtocol {
+    var stubs = [RequestStub]()
     var expectedDatas = [URLRequest: Data?]()
     var expectedResponses = [URLRequest: URLResponse?]()
     var expectedErrors = [URLRequest: Error?]()
-}
 
-/// `EphemeralStubSource` conforms to `StubSourceProtocol`
-extension EphemeralStubSource {
-    mutating func store(_ stub: RequestStub) {
+    func store(_ stub: RequestStub) {
+        stubs.append(stub)
+
         if let data = stub.data {
             expectedDatas[stub.request] = data
         }
@@ -32,7 +32,7 @@ extension EphemeralStubSource {
     }
 
     func hasStub(_ request: URLRequest) -> Bool {
-        expectedDatas[request] != nil
+        stubs.contains(where: { $0.request == request })
     }
 
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
