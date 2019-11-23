@@ -9,7 +9,6 @@ import Foundation
 
 enum NetworkStubError: Error {
     case unexpectedRequest(String)
-    case missingStubSource(String)
 }
 
 class URLSessionStub: URLSession, StubbornURLSession {
