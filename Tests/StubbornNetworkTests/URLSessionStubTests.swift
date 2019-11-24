@@ -10,7 +10,7 @@ import XCTest
 
 class TestingStubSource: EphemeralStubSource {
 
-    // Keep track on what is being stored
+    // Keep track of what is being stored
     var stored = [RequestStub]()
 
     override func store(_ stub: RequestStub) {
@@ -167,6 +167,7 @@ class URLSessionStubTests: XCTestCase {
         ("testStubsRequests", testStubsRequests),
         ("testDefaultRecordMode", testDefaultRecordMode),
         ("testRecordsInRecordMode", testRecordsInRecordMode),
+        ("testRecordsOnlyNewInRecordNewMode", testRecordsOnlyNewInRecordNewMode),
         ("testStoresProcessedRequestBody", testStoresProcessedRequestBody),
         ("testStoresProcessedResponseBody", testStoresProcessedResponseBody),
     ]
