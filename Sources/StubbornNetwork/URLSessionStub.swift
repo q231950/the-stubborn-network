@@ -65,16 +65,34 @@ extension URLSessionStub {
     override func dataTask(with request: URLRequest,
                            completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
         -> URLSessionDataTask {
+            guard let stubSource = stubSource else {
+                abort()
+            }
+
             switch recordMode {
-            case .recording:
-                assert(stubSource != nil)
+            case .record:
+                // return a real data task and record the result
+                return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
+                    self.stub(request, data: data, response: response, error: error)
+                    completionHandler(data, response, error)
+                })
+            case .recordNew:
+                if stubSource.hasStub(request) {
+                    // return a stubbed data task if the request has been stubbed already
+                    return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
+                        let processedData = self.bodyDataProcessor?
+                            .dataForDeliveringResponseBody(data: data, of: request)
+                        let preparedData = processedData ?? data
+                        completionHandler(preparedData, response, error)
+                    })
+                }
+                // return a real data task and record the result if the request is not stubbed yet
                 return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
                     self.stub(request, data: data, response: response, error: error)
                     completionHandler(data, response, error)
                 })
             case .playback:
-                assert(stubSource != nil)
-                return stubSource!.dataTask(with: request, completionHandler: {(data, response, error) in
+                return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
                     let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
                     let preparedData = processedData ?? data
                     completionHandler(preparedData, response, error)
