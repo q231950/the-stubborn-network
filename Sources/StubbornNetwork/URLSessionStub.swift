@@ -85,14 +85,20 @@ extension URLSessionStub {
             switch recordMode {
             case .record:
                 // return a real data task and record the result into a stub
-                return dataTaskForRecording(with: request, stubSource: stubSource, completionHandler: completionHandler)
+                return dataTaskForRecording(with: request,
+                                            stubSource: stubSource,
+                                            completionHandler: completionHandler)
             case .recordNew:
                 // return a data task with stubbed values if the request has been stubbed already,
                 // otherwise return a real data task and record the result into a stub
-                return dataTaskForRecordingNew(with: request, stubSource: stubSource, completionHandler: completionHandler)
+                return dataTaskForRecordingNew(with: request,
+                                               stubSource: stubSource,
+                                               completionHandler: completionHandler)
             case .playback:
                 // return a data task with stubbed values
-                return dataTaskForPlayingBack(with: request, stubSource: stubSource, completionHandler: completionHandler)
+                return dataTaskForPlayingBack(with: request,
+                                              stubSource: stubSource,
+                                              completionHandler: completionHandler)
             }
     }
 
@@ -106,7 +112,8 @@ extension URLSessionStub {
 
 fileprivate extension URLSessionStub {
     func dataTaskForRecording(with request: URLRequest, stubSource: StubSourceProtocol,
-                              completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+                              completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+        -> URLSessionDataTask {
         return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
             self.stub(request, data: data, response: response, error: error)
             completionHandler(data, response, error)
@@ -114,7 +121,8 @@ fileprivate extension URLSessionStub {
     }
 
     func dataTaskForRecordingNew(with request: URLRequest, stubSource: StubSourceProtocol,
-                                 completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+                                 completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+        -> URLSessionDataTask {
         if stubSource.hasStub(request) {
 
             return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
@@ -130,8 +138,10 @@ fileprivate extension URLSessionStub {
         })
     }
 
-    func dataTaskForPlayingBack(with request: URLRequest, stubSource: StubSourceProtocol,
-                                completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTaskForPlayingBack(with request: URLRequest,
+                                stubSource: StubSourceProtocol,
+                                completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+        -> URLSessionDataTask {
         return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
             let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
             let preparedData = processedData ?? data
