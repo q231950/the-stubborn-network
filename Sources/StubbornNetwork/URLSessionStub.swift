@@ -17,7 +17,16 @@ class URLSessionStub: URLSession, StubbornURLSession {
     ///  - modify the response body before storing a stub
     ///  - modify the response body just before delivering a stub
     var bodyDataProcessor: BodyDataProcessor?
-    var recordMode: RecordMode = .playback
+
+    /// Defaults to `.playback`
+    /// Setting it to `.record` leads to the stub source being cleared
+    var recordMode: RecordMode = .playback {
+        didSet {
+            if recordMode == .record {
+                stubSource?.clear()
+            }
+        }
+    }
     private let endToEndURLSession: URLSession
     var stubSource: StubSourceProtocol?
 

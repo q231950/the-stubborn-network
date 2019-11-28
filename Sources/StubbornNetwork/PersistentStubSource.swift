@@ -53,6 +53,16 @@ struct PersistentStubSource: StubSourceProtocol {
 
         stubs.append(stub)
 
+        save(stubs)
+    }
+
+    mutating func clear() {
+        stubs.removeAll()
+
+        save(stubs)
+    }
+
+    private func save(_ stubs: [RequestStub]) {
         do {
             let encoder = JSONEncoder()
             let json = try encoder.encode(stubs)

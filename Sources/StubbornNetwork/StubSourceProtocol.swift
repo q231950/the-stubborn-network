@@ -19,6 +19,9 @@ protocol StubSourceProtocol {
     /// - Parameter request: The request to check
     func hasStub(_ request: URLRequest) -> Bool
 
+    /// Remove all stubs
+    mutating func clear()
+
     /// This function loads a stub for the for a given request and returns a `URLSessionTask`
     /// and will execute the closure with the previously stubbed data/response/error
     /// once the data task is resumed.
