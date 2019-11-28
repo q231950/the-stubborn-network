@@ -12,6 +12,10 @@ enum NetworkStubError: Error {
 }
 
 class URLSessionStub: URLSession, StubbornURLSession {
+    /// The bodyDataProcessor allows modification of stubbed body data.
+    ///  - modify the request body before storing a stub
+    ///  - modify the response body before storing a stub
+    ///  - modify the response body just before delivering a stub
     var bodyDataProcessor: BodyDataProcessor?
     var recordMode: RecordMode = .playback
     private let endToEndURLSession: URLSession
