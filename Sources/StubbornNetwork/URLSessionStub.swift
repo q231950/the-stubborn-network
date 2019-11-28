@@ -84,32 +84,15 @@ extension URLSessionStub {
 
             switch recordMode {
             case .record:
-                // return a real data task and record the result
-                return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
-                    self.stub(request, data: data, response: response, error: error)
-                    completionHandler(data, response, error)
-                })
+                // return a real data task and record the result into a stub
+                return dataTaskForRecording(with: request, stubSource: stubSource, completionHandler: completionHandler)
             case .recordNew:
-                if stubSource.hasStub(request) {
-                    // return a stubbed data task if the request has been stubbed already
-                    return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
-                        let processedData = self.bodyDataProcessor?
-                            .dataForDeliveringResponseBody(data: data, of: request)
-                        let preparedData = processedData ?? data
-                        completionHandler(preparedData, response, error)
-                    })
-                }
-                // return a real data task and record the result if the request is not stubbed yet
-                return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
-                    self.stub(request, data: data, response: response, error: error)
-                    completionHandler(data, response, error)
-                })
+                // return a data task with stubbed values if the request has been stubbed already,
+                // otherwise return a real data task and record the result into a stub
+                return dataTaskForRecordingNew(with: request, stubSource: stubSource, completionHandler: completionHandler)
             case .playback:
-                return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
-                    let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
-                    let preparedData = processedData ?? data
-                    completionHandler(preparedData, response, error)
-                })
+                // return a data task with stubbed values
+                return dataTaskForPlayingBack(with: request, stubSource: stubSource, completionHandler: completionHandler)
             }
     }
 
@@ -118,5 +101,41 @@ extension URLSessionStub {
         -> URLSessionDataTask {
             let request = URLRequest(url: url)
             return dataTask(with: request, completionHandler: completionHandler)
+    }
+}
+
+fileprivate extension URLSessionStub {
+    func dataTaskForRecording(with request: URLRequest, stubSource: StubSourceProtocol,
+                              completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+        return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
+            self.stub(request, data: data, response: response, error: error)
+            completionHandler(data, response, error)
+        })
+    }
+
+    func dataTaskForRecordingNew(with request: URLRequest, stubSource: StubSourceProtocol,
+                                 completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+        if stubSource.hasStub(request) {
+
+            return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
+                let processedData = self.bodyDataProcessor?
+                    .dataForDeliveringResponseBody(data: data, of: request)
+                let preparedData = processedData ?? data
+                completionHandler(preparedData, response, error)
+            })
+        }
+        return endToEndURLSession.dataTask(with: request, completionHandler: { (data, response, error) in
+            self.stub(request, data: data, response: response, error: error)
+            completionHandler(data, response, error)
+        })
+    }
+
+    func dataTaskForPlayingBack(with request: URLRequest, stubSource: StubSourceProtocol,
+                                completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+        return stubSource.dataTask(with: request, completionHandler: {(data, response, error) in
+            let processedData = self.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: request)
+            let preparedData = processedData ?? data
+            completionHandler(preparedData, response, error)
+        })
     }
 }
