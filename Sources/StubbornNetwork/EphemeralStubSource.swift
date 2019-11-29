@@ -35,6 +35,13 @@ class EphemeralStubSource: StubSourceProtocol {
         stubs.contains(where: { $0.request == request })
     }
 
+    func clear() {
+	stubs.removeAll()
+	expectedDatas.removeAll()
+	expectedResponses.removeAll()
+	expectedErrors.removeAll()
+    }
+
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         return URLSessionDataTaskStub(data: expectedDatas[request] ?? nil,
                                       response: expectedResponses[request] ?? nil,

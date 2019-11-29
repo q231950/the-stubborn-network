@@ -23,7 +23,7 @@ class EphemeralStubSourceTests: XCTestCase {
 
         let url = URL(string: "127.0.0.1")!
 
-        var stubSource = EphemeralStubSource()
+        let stubSource = EphemeralStubSource()
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
