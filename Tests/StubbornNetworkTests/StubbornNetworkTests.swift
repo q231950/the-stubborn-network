@@ -11,6 +11,13 @@ final class StubbornNetworkTests: XCTestCase {
         buildDirectory = TestHelper.testingStubSourcePath()
     }
 
+    func test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols() {
+        let configuration: URLSessionConfiguration = .ephemeral
+        StubbornNetwork.insertStubbedSessionURLProtocol(into: configuration)
+
+        XCTAssertTrue(configuration.protocolClasses?.first == StubbedSessionURLProtocol.self)
+    }
+
     func testEphemeralStubbedURLSessionNotNil() {
         XCTAssertNotNil(StubbornNetwork.makeEphemeralSession())
     }
@@ -45,6 +52,8 @@ final class StubbornNetworkTests: XCTestCase {
     }
 
     static var allTests = [
+        ("test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols",
+         test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols),
         ("testEphemeralStubbedURLSessionNotNil", testEphemeralStubbedURLSessionNotNil),
         ("testStubbedURLSessionWithConfigurationNotNil", testStubbedURLSessionWithConfigurationNotNil),
         ("testPersistentStubbedURLSessionNotNil", testPersistentStubbedURLSessionNotNil),

@@ -12,6 +12,18 @@ import Foundation
 /// more efficiently where the stubs act like a cache.
 public struct StubbornNetwork {}
 
+// MARK: URLProtocol based Stubbing
+
+extension StubbornNetwork {
+
+    /// Insert the `StubbedSessionURLProtocol` `URLProtocol` class into a given `URLSessionConfiguration`.
+    /// Any configuration of a `URLSession` is required to be passed into this method prior to being used in the initializer
+    /// of `URLSession` - otherwise the `URLProtocol` will not be used by _Foundation_'s URL Loading System.
+    public static func insertStubbedSessionURLProtocol(into configuration: URLSessionConfiguration) {
+        configuration.protocolClasses?.insert(StubbedSessionURLProtocol.self, at: 0)
+    }
+}
+
 // MARK: Ephemeral stubbed URLSessions
 
 extension StubbornNetwork {

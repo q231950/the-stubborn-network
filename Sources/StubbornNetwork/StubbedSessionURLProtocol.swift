@@ -1,5 +1,5 @@
 //
-//  URLProtocol.swift
+//  StubbedSessionURLProtocol.swift
 //  
 //
 //  Created by Martin Kim Dung-Pham on 13.12.19.
@@ -7,36 +7,19 @@
 
 import Foundation
 
+/// This URL protocol enables standard URL sessions to return stubbed responses.
+///
+/// In order to use the protocol it needs to be inserted into the `URLSession` instance configuration's `protcolClasses`
+/// before the configuration is passed into the initializer of `URLSession`. The Stubborn Network has a convenience method
+/// for inserting the class into a given `URLSessionConfiguration`.
 public class StubbedSessionURLProtocol: URLProtocol {
 
-    lazy var stubSource: StubSourceProtocol = StubbornNetwork.persistentStubSource()
-    var t: URLSessionTask? = nil
-    public override var task: URLSessionTask? { t }
-
-    var c: URLProtocolClient? = nil
-    public override var client: URLProtocolClient? { c }
-
-    public override init(request: URLRequest, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
-        super.init(request: request, cachedResponse: cachedResponse, client: client)
-    }
-
-    public convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
-        self.init()
-
-        c = client
-        t = task
-    }
-
-    public override var cachedResponse: CachedURLResponse? {
-        nil
-    }
-
     public override class func canInit(with request: URLRequest) -> Bool {
-        true
+        return canInit(with: request.url?.scheme)
     }
 
     override public class func canInit(with task: URLSessionTask) -> Bool {
-        true
+        return canInit(with:task.originalRequest?.url?.scheme)
     }
 
     override public func startLoading() {
@@ -55,16 +38,38 @@ public class StubbedSessionURLProtocol: URLProtocol {
         }
     }
 
-    override public func stopLoading() {
-
-    }
+    override public func stopLoading() { /** Do nothing when asked to stop. */ }
 
     override public class func canonicalRequest(for request: URLRequest) -> URLRequest {
         request
     }
 
-    public override class func requestIsCacheEquivalent(_ a: URLRequest, to b: URLRequest) -> Bool {
-        return super.requestIsCacheEquivalent(a, to: b)
+    // MARK: - Boring Internals
+
+    lazy var stubSource: StubSourceProtocol = StubbornNetwork.persistentStubSource()
+
+    var internalTask: URLSessionTask? = nil
+    public override var task: URLSessionTask? { internalTask }
+
+    var internalClient: URLProtocolClient? = nil
+    public override var client: URLProtocolClient? { internalClient }
+
+    /// This is a convenience initializer defined in URLProtocol.
+    public convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
+        self.init()
+
+        internalClient = client
+        internalTask = task
     }
-    
+}
+
+extension StubbedSessionURLProtocol {
+    fileprivate class func canInit(with scheme: String?) -> Bool {
+        switch scheme {
+        case "http", "https":
+            return true
+        default:
+            return false
+        }
+    }
 }
