@@ -19,7 +19,12 @@ protocol StubSourceProtocol {
     /// - Parameter request: The request to check
     func hasStub(_ request: URLRequest) -> Bool
 
-    /// Remove all stubs
+    /// Get a `RequestStub` if one has been previously recorded for the given request
+    /// - Parameter request: the request to find and return a stub for
+    func stub(forRequest request: URLRequest) -> RequestStub?
+
+    /// Clear the `StubSource`.
+    /// This ideally removes all stubs from the `StubSource`
     mutating func clear()
 
     /// This function loads a stub for the for a given request and returns a `URLSessionTask`

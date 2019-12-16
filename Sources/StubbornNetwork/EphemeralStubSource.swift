@@ -11,6 +11,11 @@ import Foundation
 /// is tested against a specific request.
 /// `EphemeralStubSource` is normally not used to stub a multitude of requests.
 class EphemeralStubSource: StubSourceProtocol {
+    func stub(forRequest request: URLRequest) -> RequestStub? {
+        // the ephemeral stub source does nothing right now
+        nil
+    }
+
     var stubs = [RequestStub]()
     var expectedDatas = [URLRequest: Data?]()
     var expectedResponses = [URLRequest: URLResponse?]()

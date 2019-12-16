@@ -56,6 +56,11 @@ extension StubbornNetwork {
 
 extension StubbornNetwork {
 
+    static func persistentStubSource(withProcessInfo processInfo: ProcessInfo = ProcessInfo()) -> StubSourceProtocol {
+        let location = StubSourceLocation(processInfo: processInfo)
+        return persistentStubSource(at: location)
+    }
+
     /// Make a stubbed `URLSession` with a `StubSourceConfiguration`.
     ///
     /// - Parameter configuration: The configuration of the stub source of the stubbed `URLSession`
@@ -66,15 +71,19 @@ extension StubbornNetwork {
         case .ephemeral:
             return URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
         case .persistent(let location):
-            let name = location.stubSourceName
-            let path = location.stubSourcePath
-            let url = URL(string: path)
-            assert(url != nil, """
-                The path to the stub source is not a valid path.
-                Choose a valid path in the stub source configuration.
-                """)
-            let stubSource = PersistentStubSource(name: name, path: url!)
+            let stubSource = persistentStubSource(at: location)
             return URLSessionStub(configuration: .ephemeral, stubSource: stubSource)
         }
+    }
+
+    static func persistentStubSource(at location: StubSourceLocation) -> StubSourceProtocol {
+        let name = location.stubSourceName
+        let path = location.stubSourcePath
+        let url = URL(string: path)
+        assert(url != nil, """
+            The path to the stub source is not a valid path.
+            Choose a valid path in the stub source configuration.
+            """)
+        return PersistentStubSource(name: name, path: url!)
     }
 }
