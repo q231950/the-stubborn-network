@@ -32,5 +32,4 @@ struct CombinedStubSource: StubSourceProtocol {
         URLSessionDataTaskStub(data: nil, response: nil, error: nil, resumeCompletion: { (_, _, _) -> Void in })
     }
 
-
 }

@@ -14,12 +14,23 @@ import Foundation
 /// for inserting the class into a given `URLSessionConfiguration`.
 public class StubbedSessionURLProtocol: URLProtocol {
 
+    public override var task: URLSessionTask? { internalTask }
+    public override var client: URLProtocolClient? { internalClient }
+
     public override class func canInit(with request: URLRequest) -> Bool {
         return canInit(with: request.url?.scheme)
     }
 
     override public class func canInit(with task: URLSessionTask) -> Bool {
         return canInit(with:task.originalRequest?.url?.scheme)
+    }
+
+    /// This is a convenience initializer defined in URLProtocol.
+    public convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
+        self.init()
+
+        internalClient = client
+        internalTask = task
     }
 
     override public func startLoading() {
@@ -46,25 +57,13 @@ public class StubbedSessionURLProtocol: URLProtocol {
 
     // MARK: - Boring Internals
 
-    var stubbornNetwork: StubbornNetwork {
+    private var stubbornNetwork: StubbornNetwork {
         internalStubbornNetwork ?? StubbornNetwork.standard
     }
 
     var internalStubbornNetwork: StubbornNetwork?
-
-    var internalTask: URLSessionTask? = nil
-    public override var task: URLSessionTask? { internalTask }
-
-    var internalClient: URLProtocolClient? = nil
-    public override var client: URLProtocolClient? { internalClient }
-
-    /// This is a convenience initializer defined in URLProtocol.
-    public convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
-        self.init()
-
-        internalClient = client
-        internalTask = task
-    }
+    private var internalTask: URLSessionTask? = nil
+    private var internalClient: URLProtocolClient? = nil
 }
 
 extension StubbedSessionURLProtocol {
