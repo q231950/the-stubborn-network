@@ -1,8 +1,10 @@
 os: osx
-osx_image: xcode11
+osx_image: xcode11.2
+install:
+  - swift package generate-xcodeproj 
 jobs:
   include:
     - stage: "Environment"
       script: swift --version
     - stage: "Test"
-      script: swift test
+      script: xcodebuild clean test -project StubbornNetwork.xcodeproj -scheme StubbornNetwork-Package 
