@@ -13,7 +13,7 @@ final class StubbornNetworkTests: XCTestCase {
 
     func test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols() {
         let configuration: URLSessionConfiguration = .ephemeral
-        StubbornNetwork.insertStubbedSessionURLProtocol(into: configuration)
+        StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
 
         XCTAssertTrue(configuration.protocolClasses?.first == StubbedSessionURLProtocol.self)
     }
@@ -30,7 +30,7 @@ final class StubbornNetworkTests: XCTestCase {
         let processInfo = ProcessInfoStub(stubName: "Stub",
                                           stubPath: buildDirectory)
 
-        let location = StubSourceLocation(processInfo: processInfo)
+        let location = StubSourceLocation(processInfo: processInfo)!
 
         XCTAssertNotNil(StubbornNetwork.stubbed(
             withConfiguration: .persistent(location: location))
