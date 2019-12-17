@@ -4,7 +4,5 @@ install:
   - swift package generate-xcodeproj 
 jobs:
   include:
-    - stage: "Environment"
-      script: swift --version
     - stage: "Test"
       script: xcodebuild clean test -project StubbornNetwork.xcodeproj -scheme StubbornNetwork-Package 
