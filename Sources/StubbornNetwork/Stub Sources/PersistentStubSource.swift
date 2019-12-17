@@ -7,9 +7,20 @@
 
 import Foundation
 
-struct PersistentStubSource: StubSourceProtocol {
+class PersistentStubSource: StubSourceProtocol {
     let path: URL
     var stubs = [RequestStub]()
+
+    convenience init(with location: StubSourceLocation) {
+        let name = location.stubSourceName
+        let path = location.stubSourcePath
+        let url = URL(string: path)
+        assert(url != nil, """
+            The path to the stub source is not a valid path.
+            Choose a valid path in the stub source configuration.
+            """)
+        self.init(name: name, path: url!)
+    }
 
     init(path: URL) {
         self.path = path
@@ -28,7 +39,7 @@ struct PersistentStubSource: StubSourceProtocol {
                                       resumeCompletion: completionHandler)
     }
 
-    mutating func setupStubs(from data: Data) {
+    func setupStubs(from data: Data) {
         do {
             let decoder = JSONDecoder()
             let prerecordedStubs = try decoder.decode([RequestStub].self, from: data)
@@ -48,7 +59,7 @@ struct PersistentStubSource: StubSourceProtocol {
         return stubs.first(where: request.matches(requestStub:))
     }
 
-    mutating func store(_ stub: RequestStub) {
+    func store(_ stub: RequestStub) {
         print("Storing stub: \(stub) at \(path.absoluteString).")
 
         stubs.append(stub)
@@ -56,7 +67,7 @@ struct PersistentStubSource: StubSourceProtocol {
         save(stubs)
     }
 
-    mutating func clear() {
+    func clear() {
         stubs.removeAll()
 
         save(stubs)
@@ -87,7 +98,8 @@ extension URLRequest {
 }
 
 extension PersistentStubSource {
-    init(name: String, path: URL) {
+
+    convenience init(name: String, path: URL) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path.absoluteString) {
             PersistentStubSource.createStubDirectory(at: path)

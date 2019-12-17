@@ -24,7 +24,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
 
     override public func startLoading() {
         if let request = task?.originalRequest,
-            let stub = stubSource.stub(forRequest: request) {
+            let stub = stubbornNetwork.stubSource.stub(forRequest: request) {
 
             if let data = stub.data {
                 client?.urlProtocol(self, didLoad: data)
@@ -33,9 +33,9 @@ public class StubbedSessionURLProtocol: URLProtocol {
             if let response = stub.response {
                 client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
             }
-
-            client?.urlProtocolDidFinishLoading(self)
         }
+
+        client?.urlProtocolDidFinishLoading(self)
     }
 
     override public func stopLoading() { /** Do nothing when asked to stop. */ }
@@ -46,7 +46,11 @@ public class StubbedSessionURLProtocol: URLProtocol {
 
     // MARK: - Boring Internals
 
-    lazy var stubSource: StubSourceProtocol = StubbornNetwork.persistentStubSource()
+    var stubbornNetwork: StubbornNetwork {
+        internalStubbornNetwork ?? StubbornNetwork.standard
+    }
+
+    var internalStubbornNetwork: StubbornNetwork?
 
     var internalTask: URLSessionTask? = nil
     public override var task: URLSessionTask? { internalTask }

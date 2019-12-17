@@ -13,7 +13,7 @@ protocol StubSourceProtocol {
 
     /// Store a stub into the stub source.
     /// - Parameter stub: The stub to store
-    mutating func store(_ stub: RequestStub)
+    func store(_ stub: RequestStub)
 
     /// Get information about which requests have a stored stub
     /// - Parameter request: The request to check
@@ -25,7 +25,7 @@ protocol StubSourceProtocol {
 
     /// Clear the `StubSource`.
     /// This ideally removes all stubs from the `StubSource`
-    mutating func clear()
+    func clear()
 
     /// This function loads a stub for the for a given request and returns a `URLSessionTask`
     /// and will execute the closure with the previously stubbed data/response/error

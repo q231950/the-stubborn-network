@@ -10,7 +10,29 @@ import Foundation
 /// Stubbing your network can greatly improve flakiness in UI tests and is a common practice
 /// for unit tests. You can also use The Stubborn Network for running SwiftUI Previews
 /// more efficiently where the stubs act like a cache.
-public struct StubbornNetwork {}
+public struct StubbornNetwork {
+
+    let processInfo: ProcessInfo
+
+    /// The standard Stubborn Network used be all clients
+    public static let standard = StubbornNetwork()
+
+    private var persistentStubSource: StubSourceProtocol? {
+        guard let location = StubSourceLocation(processInfo: ProcessInfo()) else { return nil }
+
+        return PersistentStubSource(with: location)
+    }
+
+    private let ephemeralStubSource = EphemeralStubSource()
+
+    init() {
+        self.init(processInfo: ProcessInfo())
+    }
+
+    init(processInfo: ProcessInfo) {
+        self.processInfo = processInfo
+    }
+}
 
 // MARK: URLProtocol based Stubbing
 
@@ -19,8 +41,12 @@ extension StubbornNetwork {
     /// Insert the `StubbedSessionURLProtocol` `URLProtocol` class into a given `URLSessionConfiguration`.
     /// Any configuration of a `URLSession` is required to be passed into this method prior to being used in the initializer
     /// of `URLSession` - otherwise the `URLProtocol` will not be used by _Foundation_'s URL Loading System.
-    public static func insertStubbedSessionURLProtocol(into configuration: URLSessionConfiguration) {
+    public func insertStubbedSessionURLProtocol(into configuration: URLSessionConfiguration) {
         configuration.protocolClasses?.insert(StubbedSessionURLProtocol.self, at: 0)
+    }
+
+    var stubSource: StubSourceProtocol {
+        return CombinedStubSource(sources: [ephemeralStubSource, persistentStubSource].compactMap{ $0 })
     }
 }
 
@@ -48,7 +74,7 @@ extension StubbornNetwork {
     /// the location of the stub source.
     public static func makePersistentSession(withProcessInfo processInfo: ProcessInfo = ProcessInfo())
         -> StubbornURLSession {
-        let location = StubSourceLocation(processInfo: processInfo)
+        let location = StubSourceLocation(processInfo: processInfo)!
         return stubbed(withConfiguration: .persistent(location: location))
     }
 
@@ -69,7 +95,7 @@ extension StubbornNetwork {
 extension StubbornNetwork {
 
     static func persistentStubSource(withProcessInfo processInfo: ProcessInfo = ProcessInfo()) -> StubSourceProtocol {
-        let location = StubSourceLocation(processInfo: processInfo)
+        let location = StubSourceLocation(processInfo: processInfo)!
         return persistentStubSource(at: location)
     }
 
@@ -89,13 +115,6 @@ extension StubbornNetwork {
     }
 
     static func persistentStubSource(at location: StubSourceLocation) -> StubSourceProtocol {
-        let name = location.stubSourceName
-        let path = location.stubSourcePath
-        let url = URL(string: path)
-        assert(url != nil, """
-            The path to the stub source is not a valid path.
-            Choose a valid path in the stub source configuration.
-            """)
-        return PersistentStubSource(name: name, path: url!)
+        PersistentStubSource(with: location)
     }
 }
