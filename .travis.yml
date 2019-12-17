@@ -2,5 +2,7 @@ os: osx
 osx_image: xcode11
 jobs:
   include:
+    - stage: "Environment"
+      script: swift --version
     - stage: "Test"
       script: swift test
