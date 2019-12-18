@@ -1,5 +1,0 @@
-{
-  "plugins": [
-    ["remark-lint-list-item-indent", false]
-  ]
-}

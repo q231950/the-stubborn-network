@@ -22,7 +22,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
     }
 
     override public class func canInit(with task: URLSessionTask) -> Bool {
-        return canInit(with:task.originalRequest?.url?.scheme)
+        return canInit(with: task.originalRequest?.url?.scheme)
     }
 
     /// This is a convenience initializer defined in URLProtocol.
@@ -62,8 +62,8 @@ public class StubbedSessionURLProtocol: URLProtocol {
     }
 
     var internalStubbornNetwork: StubbornNetwork?
-    private var internalTask: URLSessionTask? = nil
-    private var internalClient: URLProtocolClient? = nil
+    private var internalTask: URLSessionTask?
+    private var internalClient: URLProtocolClient?
 }
 
 extension StubbedSessionURLProtocol {

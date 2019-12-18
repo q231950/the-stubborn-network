@@ -46,7 +46,7 @@ extension StubbornNetwork {
     }
 
     var stubSource: StubSourceProtocol {
-        return CombinedStubSource(sources: [ephemeralStubSource, persistentStubSource].compactMap{ $0 })
+        return CombinedStubSource(sources: [ephemeralStubSource, persistentStubSource].compactMap { $0 })
     }
 }
 
