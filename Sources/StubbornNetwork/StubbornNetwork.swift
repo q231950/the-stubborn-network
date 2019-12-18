@@ -10,12 +10,18 @@ import Foundation
 /// Stubbing your network can greatly improve flakiness in UI tests and is a common practice
 /// for unit tests. You can also use The Stubborn Network for running SwiftUI Previews
 /// more efficiently where the stubs act like a cache.
-public struct StubbornNetwork {
+public class StubbornNetwork {
 
     let processInfo: ProcessInfo
 
     /// The standard Stubborn Network used be all clients
     public static let standard = StubbornNetwork()
+
+    /// The bodyDataProcessor allows modification of stubbed body data.
+    ///  - modify the request body before storing a stub
+    ///  - modify the response body before storing a stub
+    ///  - modify the response body just before delivering a stub
+    public var bodyDataProcessor: BodyDataProcessor?
 
     private var persistentStubSource: StubSourceProtocol? {
         guard let location = StubSourceLocation(processInfo: ProcessInfo()) else { return nil }
@@ -25,7 +31,7 @@ public struct StubbornNetwork {
 
     private let ephemeralStubSource = EphemeralStubSource()
 
-    init() {
+    convenience init() {
         self.init(processInfo: ProcessInfo())
     }
 
