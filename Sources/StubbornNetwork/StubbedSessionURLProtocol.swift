@@ -27,10 +27,16 @@ public class StubbedSessionURLProtocol: URLProtocol {
 
     /// This is a convenience initializer defined in URLProtocol.
     public convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
+        self.init(task: task, cachedResponse: cachedResponse, client: client, recorder: nil)
+
+    }
+
+    convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?, recorder: StubRecording?) {
         self.init()
 
         internalClient = client
         internalTask = task
+        internalRecorder = recorder
     }
 
     override public func startLoading() {
@@ -66,10 +72,15 @@ public class StubbedSessionURLProtocol: URLProtocol {
         internalStubbornNetwork ?? StubbornNetwork.standard
     }
 
+    private var recorder: StubRecording {
+        let urlSession = URLSession(configuration: .ephemeral)
+        return internalRecorder ?? StubRecorder(urlSession: urlSession, stubSource: stubbornNetwork.stubSource)
+    }
+
     var internalStubbornNetwork: StubbornNetwork?
     private var internalTask: URLSessionTask?
     private var internalClient: URLProtocolClient?
-    private let urlSession = URLSession(configuration: .ephemeral)
+    private var internalRecorder: StubRecording?
     private let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
 }
 
@@ -94,43 +105,7 @@ extension StubbedSessionURLProtocol {
     }
 
     fileprivate func record(_ task: URLSessionTask?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
-        guard let task = task, let request = task.originalRequest else { return }
-
-        if task.self.isKind(of: URLSessionDataTask.self) {
-            urlSession.dataTask(with: request) { (data, response, error) in
-
-                let (preparedRequestBodyData, preparedResponseBodyData) = self.prepareBodyData(requestBodyData: request.httpBody,
-                                                                                          responseBodyData: data,
-                                                                                          request: request)
-
-                var preparedRequest = request
-                preparedRequest.httpBody = preparedRequestBodyData
-
-                let stub = RequestStub(request: preparedRequest,
-                                       data: preparedResponseBodyData,
-                                       response: response,
-                                       error: error)
-
-                self.stubbornNetwork.stubSource.store(stub)
-
-                completion(data, response, error)
-            }.resume()
-        }
-    }
-
-    private func prepareBodyData(requestBodyData: Data?, responseBodyData: Data?, request: URLRequest) ->
-        (preparedRequestBodyData: Data?, preparedResponseBodyData: Data?) {
-            let preparedRequestBodyData, preparedResponseBodyData: Data?
-            if let bodyDataProcessor = stubbornNetwork.bodyDataProcessor {
-                preparedRequestBodyData = bodyDataProcessor.dataForStoringRequestBody(data: requestBodyData,
-                                                                                      of: request)
-                preparedResponseBodyData = bodyDataProcessor.dataForStoringResponseBody(data: responseBodyData,
-                                                                                        of: request)
-            } else {
-                preparedRequestBodyData = requestBodyData
-                preparedResponseBodyData = responseBodyData
-            }
-            return (preparedRequestBodyData, preparedResponseBodyData)
+        recorder.record(task, bodyDataProcessor: stubbornNetwork.bodyDataProcessor, completion: completion)
     }
 
     /// Gets the information about whether or not a URL scheme is supported by this protocol.

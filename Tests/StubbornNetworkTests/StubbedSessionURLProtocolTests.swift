@@ -66,6 +66,17 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         XCTAssertEqual(client.didFinishLoadingCount, 1)
     }
 
+    func test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub() throws {
+        // given there is no stub for the given request
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let task = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let client = ClientMock()
+        let recorder = StubRecorderMock()
+        let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
+        objectUnderTest.startLoading()
+        XCTAssertEqual(recorder.recordCount, 1)
+    }
+
     static var allTests = [
         ("test_StubbedSessionURLProtocol_canInitialize_withHTTPRequests",
          test_StubbedSessionURLProtocol_canInitialize_withHTTPRequests),
@@ -98,4 +109,12 @@ class ClientStub: NSObject, URLProtocolClient {
     func urlProtocol(_ protocol: URLProtocol, didReceive challenge: URLAuthenticationChallenge) { }
 
     func urlProtocol(_ protocol: URLProtocol, didCancel challenge: URLAuthenticationChallenge) { }
+}
+
+class StubRecorderMock: StubRecording {
+    var recordCount = 0
+
+    func record(_ task: URLSessionTask?, bodyDataProcessor: BodyDataProcessor?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        recordCount += 1
+    }
 }
