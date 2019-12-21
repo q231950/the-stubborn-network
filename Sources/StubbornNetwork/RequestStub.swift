@@ -28,6 +28,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         case url
         case method
         case headerFields
+        case requestData
     }
 
     enum ResponseCodingKeys: String, CodingKey {
@@ -45,6 +46,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         })
         try requestContainer.encode(requestHeaderFieldsAsStrings, forKey: .headerFields)
         try requestContainer.encode(request.httpMethod, forKey: .method)
+        try requestContainer.encode(request.httpBody, forKey: .requestData)
 
         try container.encode(data, forKey: .data)
 
@@ -81,6 +83,8 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
                 result[key] = value
             }
         }
+        let requestBodyData = try requestContainer.decode(Data?.self, forKey: .requestData)
+        request.httpBody = requestBodyData
 
         let data = try container.decode(Data.self, forKey: .data)
 

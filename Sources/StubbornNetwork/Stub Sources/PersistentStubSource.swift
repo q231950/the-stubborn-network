@@ -143,6 +143,7 @@ extension URLRequest {
 
         return self.url == other.url &&
             self.httpMethod == other.httpMethod &&
+            (self.httpBody == other.httpBody || self.httpBody == nil && other.httpBody == nil) &&
             sortedA == sortedB
     }
 }
