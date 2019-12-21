@@ -48,12 +48,21 @@ class StubbedSessionURLProtocolTests: XCTestCase {
     }
 
     func test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading() throws {
-        let url = try XCTUnwrap(URL(string: "ftp://elbedev.com"))
+        // given there is a stub for the given request
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = ClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork()
+        let stub = RequestStub(request: task.originalRequest!)
+        objectUnderTest.internalStubbornNetwork?.ephemeralStubSource.store(stub)
+
+        // when
         objectUnderTest.startLoading()
 
+        // then
+        let someQueue = expectation(description: "Wait for another dispatch queue")
+        _ = XCTWaiter.wait(for: [someQueue], timeout: 0.1)
         XCTAssertEqual(client.didFinishLoadingCount, 1)
     }
 

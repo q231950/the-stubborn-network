@@ -39,13 +39,16 @@ public class StubbedSessionURLProtocol: URLProtocol {
 
         if let request = task?.originalRequest {
 
-            // this basically mimics .recordNew
             if let stub = stubbornNetwork.stubSource.stub(forRequest: request) {
                 playback(stub) { notifyFinished() }
             } else {
-                record(task) { stub in self.playback(stub) { notifyFinished() } }
+                record(task) {
+                    data, response, error in
+                    self.playback(data: data, response: response, error: error) {
+                        notifyFinished()
+                    }
+                }
             }
-
         } else {
             notifyFinished()
         }
@@ -67,46 +70,51 @@ public class StubbedSessionURLProtocol: URLProtocol {
     private var internalTask: URLSessionTask?
     private var internalClient: URLProtocolClient?
     private let urlSession = URLSession(configuration: .ephemeral)
+    private let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
 }
 
 extension StubbedSessionURLProtocol {
 
-    fileprivate func playback(_ stub: RequestStub, completion: () -> Void) {
-        if let data = stub.data {
+    fileprivate func playback(_ stub: RequestStub, completion: @escaping () -> Void) {
+        playback(data: stub.data, response: stub.response, error: stub.error, completion: completion)
+    }
+
+    fileprivate func playback(data: Data?, response: URLResponse?, error: Error?, completion: @escaping () -> Void) {
+        if let data = data {
             client?.urlProtocol(self, didLoad: data)
         }
 
-        if let response = stub.response {
+        if let response = response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
         }
 
-        completion()
+        queue.async {
+            completion()
+        }
     }
 
-    fileprivate func record(_ task: URLSessionTask?, completion: @escaping (RequestStub) -> Void) {
+    fileprivate func record(_ task: URLSessionTask?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         guard let task = task, let request = task.originalRequest else { return }
 
         if task.self.isKind(of: URLSessionDataTask.self) {
-            if let url = request.url {
-                urlSession.dataTask(with: url) { (data, response, error) in
+            urlSession.dataTask(with: request) { (data, response, error) in
 
-                    let (preparedRequestBodyData, preparedResponseBodyData) = self.prepareBodyData(requestBodyData: request.httpBody,
-                                                                                              responseBodyData: data,
-                                                                                              request: request)
+                let (preparedRequestBodyData, preparedResponseBodyData) = self.prepareBodyData(requestBodyData: request.httpBody,
+                                                                                          responseBodyData: data,
+                                                                                          request: request)
 
-                    var preparedRequest = request
-                    preparedRequest.httpBody = preparedRequestBodyData
+                var preparedRequest = request
+                preparedRequest.httpBody = preparedRequestBodyData
 
-                    let stub = RequestStub(request: preparedRequest,
-                                           data: preparedResponseBodyData,
-                                           response: response,
-                                           error: error)
+                let stub = RequestStub(request: preparedRequest,
+                                       data: preparedResponseBodyData,
+                                       response: response,
+                                       error: error)
 
-                    self.stubbornNetwork.stubSource.store(stub)
+                self.stubbornNetwork.stubSource.store(stub)
 
-                    completion(stub)
-                }.resume()
-            }
+                completion(data, response, error)
+            }.resume()
         }
     }
 
