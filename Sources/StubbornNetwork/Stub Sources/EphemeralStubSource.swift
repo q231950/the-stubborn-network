@@ -11,10 +11,13 @@ import Foundation
 /// is tested against a specific request.
 /// `EphemeralStubSource` is normally not used to stub a multitude of requests.
 class EphemeralStubSource: StubSourceProtocol {
+<<<<<<< HEAD
     func stub(forRequest request: URLRequest) -> RequestStub? {
         // the _Ephemeral Stub Source_ does currently not support URL Session Protocol based stubbing.
         nil
     }
+=======
+>>>>>>> Make Ephemeral Stub Source return a stub if it has one for a given
 
     var stubs = [RequestStub]()
     var expectedDatas = [URLRequest: Data?]()
@@ -38,6 +41,12 @@ class EphemeralStubSource: StubSourceProtocol {
 
     func hasStub(_ request: URLRequest) -> Bool {
         stubs.contains(where: { $0.request == request })
+    }
+
+    func stub(forRequest request: URLRequest) -> RequestStub? {
+        stubs.first { (stub) -> Bool in
+            stub.request.matches(request: request)
+        }
     }
 
     func clear() {
