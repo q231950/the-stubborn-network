@@ -16,7 +16,7 @@ class URLRequestMatcherTests: XCTestCase {
         var requestWithLowercaseHeader = URLRequest(url: URL(string: "127.0.0.1")!)
         requestWithLowercaseHeader.setValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertTrue(requestWithCapitalHeader.matches(request: requestWithLowercaseHeader))
+        XCTAssertTrue(requestWithCapitalHeader.matches(otherRequest: requestWithLowercaseHeader))
     }
 
     func testHeaderDuplicateMismatches() {
@@ -27,7 +27,7 @@ class URLRequestMatcherTests: XCTestCase {
         var requestWithSingleHeader = URLRequest(url: URL(string: "127.0.0.1")!)
         requestWithSingleHeader.setValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestWithDuplicatedHeader.matches(request: requestWithSingleHeader))
+        XCTAssertFalse(requestWithDuplicatedHeader.matches(otherRequest: requestWithSingleHeader))
     }
 
     func testHeaderDuplicateMatches() {
@@ -39,7 +39,7 @@ class URLRequestMatcherTests: XCTestCase {
         requestWithDuplicatedLowercaseHeader.addValue("alphabet", forHTTPHeaderField: "abc")
         requestWithDuplicatedLowercaseHeader.addValue("алфавит", forHTTPHeaderField: "abc")
 
-        XCTAssertTrue(requestWithDuplicatedHeader.matches(request: requestWithDuplicatedLowercaseHeader))
+        XCTAssertTrue(requestWithDuplicatedHeader.matches(otherRequest: requestWithDuplicatedLowercaseHeader))
     }
 
     func testHeaderOrderMismatches() {
@@ -51,6 +51,6 @@ class URLRequestMatcherTests: XCTestCase {
         requestWithDuplicatedHeaderOtherOrder.addValue("алфавит", forHTTPHeaderField: "abc")
         requestWithDuplicatedHeaderOtherOrder.addValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestWithDuplicatedHeader.matches(request: requestWithDuplicatedHeaderOtherOrder))
+        XCTAssertFalse(requestWithDuplicatedHeader.matches(otherRequest: requestWithDuplicatedHeaderOtherOrder))
     }
 }

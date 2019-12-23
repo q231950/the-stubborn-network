@@ -127,7 +127,7 @@ class URLSessionStubTests: XCTestCase {
         wait(for: [asyncExpectation], timeout: 0.001)
 
         // then only the new request B should have been stored freshly
-        XCTAssertEqual(stubSource.stored.filter({ $0.request.matches(request: requestB) }).count, 1)
+        XCTAssertEqual(stubSource.stored.filter({ $0.request.matches(otherRequest: requestB) }).count, 1)
     }
 
     func testStoresProcessedRequestBody() {
