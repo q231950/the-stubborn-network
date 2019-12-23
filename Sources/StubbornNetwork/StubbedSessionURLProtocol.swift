@@ -73,7 +73,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
             return internalRecorder
         } else {
             let urlSession = URLSession(configuration: .ephemeral)
-            StubRecorder(urlSession: urlSession, stubSource: stubbornNetwork.stubSource)
+            return StubRecorder(urlSession: urlSession, stubSource: stubbornNetwork.stubSource)
         }
     }
 
