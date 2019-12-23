@@ -11,7 +11,7 @@ extension URLRequest {
 
     /// Verifies if this request and matches the other one.
     func matches(otherRequest: URLRequest) -> Bool {
-        let sortedA = self.allHTTPHeaderFields?.map({ (key, value) -> String in
+        let sortedA = allHTTPHeaderFields?.map({ (key, value) -> String in
             return key.lowercased() + value
         }).sorted(by: <)
 
@@ -19,9 +19,9 @@ extension URLRequest {
             return key.lowercased() + value
         }).sorted(by: <)
 
-        return self.url == otherRequest.url &&
-            self.httpMethod == otherRequest.httpMethod &&
-            (self.httpBody == otherRequest.httpBody || self.httpBody == nil && otherRequest.httpBody == nil) &&
+        return url == otherRequest.url &&
+            httpMethod == otherRequest.httpMethod &&
+            (httpBody == otherRequest.httpBody || httpBody == nil && otherRequest.httpBody == nil) &&
             sortedA == sortedB
     }
 }
