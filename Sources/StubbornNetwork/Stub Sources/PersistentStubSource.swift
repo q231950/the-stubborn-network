@@ -12,14 +12,12 @@ class PersistentStubSource: StubSourceProtocol {
     var stubs = [RequestStub]()
 
     convenience init(with location: StubSourceLocation) {
-        let name = location.stubSourceName
-        let path = location.stubSourcePath
-        let url = URL(string: path)
+        let url = URL(string: location.stubSourcePath)
         assert(url != nil, """
             The path to the stub source is not a valid path.
             Choose a valid path in the stub source configuration.
             """)
-        self.init(name: name, path: url!)
+        self.init(name: location.stubSourceName, path: url!)
     }
 
     init(path: URL) {
@@ -30,6 +28,7 @@ class PersistentStubSource: StubSourceProtocol {
         }
     }
 
+    // TODO: Remove this when the StubSourceProtocol gets cleaned up
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         let requestStub = stub(forRequest: request)
         precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
@@ -99,6 +98,11 @@ extension URLRequest {
 
 extension PersistentStubSource {
 
+    /// Initialize a _Persistent Stub Source_ with a name and a path.
+    ///
+    /// - Parameters:
+    ///   - name: this is how the _Stub Source_ is called
+    ///   - path: the location of the _Stub Source_
     convenience init(name: String, path: URL) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path.absoluteString) {

@@ -38,9 +38,9 @@ public struct StubbornNetwork {
 
 extension StubbornNetwork {
 
-    /// Insert the `StubbedSessionURLProtocol` `URLProtocol` class into a given `URLSessionConfiguration`.
-    /// Any configuration of a `URLSession` is required to be passed into this method prior to being used in the initializer
-    /// of `URLSession` - otherwise the `URLProtocol` will not be used by _Foundation_'s URL Loading System.
+    /// Insert the `StubbedSessionURLProtocol` class into a given `URLSessionConfiguration`'s _protocolClasses_.
+    /// Any configuration of a session is required to be passed into this method prior to being used in the initializer
+    /// of `URLSession` - otherwise the protocol will not be used by _Foundation_'s URL Loading System.
     public func insertStubbedSessionURLProtocol(into configuration: URLSessionConfiguration) {
         configuration.protocolClasses?.insert(StubbedSessionURLProtocol.self, at: 0)
     }
@@ -74,8 +74,9 @@ extension StubbornNetwork {
     /// the location of the stub source.
     public static func makePersistentSession(withProcessInfo processInfo: ProcessInfo = ProcessInfo())
         -> StubbornURLSession {
-        let location = StubSourceLocation(processInfo: processInfo)!
-        return stubbed(withConfiguration: .persistent(location: location))
+            // temporary force unwrap since the this will go away anyways in the light of URL protocol based stubbing
+            let location = StubSourceLocation(processInfo: processInfo)!
+            return stubbed(withConfiguration: .persistent(location: location))
     }
 
     /// Make a stubbed `URLSession` by providing a name and a path to the source for the stubs to use.
@@ -85,8 +86,9 @@ extension StubbornNetwork {
     public static func makePersistentSession(withName name: String,
                                              path: String)
         -> StubbornURLSession {
-        let location = StubSourceLocation(name: name, path: path)
-        return stubbed(withConfiguration: .persistent(location: location))
+            let location = StubSourceLocation(name: name, path: path)
+            // temporary force unwrap since the this will go away anyways in the light of URL protocol based stubbing
+            return stubbed(withConfiguration: .persistent(location: location))
     }
 }
 
@@ -95,6 +97,7 @@ extension StubbornNetwork {
 extension StubbornNetwork {
 
     static func persistentStubSource(withProcessInfo processInfo: ProcessInfo = ProcessInfo()) -> StubSourceProtocol {
+        // temporary force unwrap since the this will go away anyways in the light of URL protocol based stubbing
         let location = StubSourceLocation(processInfo: processInfo)!
         return persistentStubSource(at: location)
     }
@@ -105,13 +108,13 @@ extension StubbornNetwork {
     static func stubbed(withConfiguration configuration: StubSourceConfiguration = .ephemeral)
         -> StubbornURLSession {
 
-        switch configuration {
-        case .ephemeral:
-            return URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
-        case .persistent(let location):
-            let stubSource = persistentStubSource(at: location)
-            return URLSessionStub(configuration: .ephemeral, stubSource: stubSource)
-        }
+            switch configuration {
+            case .ephemeral:
+                return URLSessionStub(configuration: .ephemeral, stubSource: EphemeralStubSource())
+            case .persistent(let location):
+                let stubSource = persistentStubSource(at: location)
+                return URLSessionStub(configuration: .ephemeral, stubSource: stubSource)
+            }
     }
 
     static func persistentStubSource(at location: StubSourceLocation) -> StubSourceProtocol {

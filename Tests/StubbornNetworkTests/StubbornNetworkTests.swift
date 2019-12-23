@@ -26,11 +26,11 @@ final class StubbornNetworkTests: XCTestCase {
         XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .ephemeral))
     }
 
-    func testPersistentStubbedURLSessionNotNil() {
+    func testPersistentStubbedURLSessionNotNil() throws {
         let processInfo = ProcessInfoStub(stubName: "Stub",
                                           stubPath: buildDirectory)
 
-        let location = StubSourceLocation(processInfo: processInfo)!
+        let location = try XCTUnwrap(StubSourceLocation(processInfo: processInfo))
 
         XCTAssertNotNil(StubbornNetwork.stubbed(
             withConfiguration: .persistent(location: location))

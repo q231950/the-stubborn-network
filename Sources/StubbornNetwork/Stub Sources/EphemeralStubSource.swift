@@ -12,7 +12,7 @@ import Foundation
 /// `EphemeralStubSource` is normally not used to stub a multitude of requests.
 class EphemeralStubSource: StubSourceProtocol {
     func stub(forRequest request: URLRequest) -> RequestStub? {
-        // the ephemeral stub source does nothing right now
+        // the _Ephemeral Stub Source_ does currently not support URL Session Protocol based stubbing.
         nil
     }
 

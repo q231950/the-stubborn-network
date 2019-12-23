@@ -41,7 +41,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
     func test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld() throws {
         let url = try XCTUnwrap(URL(string: "ftp://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientMock()
+        let client = ClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
 
         XCTAssertNoThrow(objectUnderTest.stopLoading())
@@ -50,7 +50,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
     func test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading() throws {
         let url = try XCTUnwrap(URL(string: "ftp://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientMock()
+        let client = ClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
         objectUnderTest.startLoading()
 
@@ -71,7 +71,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
     ]
 }
 
-class ClientMock: NSObject, URLProtocolClient {
+class ClientStub: NSObject, URLProtocolClient {
     var didFinishLoadingCount = 0
 
     func urlProtocol(_ protocol: URLProtocol, wasRedirectedTo request: URLRequest, redirectResponse: URLResponse) { }

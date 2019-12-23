@@ -14,12 +14,14 @@ public enum EnvironmentVariableKeys: String {
     case stubPath = "STUB_PATH"
 }
 
-/// A `StubSourceLocation` defines where to find a `StubSource`.
+/// A _Stub Source Location_ defines where to find a _Stub Source_.
 struct StubSourceLocation {
     let stubSourceName: String
     let stubSourcePath: String
 
-    /// The initializer takes a process info in order to read the environment variables
+    /// Create a _Stub Source Location_ from a _Process Info_.
+    ///
+    /// This initializer takes a process info in order to read the environment variables
     /// which define the path and name of the current stub source during test execution
     /// - Parameter processInfo: The process info is setup by the test, using the `EnvironmentVariableKeys` to specify
     /// a path and a name of a stub source

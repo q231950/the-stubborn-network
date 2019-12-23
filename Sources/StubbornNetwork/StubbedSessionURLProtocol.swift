@@ -67,6 +67,10 @@ public class StubbedSessionURLProtocol: URLProtocol {
 }
 
 extension StubbedSessionURLProtocol {
+
+    /// Gets the information about whether or not a URL scheme is supported by this protocol.
+    ///
+    /// - Parameter scheme: The scheme to check support for
     fileprivate class func canInit(with scheme: String?) -> Bool {
         switch scheme {
         case "http", "https":
