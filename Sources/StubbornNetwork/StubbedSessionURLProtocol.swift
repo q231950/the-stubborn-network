@@ -28,7 +28,6 @@ public class StubbedSessionURLProtocol: URLProtocol {
     /// This is a convenience initializer defined in URLProtocol.
     public convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?) {
         self.init(task: task, cachedResponse: cachedResponse, client: client, recorder: nil)
-
     }
 
     convenience init(task: URLSessionTask, cachedResponse: CachedURLResponse?, client: URLProtocolClient?, recorder: StubRecording?) {
@@ -70,8 +69,12 @@ public class StubbedSessionURLProtocol: URLProtocol {
     }
 
     private var recorder: StubRecording {
-        let urlSession = URLSession(configuration: .ephemeral)
-        return internalRecorder ?? StubRecorder(urlSession: urlSession, stubSource: stubbornNetwork.stubSource)
+        if let internalRecorder = internalRecorder {
+            return internalRecorder
+        } else {
+            let urlSession = URLSession(configuration: .ephemeral)
+            StubRecorder(urlSession: urlSession, stubSource: stubbornNetwork.stubSource)
+        }
     }
 
     var internalStubbornNetwork: StubbornNetwork?
