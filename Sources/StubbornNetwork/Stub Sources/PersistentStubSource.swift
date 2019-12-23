@@ -7,9 +7,18 @@
 
 import Foundation
 
-struct PersistentStubSource: StubSourceProtocol {
+class PersistentStubSource: StubSourceProtocol {
     let path: URL
     var stubs = [RequestStub]()
+
+    convenience init(with location: StubSourceLocation) {
+        let url = URL(string: location.stubSourcePath)
+        assert(url != nil, """
+            The path to the stub source is not a valid path.
+            Choose a valid path in the stub source configuration.
+            """)
+        self.init(name: location.stubSourceName, path: url!)
+    }
 
     init(path: URL) {
         self.path = path
@@ -19,6 +28,7 @@ struct PersistentStubSource: StubSourceProtocol {
         }
     }
 
+    // TODO: Remove this when the StubSourceProtocol gets cleaned up
     func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
         let requestStub = stub(forRequest: request)
         precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
@@ -28,7 +38,7 @@ struct PersistentStubSource: StubSourceProtocol {
                                       resumeCompletion: completionHandler)
     }
 
-    mutating func setupStubs(from data: Data) {
+    func setupStubs(from data: Data) {
         do {
             let decoder = JSONDecoder()
             let prerecordedStubs = try decoder.decode([RequestStub].self, from: data)
@@ -48,7 +58,7 @@ struct PersistentStubSource: StubSourceProtocol {
         return stubs.first(where: request.matches(requestStub:))
     }
 
-    mutating func store(_ stub: RequestStub) {
+    func store(_ stub: RequestStub) {
         print("Storing stub: \(stub) at \(path.absoluteString).")
 
         stubs.append(stub)
@@ -56,7 +66,7 @@ struct PersistentStubSource: StubSourceProtocol {
         save(stubs)
     }
 
-    mutating func clear() {
+    func clear() {
         stubs.removeAll()
 
         save(stubs)
@@ -87,7 +97,13 @@ extension URLRequest {
 }
 
 extension PersistentStubSource {
-    init(name: String, path: URL) {
+
+    /// Initialize a _Persistent Stub Source_ with a name and a path.
+    ///
+    /// - Parameters:
+    ///   - name: this is how the _Stub Source_ is called
+    ///   - path: the location of the _Stub Source_
+    convenience init(name: String, path: URL) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path.absoluteString) {
             PersistentStubSource.createStubDirectory(at: path)

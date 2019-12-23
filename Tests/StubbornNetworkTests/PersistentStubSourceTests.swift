@@ -18,7 +18,7 @@ class StubSourceTests: XCTestCase {
     }
 
     func testLoadsStubForRequest() {
-        var stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         let url = URL(string: "https://api.abc.com")
@@ -33,7 +33,7 @@ class StubSourceTests: XCTestCase {
     func testStoresStubResponse() {
         let url = URL(string: "127.0.0.1/abc")!
 
-        var stubSource = PersistentStubSource(path: url)
+        let stubSource = PersistentStubSource(path: url)
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -52,7 +52,7 @@ class StubSourceTests: XCTestCase {
 
         let url = URL(string: "\(stubSourceUrl.path)/123")!
 
-        var stubSource = PersistentStubSource(path: url)
+        let stubSource = PersistentStubSource(path: url)
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
