@@ -49,10 +49,4 @@ class EphemeralStubSource: StubSourceProtocol {
 	expectedErrors.removeAll()
     }
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
-        return URLSessionDataTaskStub(data: expectedDatas[request] ?? nil,
-                                      response: expectedResponses[request] ?? nil,
-                                      error: expectedErrors[request] ?? nil,
-                                      resumeCompletion: completionHandler)
-    }
 }

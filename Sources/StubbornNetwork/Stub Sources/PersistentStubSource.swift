@@ -28,16 +28,6 @@ class PersistentStubSource: StubSourceProtocol {
         }
     }
 
-    // TODO: Remove this when the StubSourceProtocol gets cleaned up
-    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
-        let requestStub = stub(forRequest: request)
-        precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
-        return URLSessionDataTaskStub(data: requestStub?.data,
-                                      response: requestStub?.response,
-                                      error: requestStub?.error,
-                                      resumeCompletion: completionHandler)
-    }
-
     func setupStubs(from data: Data) {
         do {
             let decoder = JSONDecoder()

@@ -32,9 +32,4 @@ struct CombinedStubSource: StubSourceProtocol {
         sources.forEach { $0.clear() }
     }
 
-    // TODO: remove this implementation when the declaration gets removed from `StubSourceProtocol`
-    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
-        URLSessionDataTaskStub(data: nil, response: nil, error: nil, resumeCompletion: { (_, _, _) -> Void in })
-    }
-
 }

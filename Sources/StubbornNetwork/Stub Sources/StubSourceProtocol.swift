@@ -28,11 +28,4 @@ protocol StubSourceProtocol {
     /// Clear the _Stub Source_. This ideally removes all stubs from the _Stub Source_.
     func clear()
 
-    // TODO: Remove this declaration from the protocol and cleanup the implementations as well
-    /// This function loads a stub for the for a given request and returns a `URLSessionTask`
-    /// and will execute the closure with the previously stubbed data/response/error
-    /// once the data task is resumed.
-    /// - Parameter request: The request to find a matching stub for
-    /// - Parameter completionHandler: The closure to execute once the data task is resumed
-    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask
 }
