@@ -18,46 +18,46 @@ final class StubbornNetworkTests: XCTestCase {
         XCTAssertTrue(configuration.protocolClasses?.first == StubbedSessionURLProtocol.self)
     }
 
-    func testEphemeralStubbedURLSessionNotNil() {
-        XCTAssertNotNil(StubbornNetwork.makeEphemeralSession())
-    }
-
-    func testStubbedURLSessionWithConfigurationNotNil() {
-        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .ephemeral))
-    }
-
-    func testPersistentStubbedURLSessionNotNil() throws {
-        let processInfo = ProcessInfoStub(stubName: "Stub",
-                                          stubPath: buildDirectory)
-
-        let location = try XCTUnwrap(StubSourceLocation(processInfo: processInfo))
-
-        XCTAssertNotNil(StubbornNetwork.stubbed(
-            withConfiguration: .persistent(location: location))
-        )
-    }
-
-    func testPersistentStubbedURLSessionFromProcessInfoNotNil() {
-        let processInfo = ProcessInfoStub(stubName: "Stub",
-                                          stubPath: buildDirectory
-        )
-
-        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withProcessInfo: processInfo))
-    }
-
-    func testPersistentStubbedURLSessionWithNameAndPathNotNil() {
-        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withName: "Stub",
-                                                              path: buildDirectory)
-        )
-    }
+//    func testEphemeralStubbedURLSessionNotNil() {
+//        XCTAssertNotNil(StubbornNetwork.makeEphemeralSession())
+//    }
+//
+//    func testStubbedURLSessionWithConfigurationNotNil() {
+//        XCTAssertNotNil(StubbornNetwork.stubbed(withConfiguration: .ephemeral))
+//    }
+//
+//    func testPersistentStubbedURLSessionNotNil() throws {
+//        let processInfo = ProcessInfoStub(stubName: "Stub",
+//                                          stubPath: buildDirectory)
+//
+//        let location = try XCTUnwrap(StubSourceLocation(processInfo: processInfo))
+//
+//        XCTAssertNotNil(StubbornNetwork.stubbed(
+//            withConfiguration: .persistent(location: location))
+//        )
+//    }
+//
+//    func testPersistentStubbedURLSessionFromProcessInfoNotNil() {
+//        let processInfo = ProcessInfoStub(stubName: "Stub",
+//                                          stubPath: buildDirectory
+//        )
+//
+//        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withProcessInfo: processInfo))
+//    }
+//
+//    func testPersistentStubbedURLSessionWithNameAndPathNotNil() {
+//        XCTAssertNotNil(StubbornNetwork.makePersistentSession(withName: "Stub",
+//                                                              path: buildDirectory)
+//        )
+//    }
 
     static var allTests = [
         ("test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols",
-         test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols),
-        ("testEphemeralStubbedURLSessionNotNil", testEphemeralStubbedURLSessionNotNil),
-        ("testStubbedURLSessionWithConfigurationNotNil", testStubbedURLSessionWithConfigurationNotNil),
-        ("testPersistentStubbedURLSessionNotNil", testPersistentStubbedURLSessionNotNil),
-        ("testPersistentStubbedURLSessionFromProcessInfoNotNil", testPersistentStubbedURLSessionFromProcessInfoNotNil),
-        ("testPersistentStubbedURLSessionWithNameAndPathNotNil", testPersistentStubbedURLSessionWithNameAndPathNotNil),
+         test_StubbornNetwork_insertsURLProcotolClass_beforeSystemProtocols)
+//        ("testEphemeralStubbedURLSessionNotNil", testEphemeralStubbedURLSessionNotNil),
+//        ("testStubbedURLSessionWithConfigurationNotNil", testStubbedURLSessionWithConfigurationNotNil),
+//        ("testPersistentStubbedURLSessionNotNil", testPersistentStubbedURLSessionNotNil),
+//        ("testPersistentStubbedURLSessionFromProcessInfoNotNil", testPersistentStubbedURLSessionFromProcessInfoNotNil),
+//        ("testPersistentStubbedURLSessionWithNameAndPathNotNil", testPersistentStubbedURLSessionWithNameAndPathNotNil),
     ]
 }
