@@ -114,7 +114,7 @@ class ClientStub: NSObject, URLProtocolClient {
 class StubRecorderMock: StubRecording {
     var recordCount = 0
 
-    func record(_ task: URLSessionTask?, bodyDataProcessor: BodyDataProcessor?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    func record(_ task: URLSessionTask?, processor: BodyDataProcessor?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         recordCount += 1
     }
 }
