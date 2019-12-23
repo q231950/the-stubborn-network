@@ -70,7 +70,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         // given there is no stub for the given request
         let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientMock()
+        let client = ClientStub()
         let recorder = StubRecorderMock()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
         objectUnderTest.startLoading()
