@@ -62,7 +62,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
         // then
         let someQueue = expectation(description: "Wait for another dispatch queue")
-        _ = XCTWaiter.wait(for: [someQueue], timeout: 1)
+        _ = XCTWaiter.wait(for: [someQueue], timeout: 0.1)
         XCTAssertEqual(client.didFinishLoadingCount, 1)
     }
 

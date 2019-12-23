@@ -81,7 +81,6 @@ public class StubbedSessionURLProtocol: URLProtocol {
     private var internalTask: URLSessionTask?
     private var internalClient: URLProtocolClient?
     private var internalRecorder: StubRecording?
-    private let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
 }
 
 extension StubbedSessionURLProtocol {
@@ -99,6 +98,7 @@ extension StubbedSessionURLProtocol {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
         }
 
+        let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
         queue.async {
             completion()
         }
