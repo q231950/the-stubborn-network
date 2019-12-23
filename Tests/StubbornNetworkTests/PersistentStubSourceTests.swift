@@ -17,14 +17,28 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.path)/a_name.json")
     }
 
-    func testLoadsStubForRequest() {
+    func test_persistentStubSource_loadsStub_forRequestWithBodyData() {
+        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+        stubSource.setupStubs(from: prerecordedStubMockData)
+
+        let url = URL(string: "https://api.abc.com")
+        var request = URLRequest(url: url!)
+        request.httpBody = "abc".data(using: .utf8)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = ["B": "BBB"]
+        let loadedStub = stubSource.stub(forRequest: request)
+
+        XCTAssertNotNil(loadedStub)
+    }
+
+    func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() {
         let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         let url = URL(string: "https://api.abc.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
-        request.allHTTPHeaderFields = ["B": "BBB"]
+        request.allHTTPHeaderFields = ["D": "DDD"]
         let loadedStub = stubSource.stub(forRequest: request)
 
         XCTAssertNotNil(loadedStub)
@@ -77,6 +91,7 @@ class StubSourceTests: XCTestCase {
                 {
                     "request": {
                         "url": "https://api.abc.com",
+                        "requestData": null,
                         "headerFields": [
                             "A[:::]AAA"
                         ],
@@ -88,6 +103,7 @@ class StubSourceTests: XCTestCase {
                 {
                     "request": {
                         "url": "https://api.abc.com",
+                        "requestData": "YWJj",
                         "headerFields": [
                             "B[:::]BBB"
                         ],
@@ -104,6 +120,7 @@ class StubSourceTests: XCTestCase {
                 {
                     "request": {
                         "url": "https://api.abc.com",
+                        "requestData": null,
                         "headerFields": [
                             "D[:::]DDD"
                         ],
@@ -123,7 +140,10 @@ class StubSourceTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testLoadsStubForRequest", testLoadsStubForRequest),
+        ("test_persistentStubSource_loadsStub_forRequestWithBodyData",
+         test_persistentStubSource_loadsStub_forRequestWithBodyData),
+        ("test_persistentStubSource_loadsStub_forRequestWithoutBodyData",
+         test_persistentStubSource_loadsStub_forRequestWithoutBodyData),
         ("testStoresStubResponse", testStoresStubResponse),
     ]
 }
