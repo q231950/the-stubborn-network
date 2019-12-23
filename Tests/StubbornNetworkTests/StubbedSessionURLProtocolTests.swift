@@ -86,8 +86,13 @@ class StubbedSessionURLProtocolTests: XCTestCase {
          test_StubbedSessionURLProtocol_canInitialize_withHTTPURLSessionTasks),
         ("test_StubbedSessionURLProtocol_cannotInitialize_withFTPURLSessionTasks",
          test_StubbedSessionURLProtocol_cannotInitialize_withFTPURLSessionTasks),
+         ("test_StubbedSessionURLProtocol_returnsACanonicalRequest",
+         test_StubbedSessionURLProtocol_returnsACanonicalRequest),
+         ("test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld",
+         test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld),
         ("test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading",
-         test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading)
+         test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading),
+         ("test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub", test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub)
     ]
 }
 
