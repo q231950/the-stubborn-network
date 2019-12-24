@@ -65,22 +65,27 @@ class BodyDataProcessorTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
-    //    func testPreparesResponseBodyBeforeDelivery() throws {
-    //        let asyncExpectation = expectation(description: "Wait for async completion")
-    //        let data = "123".data(using: .utf8)
-    //        let requestStub = RequestStub(request: request, data: data, response: nil, error: nil)
-    //        StubbornNetwork.standard.ephemeralStubSource.store(requestStub)
-    //        let task = stubbedSession?.dataTask(with: URL(string: "127.0.0.1")!, completionHandler: { (_, _, _) in
-    //            XCTAssertEqual(self.bodyDataProcessor.collector.dataForDeliveringResponseBody, data)
-    //            asyncExpectation.fulfill()
-    //        })
-    //        task?.resume()
-    //        wait(for: [asyncExpectation], timeout: 0.001)
-    //    }
+    func testPreparesResponseBodyBeforeDelivery() throws {
+        // given
+        let exp = expectation(description: "Wait for session")
+        let data = "123".data(using: .utf8)
+        let requestStub = RequestStub(request: request, data: data, response: nil, error: nil)
+        StubbornNetwork.standard.ephemeralStubSource.store(requestStub)
+
+        // when
+        session.dataTask(with: try XCTUnwrap(URL(string: "127.0.0.1"))) { (data, _, _) in
+
+            // then
+            XCTAssertEqual(self.bodyDataProcessor.collector.dataForDeliveringResponseBody, data)
+            exp.fulfill()
+        }.resume()
+
+        wait(for: [exp], timeout: 1)
+    }
 
     static var allTests = [
-        //        ("testPreparesRequestBodyBeforeStorage", testPreparesRequestBodyBeforeStorage),
+        ("testPreparesRequestBodyBeforeStorage", testPreparesRequestBodyBeforeStorage),
         ("testPreparesResponseBodyBeforeStorage", testPreparesResponseBodyBeforeStorage),
-        //        ("testPreparesResponseBodyBeforeDelivery", testPreparesResponseBodyBeforeDelivery),
+        ("testPreparesResponseBodyBeforeDelivery", testPreparesResponseBodyBeforeDelivery),
     ]
 }
