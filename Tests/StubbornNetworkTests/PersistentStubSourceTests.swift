@@ -11,6 +11,16 @@ import XCTest
 class StubSourceTests: XCTestCase {
 
     var stubSourceUrl = TestHelper.testingStubSourceUrl()
+    var session: URLSession!
+
+    override func setUp() {
+        super.setUp()
+        let configuration: URLSessionConfiguration = .ephemeral
+
+        StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
+
+        session = URLSession(configuration: configuration)
+    }
 
     func testPath() {
         let stubSource = PersistentStubSource(name: "a name", path: stubSourceUrl)
@@ -61,29 +71,31 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stub, loadedStub)
     }
 
-//    func testDataTaskStub() {
-//        let asyncExpectation = expectation(description: "Wait for async completion")
-//
-//        let url = URL(string: "\(stubSourceUrl.path)/123")!
-//
-//        let stubSource = PersistentStubSource(path: url)
-//
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "POST"
-//        request.allHTTPHeaderFields = ["B": "BBB"]
-//
-//        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: URLResponse(), error: nil)
-//        stubSource.store(stub)
-//
-//        let task = stubSource.dataTask(with: request) { (data, response, error) in
-//            XCTAssertEqual(self.prerecordedStubMockData, data)
-//            XCTAssertNotNil(response)
-//            XCTAssertNil(error)
-//            asyncExpectation.fulfill()
-//        }
-//        task.resume()
-//        wait(for: [asyncExpectation], timeout: 0.001)
-//    }
+    func testDataTaskStub() throws {
+        let asyncExpectation = expectation(description: "Wait for async completion")
+
+        let url = try XCTUnwrap(URL(string: "\(stubSourceUrl.path)/123"))
+
+        let stubSource = PersistentStubSource(path: url)
+
+        var request = URLRequest(url: try XCTUnwrap(URL(string: "https://elbedev.com/b")))
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = ["B": "BBB"]
+
+        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: URLResponse(), error: nil)
+        stubSource.store(stub)
+
+        StubbornNetwork.standard.ephemeralStubSource = try XCTUnwrap(stubSource)
+
+        session.dataTask(with: request) { (data, response, error) in
+            XCTAssertEqual(self.prerecordedStubMockData, data)
+            XCTAssertNotNil(response)
+            XCTAssertNil(error)
+            asyncExpectation.fulfill()
+        }.resume()
+
+        wait(for: [asyncExpectation], timeout: 0.001)
+    }
 
     var prerecordedStubMockData: Data {
         String("""

@@ -29,7 +29,7 @@ public class StubbornNetwork {
         return PersistentStubSource(with: location)
     }
 
-    var ephemeralStubSource: EphemeralStubSource?
+    var ephemeralStubSource: StubSourceProtocol?
 
     convenience init() {
         self.init(processInfo: ProcessInfo(), EphemeralStubSource())
