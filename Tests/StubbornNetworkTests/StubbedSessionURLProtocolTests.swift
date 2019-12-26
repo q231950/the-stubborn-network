@@ -55,7 +55,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
         objectUnderTest.internalStubbornNetwork = StubbornNetwork()
         let stub = RequestStub(request: task.originalRequest!)
-        objectUnderTest.internalStubbornNetwork?.ephemeralStubSource.store(stub)
+        objectUnderTest.internalStubbornNetwork?.ephemeralStubSource?.store(stub)
 
         // when
         objectUnderTest.startLoading()

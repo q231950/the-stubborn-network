@@ -13,27 +13,13 @@ import Foundation
 class EphemeralStubSource: StubSourceProtocol {
 
     var stubs = [RequestStub]()
-    var expectedDatas = [URLRequest: Data?]()
-    var expectedResponses = [URLRequest: URLResponse?]()
-    var expectedErrors = [URLRequest: Error?]()
 
     func store(_ stub: RequestStub) {
         stubs.append(stub)
-
-        if let data = stub.data {
-            expectedDatas[stub.request] = data
-        }
-
-        if let response = stub.response {
-            expectedResponses[stub.request] = response
-        }
-        if let error = stub.error {
-            expectedErrors[stub.request] = error
-        }
     }
 
     func hasStub(_ request: URLRequest) -> Bool {
-        stubs.contains(where: { $0.request == request })
+        stubs.contains(where: { $0.request.matches(request: request) })
     }
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
@@ -43,10 +29,7 @@ class EphemeralStubSource: StubSourceProtocol {
     }
 
     func clear() {
-	stubs.removeAll()
-	expectedDatas.removeAll()
-	expectedResponses.removeAll()
-	expectedErrors.removeAll()
+        stubs.removeAll()
     }
 
 }

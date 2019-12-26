@@ -90,13 +90,19 @@ extension StubbedSessionURLProtocol {
     }
 
     fileprivate func playback(data: Data?, response: URLResponse?, error: Error?, completion: @escaping () -> Void) {
-        if let data = data {
-            client?.urlProtocol(self, didLoad: data)
+
+        if let error = error {
+            client?.urlProtocol(self, didFailWithError: error)
+        } else {
+            if let data = data {
+                client?.urlProtocol(self, didLoad: data)
+            }
+
+            if let response = response {
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
+            }
         }
 
-        if let response = response {
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
-        }
 
         let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
         queue.async {

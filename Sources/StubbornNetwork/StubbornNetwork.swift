@@ -29,14 +29,19 @@ public class StubbornNetwork {
         return PersistentStubSource(with: location)
     }
 
-    let ephemeralStubSource = EphemeralStubSource()
+    var ephemeralStubSource: EphemeralStubSource?
 
     convenience init() {
-        self.init(processInfo: ProcessInfo())
+        self.init(processInfo: ProcessInfo(), EphemeralStubSource())
     }
 
-    init(processInfo: ProcessInfo) {
+    init(processInfo: ProcessInfo? = ProcessInfo(),
+         _ ephemeralStubSource: EphemeralStubSource?) {
+
+        guard let processInfo = processInfo else { abort() }
+
         self.processInfo = processInfo
+        self.ephemeralStubSource = ephemeralStubSource
     }
 }
 
