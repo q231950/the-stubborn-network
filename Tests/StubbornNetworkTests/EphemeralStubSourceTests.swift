@@ -55,7 +55,7 @@ class EphemeralStubSourceTests: XCTestCase {
             exp.fulfill()
         }.resume()
 
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 0.01)
     }
 
     static var allTests = [

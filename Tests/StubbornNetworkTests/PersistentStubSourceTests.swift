@@ -27,6 +27,12 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.path)/a_name.json")
     }
 
+    func test_persistentStubSource_findsLocation_inProcessInfo() throws {
+        let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: TestHelper.testingStubSourcePath())
+        let location = StubSourceLocation(processInfo: processInfo)
+        XCTAssertNotNil(PersistentStubSource(with: try XCTUnwrap(location)))
+    }
+
     func test_persistentStubSource_loadsStub_forRequestWithBodyData() {
         let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
         stubSource.setupStubs(from: prerecordedStubMockData)
@@ -97,6 +103,16 @@ class StubSourceTests: XCTestCase {
         wait(for: [asyncExpectation], timeout: 0.001)
     }
 
+    func test_persistentStubSource_clearsStubs() {
+        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+        stubSource.setupStubs(from: prerecordedStubMockData)
+        XCTAssertEqual(stubSource.stubs.count, 3)
+
+        stubSource.clear()
+
+        XCTAssertEqual(stubSource.stubs.count, 0)
+    }
+
     var prerecordedStubMockData: Data {
         String("""
             [
@@ -152,6 +168,8 @@ class StubSourceTests: XCTestCase {
     }
 
     static var allTests = [
+        ("test_persistentStubSource_findsLocation_inProcessInfo",
+        test_persistentStubSource_findsLocation_inProcessInfo),
         ("test_persistentStubSource_loadsStub_forRequestWithBodyData",
          test_persistentStubSource_loadsStub_forRequestWithBodyData),
         ("test_persistentStubSource_loadsStub_forRequestWithoutBodyData",

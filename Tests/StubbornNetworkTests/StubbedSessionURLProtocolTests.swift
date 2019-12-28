@@ -53,17 +53,37 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = ClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
-        objectUnderTest.internalStubbornNetwork = StubbornNetwork()
+        let ephemeralStubSource = EphemeralStubSource()
+
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
         let stub = RequestStub(request: task.originalRequest!)
-        objectUnderTest.internalStubbornNetwork?.ephemeralStubSource?.store(stub)
+        ephemeralStubSource.store(stub)
 
         // when
         objectUnderTest.startLoading()
 
         // then
-        let someQueue = expectation(description: "Wait for another dispatch queue")
-        _ = XCTWaiter.wait(for: [someQueue], timeout: 0.1)
-        XCTAssertEqual(client.didFinishLoadingCount, 1)
+        objectUnderTest.queue?.sync {
+            XCTAssertEqual(client.didFinishLoadingCount, 1)
+        }
+    }
+
+    func test_StubbedSessionURLProtocol_doesNotRecord_whenItFindsMatchingStub() throws {
+        // given there is no stub for the given request
+        // given there is a stub for the given request
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let task = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let client = ClientStub()
+        let recorder = StubRecorderMock()
+        let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
+        let ephemeralStubSource = EphemeralStubSource()
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
+
+        let stub = RequestStub(request: task.originalRequest!)
+        ephemeralStubSource.store(stub)
+
+        objectUnderTest.startLoading()
+        XCTAssertEqual(recorder.recordCount, 0)
     }
 
     func test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub() throws {
@@ -86,13 +106,13 @@ class StubbedSessionURLProtocolTests: XCTestCase {
          test_StubbedSessionURLProtocol_canInitialize_withHTTPURLSessionTasks),
         ("test_StubbedSessionURLProtocol_cannotInitialize_withFTPURLSessionTasks",
          test_StubbedSessionURLProtocol_cannotInitialize_withFTPURLSessionTasks),
-         ("test_StubbedSessionURLProtocol_returnsACanonicalRequest",
+        ("test_StubbedSessionURLProtocol_returnsACanonicalRequest",
          test_StubbedSessionURLProtocol_returnsACanonicalRequest),
-         ("test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld",
+        ("test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld",
          test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld),
         ("test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading",
          test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading),
-         ("test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub", test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub)
+        ("test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub", test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub)
     ]
 }
 

@@ -23,8 +23,8 @@ public class StubbornNetwork {
     ///  - modify the response body just before delivering a stub
     public var bodyDataProcessor: BodyDataProcessor?
 
-    private var persistentStubSource: StubSourceProtocol? {
-        guard let location = StubSourceLocation(processInfo: ProcessInfo()) else { return nil }
+    var persistentStubSource: StubSourceProtocol? {
+        guard let location = StubSourceLocation(processInfo: processInfo) else { return nil }
 
         return PersistentStubSource(with: location)
     }
@@ -32,11 +32,11 @@ public class StubbornNetwork {
     var ephemeralStubSource: StubSourceProtocol?
 
     convenience init() {
-        self.init(processInfo: ProcessInfo(), EphemeralStubSource())
+        self.init(processInfo: ProcessInfo(), nil)
     }
 
     init(processInfo: ProcessInfo? = ProcessInfo(),
-         _ ephemeralStubSource: EphemeralStubSource?) {
+         _ ephemeralStubSource: EphemeralStubSource? = EphemeralStubSource()) {
 
         guard let processInfo = processInfo else { abort() }
 
@@ -55,7 +55,8 @@ extension StubbornNetwork {
     }
 
     var stubSource: StubSourceProtocol {
-        return CombinedStubSource(sources: [ephemeralStubSource, persistentStubSource].compactMap { $0 })
+        let sources = [ephemeralStubSource, persistentStubSource].compactMap { $0 }
+        return CombinedStubSource(sources: sources)
     }
 }
 

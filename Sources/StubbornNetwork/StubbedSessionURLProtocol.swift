@@ -36,6 +36,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
         internalClient = client
         internalTask = task
         internalRecorder = recorder
+        queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue", qos: .utility)
     }
 
     override public func startLoading() {
@@ -81,6 +82,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
     private var internalTask: URLSessionTask?
     private var internalClient: URLProtocolClient?
     private var internalRecorder: StubRecording?
+    var queue: DispatchQueue?
 }
 
 extension StubbedSessionURLProtocol {
@@ -103,9 +105,7 @@ extension StubbedSessionURLProtocol {
             }
         }
 
-
-        let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
-        queue.async {
+        queue?.sync {
             completion()
         }
     }
