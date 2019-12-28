@@ -59,14 +59,3 @@ extension StubbornNetwork {
         return CombinedStubSource(sources: sources)
     }
 }
-
-// MARK: Module Internal Implementation Details
-
-extension StubbornNetwork {
-
-    static func persistentStubSource(withProcessInfo processInfo: ProcessInfo = ProcessInfo()) -> StubSourceProtocol {
-        // temporary force unwrap since the this will go away anyways in the light of URL protocol based stubbing
-        let location = StubSourceLocation(processInfo: processInfo)!
-        return PersistentStubSource(with: location)
-    }
-}
