@@ -45,7 +45,7 @@ class PersistentStubSource: StubSourceProtocol {
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
         print("Loading stub for request \(request.url?.absoluteString ?? "unknown")")
-        return stubs.first(where: request.matches(requestStub:))
+        return stubs.first(where: { request.matches(otherRequest: $0.request) })
     }
 
     func store(_ stub: RequestStub) {
@@ -108,26 +108,5 @@ extension PersistentStubSource {
         } catch let error {
             assertionFailure("Unable to create stub directory. \(error.localizedDescription)")
         }
-    }
-}
-
-extension URLRequest {
-    func matches(requestStub: RequestStub) -> Bool {
-        return matches(request: requestStub.request)
-    }
-
-    func matches(request other: URLRequest) -> Bool {
-        let sortedA = self.allHTTPHeaderFields?.map({ (key, value) -> String in
-            return key.lowercased() + value
-        }).sorted(by: <)
-
-        let sortedB = other.allHTTPHeaderFields?.map({ (key, value) -> String in
-            return key.lowercased() + value
-        }).sorted(by: <)
-
-        return self.url == other.url &&
-            self.httpMethod == other.httpMethod &&
-            (self.httpBody == other.httpBody || self.httpBody == nil && other.httpBody == nil) &&
-            sortedA == sortedB
     }
 }

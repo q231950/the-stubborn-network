@@ -24,7 +24,7 @@ class EphemeralStubSource: StubSourceProtocol {
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
         stubs.first { (stub) -> Bool in
-            stub.request.matches(request: request)
+            stub.request.matches(otherRequest: request)
         }
     }
 
