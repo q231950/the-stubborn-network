@@ -19,7 +19,7 @@ class EphemeralStubSource: StubSourceProtocol {
     }
 
     func hasStub(_ request: URLRequest) -> Bool {
-        stubs.contains(where: { $0.request.matches(request: request) })
+        stubs.contains(where: { $0.request.matches(otherRequest: request) })
     }
 
     func stub(forRequest request: URLRequest) -> RequestStub? {
