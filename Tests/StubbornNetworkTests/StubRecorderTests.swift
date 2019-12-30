@@ -32,8 +32,8 @@ class StubRecorderTests: XCTestCase {
                                         error: nil)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+
         recorder.record(task, processor: nil) { (data, response, _) in
             XCTAssertEqual(data, self.expectedData)
             XCTAssertEqual(response, self.expectedResponse)
@@ -47,8 +47,8 @@ class StubRecorderTests: XCTestCase {
                                         error: TestError.expected)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+
         recorder.record(task, processor: nil) { (_, _, error) in
             XCTAssertEqual(error?.localizedDescription, TestError.expected.localizedDescription)
         }
@@ -63,10 +63,10 @@ class StubRecorderTests: XCTestCase {
                                         error: nil)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
-        recorder.record(task, processor: nil) { (_, _, _) in
-        }
+
+        recorder.record(task, processor: nil) { (_, _, _) in }
+
         XCTAssertEqual(self.stubSource.stubs.first?.data, self.expectedData)
         XCTAssertEqual(self.stubSource.stubs.first?.response, self.expectedResponse)
     }
@@ -78,8 +78,8 @@ class StubRecorderTests: XCTestCase {
                                         error: TestError.expected)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+
         recorder.record(task, processor: nil) { (_, _, _) in }
 
         let stub = try XCTUnwrap(self.stubSource.stubs.first)
@@ -95,8 +95,8 @@ class StubRecorderTests: XCTestCase {
                                         error: nil)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+
         let bodyDataProcessorStub = BodyDataProcessorStub()
         recorder.record(task, processor: bodyDataProcessorStub) { (_, _, _) in }
 
@@ -106,8 +106,18 @@ class StubRecorderTests: XCTestCase {
     }
 
     static var allTests = [
-    ("test_stubRecorder_CompletesWithOriginalDataAndResponse",
-    test_stubRecorder_CompletesWithOriginalDataAndResponse),
+        ("test_stubRecorder_CompletesWithOriginalDataAndResponse",
+         test_stubRecorder_CompletesWithOriginalDataAndResponse),
+        ("test_stubRecorder_CompletesWithOriginalError",
+         test_stubRecorder_CompletesWithOriginalError),
+        ("test_stubRecorder_RecordsDataAndResponse",
+         test_stubRecorder_RecordsDataAndResponse),
+        ("test_stubRecorder_RecordsDataAndResponse",
+         test_stubRecorder_RecordsDataAndResponse),
+        ("test_stubRecorder_RecordsError",
+         test_stubRecorder_RecordsError),
+        ("test_stubRecorder_passesDataThroughBodyDataProcessor_beforeStoringStub",
+         test_stubRecorder_passesDataThroughBodyDataProcessor_beforeStoringStub)
     ]
 
 }

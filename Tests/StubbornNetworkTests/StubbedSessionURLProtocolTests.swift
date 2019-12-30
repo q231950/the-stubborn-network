@@ -54,22 +54,16 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let client = ClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
         let ephemeralStubSource = EphemeralStubSource()
+        let stub = RequestStub(request: task.originalRequest!)
 
         objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
-        let stub = RequestStub(request: task.originalRequest!)
         ephemeralStubSource.store(stub)
-
-        // when
         objectUnderTest.startLoading()
 
-        // then
-        objectUnderTest.queue?.sync {
-            XCTAssertEqual(client.didFinishLoadingCount, 1)
-        }
+        XCTAssertEqual(client.didFinishLoadingCount, 1)
     }
 
     func test_StubbedSessionURLProtocol_doesNotRecord_whenItFindsMatchingStub() throws {
-        // given there is no stub for the given request
         // given there is a stub for the given request
         let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
@@ -77,12 +71,12 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let recorder = StubRecorderMock()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
         let ephemeralStubSource = EphemeralStubSource()
-        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
-
         let stub = RequestStub(request: task.originalRequest!)
-        ephemeralStubSource.store(stub)
 
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
+        ephemeralStubSource.store(stub)
         objectUnderTest.startLoading()
+
         XCTAssertEqual(recorder.recordCount, 0)
     }
 
@@ -93,7 +87,9 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let client = ClientStub()
         let recorder = StubRecorderMock()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
+
         objectUnderTest.startLoading()
+
         XCTAssertEqual(recorder.recordCount, 1)
     }
 
