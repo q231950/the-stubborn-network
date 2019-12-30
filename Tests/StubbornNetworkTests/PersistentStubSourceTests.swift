@@ -100,7 +100,7 @@ class StubSourceTests: XCTestCase {
             asyncExpectation.fulfill()
         }.resume()
 
-        wait(for: [asyncExpectation], timeout: 0.001)
+        wait(for: [asyncExpectation], timeout: 0.01)
     }
 
     func test_persistentStubSource_clearsStubs() {
