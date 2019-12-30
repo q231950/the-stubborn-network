@@ -43,6 +43,7 @@ final class StubbornNetworkTests: XCTestCase {
          testEphemeralStubbedURLSessionNotNil),
         ("testPersistentStubbedURLSessionFromProcessInfoNotNil",
          testPersistentStubbedURLSessionFromProcessInfoNotNil),
-        ("test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime", test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime)
+        ("test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime",
+         test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime)
     ]
 }

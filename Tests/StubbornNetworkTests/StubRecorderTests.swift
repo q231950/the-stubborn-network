@@ -19,8 +19,8 @@ class StubRecorderTests: XCTestCase {
         super.setUp()
 
         expectedData = "abc".data(using: .utf8)
-        url = URL(string:"http://elbedev.com")!
-        expectedResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "1.1", headerFields: ["a":"b"])
+        url = URL(string: "http://elbedev.com")!
+        expectedResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "1.1", headerFields: ["a": "b"])
     }
 
     // MARK: Verify request responses
@@ -109,21 +109,5 @@ class StubRecorderTests: XCTestCase {
     ("test_stubRecorder_CompletesWithOriginalDataAndResponse",
     test_stubRecorder_CompletesWithOriginalDataAndResponse),
     ]
-
-}
-
-struct BodyDataProcessorStub: BodyDataProcessor {
-    func dataForStoringRequestBody(data: Data?, of request: URLRequest) -> Data? {
-        "⚡️⚡️⚡️ dataForStoringRequestBody ⚡️⚡️⚡️".data(using: .utf8)
-    }
-
-    func dataForStoringResponseBody(data: Data?, of request: URLRequest) -> Data? {
-        "🐠🐠🐠 dataForStoringResponseBody 🐠🐠🐠".data(using: .utf8)
-    }
-
-    func dataForDeliveringResponseBody(data: Data?, of request: URLRequest) -> Data? {
-        "🐻🐞 dataForDeliveringResponseBody 🐻🐞".data(using: .utf8)
-    }
-
 
 }

@@ -26,11 +26,12 @@ class URLSessionDataTaskStub: URLSessionDataTask {
     }
     var resumeCompletion: ((Data?, URLResponse?, Error?) -> Void)
 
-
     convenience init(originalRequest: URLRequest?) {
-        self.init(originalRequest: originalRequest, data: nil, response: nil, error: nil, resumeCompletion: {
-        (_, _, _) in
-        })
+        self.init(originalRequest: originalRequest,
+                  data: nil,
+                  response: nil,
+                  error: nil,
+                  resumeCompletion: { (_, _, _) in })
     }
 
     init(originalRequest: URLRequest?,
