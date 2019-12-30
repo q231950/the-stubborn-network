@@ -80,12 +80,6 @@ class PersistentStubSource: StubSourceProtocol {
     }
 }
 
-extension URLRequest {
-    var preconditionFailureDescription: String {
-        "Unable to find a request stub for the given request: \(url?.absoluteString ?? "")."
-    }
-}
-
 extension PersistentStubSource {
 
     /// Initialize a _Persistent Stub Source_ with a name and a path.
