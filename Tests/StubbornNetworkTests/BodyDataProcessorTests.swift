@@ -10,7 +10,7 @@ import XCTest
 
 class BodyDataProcessorTests: XCTestCase {
 
-    let bodyDataProcessor = TestingBodyDataProcessor()
+    let bodyDataProcessor = BodyDataProcessorStub()
     var request: URLRequest!
     var session: URLSession!
 

@@ -8,17 +8,28 @@
 import Foundation
 import StubbornNetwork
 
+class TestingDataCollector {
+    var dataForStoringRequestBody: Data?
+    var dataForStoringResponseBody: Data?
+    var dataForDeliveringResponseBody: Data?
+}
+
 struct BodyDataProcessorStub: BodyDataProcessor {
+    var collector = TestingDataCollector()
+
     func dataForStoringRequestBody(data: Data?, of request: URLRequest) -> Data? {
-        "⚡️⚡️⚡️ dataForStoringRequestBody ⚡️⚡️⚡️".data(using: .utf8)
+        collector.dataForStoringRequestBody = data
+        return "⚡️⚡️⚡️ dataForStoringRequestBody ⚡️⚡️⚡️".data(using: .utf8)
     }
 
     func dataForStoringResponseBody(data: Data?, of request: URLRequest) -> Data? {
-        "🐠🐠🐠 dataForStoringResponseBody 🐠🐠🐠".data(using: .utf8)
+        collector.dataForStoringResponseBody = data
+        return "🐠🐠🐠 dataForStoringResponseBody 🐠🐠🐠".data(using: .utf8)
     }
 
     func dataForDeliveringResponseBody(data: Data?, of request: URLRequest) -> Data? {
-        "🐻🐞 dataForDeliveringResponseBody 🐻🐞".data(using: .utf8)
+        collector.dataForDeliveringResponseBody = data
+        return "🐻🐞 dataForDeliveringResponseBody 🐻🐞".data(using: .utf8)
     }
 
 }
