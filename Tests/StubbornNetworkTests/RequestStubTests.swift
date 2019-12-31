@@ -10,18 +10,21 @@ import XCTest
 
 final class RequestStubTests: XCTestCase {
 
-    func testProperlyEncodesRequests() throws {
-        var request = URLRequest(url: URL(string: "123.4.5.6")!)
+    func test_requestStub_properlyEncodesRequests() throws {
+        let url = try XCTUnwrap(URL(string: "123.4.5.6"))
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = "some data".data(using: .utf8)
 
-        let requestStub = RequestStub(request: request)
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "1.1", headerFields: ["A": "aaa"])
+
+        let requestStub = RequestStub(request: request, response: response)
 
         let encoder = JSONEncoder()
         let result = try encoder.encode(requestStub)
         let json = String(data: result, encoding: .utf8)
         XCTAssertEqual(json, """
-        {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"},\"data\":null,\"response\":{}}
+        {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"},\"data\":null,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"]}}
         """)
     }
 
@@ -65,8 +68,11 @@ final class RequestStubTests: XCTestCase {
     }
 
     static var allTests = [
-        ("properlyEncodesStubbedRequest", testProperlyEncodesRequests),
-        ("testDecodesData", testDecodesData),
-        ("testDecodesHTTPMethod", testDecodesHTTPMethod),
+        ("test_requestStub_properlyEncodesRequests",
+        test_requestStub_properlyEncodesRequests),
+        ("testDecodesData",
+        testDecodesData),
+        ("testDecodesHTTPMethod",
+        testDecodesHTTPMethod),
     ]
 }
