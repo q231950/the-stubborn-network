@@ -22,7 +22,7 @@ final class StubbornNetworkTests: XCTestCase {
         do {
             url = try XCTUnwrap(URL(string: "http://elbedev.com"))
         } catch {
-            XCTFail()
+            XCTFail("Test can't be set up with an incorrect url.")
         }
     }
 

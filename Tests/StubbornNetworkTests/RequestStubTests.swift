@@ -23,8 +23,14 @@ final class RequestStubTests: XCTestCase {
         let encoder = JSONEncoder()
         let result = try encoder.encode(requestStub)
         let json = String(data: result, encoding: .utf8)
+
         XCTAssertEqual(json, """
-        {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"},\"data\":null,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"]}}
+        {\"request\":{\"headerFields\":[],\
+        \"method\":\"POST\",\
+        \"requestData\":\"c29tZSBkYXRh\",\
+        \"url\":\"123.4.5.6\"},\
+        \"data\":null,\
+        \"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"]}}
         """)
     }
 
