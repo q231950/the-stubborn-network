@@ -52,8 +52,6 @@ public class StubbedSessionURLProtocol: URLProtocol {
                     self.playback(data: data, response: response, error: error) { notifyFinished() }
                 }
             }
-        } else {
-            notifyFinished()
         }
     }
 
