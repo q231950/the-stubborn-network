@@ -15,7 +15,9 @@ class EphemeralStubSource: StubSourceProtocol {
     var stubs = [RequestStub]()
 
     func store(_ stub: RequestStub) {
-        stubs.append(stub)
+        if !hasStub(stub.request) {
+            stubs.append(stub)
+        }
     }
 
     func hasStub(_ request: URLRequest) -> Bool {

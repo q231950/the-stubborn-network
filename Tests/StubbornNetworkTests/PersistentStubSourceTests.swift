@@ -77,30 +77,20 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stub, loadedStub)
     }
 
-    func testDataTaskStub() throws {
-        let asyncExpectation = expectation(description: "Wait for async completion")
-
-        let url = try XCTUnwrap(URL(string: "\(stubSourceUrl.path)/123"))
+    func test_persistentStubSource_storesNoDuplicateRequests() throws {
+        let url = URL(string: "127.0.0.1/abc")!
 
         let stubSource = PersistentStubSource(path: url)
 
-        var request = URLRequest(url: try XCTUnwrap(URL(string: "https://elbedev.com/b")))
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: URLResponse(), error: nil)
+        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        stubSource.store(stub)
         stubSource.store(stub)
 
-        StubbornNetwork.standard.ephemeralStubSource = try XCTUnwrap(stubSource)
-
-        session.dataTask(with: request) { (data, response, error) in
-            XCTAssertEqual(self.prerecordedStubMockData, data)
-            XCTAssertNotNil(response)
-            XCTAssertNil(error)
-            asyncExpectation.fulfill()
-        }.resume()
-
-        wait(for: [asyncExpectation], timeout: 0.01)
+        XCTAssertEqual(stubSource.stubs.count, 1)
     }
 
     func test_persistentStubSource_clearsStubs() {
