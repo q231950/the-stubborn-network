@@ -23,6 +23,11 @@ public class StubbornNetwork {
     ///  - modify the response body just before delivering a stub
     public var bodyDataProcessor: BodyDataProcessor?
 
+    /// Removes the body data processor
+    func removeBodyDataProcessor() {
+        bodyDataProcessor = nil
+    }
+
     var persistentStubSource: StubSourceProtocol? {
         guard let location = StubSourceLocation(processInfo: processInfo) else { return nil }
 

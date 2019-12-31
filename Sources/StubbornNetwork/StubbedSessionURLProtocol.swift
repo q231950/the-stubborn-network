@@ -67,7 +67,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
         internalStubbornNetwork ?? StubbornNetwork.standard
     }
 
-    private var recorder: StubRecording {
+    var recorder: StubRecording {
         if let internalRecorder = internalRecorder {
             return internalRecorder
         } else {
@@ -95,7 +95,8 @@ extension StubbedSessionURLProtocol {
             client?.urlProtocol(self, didFailWithError: error)
         } else {
             if let data = data {
-                client?.urlProtocol(self, didLoad: data)
+                let processedData = stubbornNetwork.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: internalTask!.originalRequest!) ?? data
+                client?.urlProtocol(self, didLoad: processedData)
             }
 
             if let response = response {

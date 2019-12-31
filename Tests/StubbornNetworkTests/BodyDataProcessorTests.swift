@@ -17,7 +17,7 @@ class BodyDataProcessorTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        request = URLRequest(url: URL(string: "127.0.0.1")!)
+        request = URLRequest(url: URL(string: "https://elbedev.com")!)
         StubbornNetwork.standard.bodyDataProcessor = bodyDataProcessor
 
         let configuration: URLSessionConfiguration = .ephemeral
@@ -25,6 +25,8 @@ class BodyDataProcessorTests: XCTestCase {
         StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
 
         session = URLSession(configuration: configuration)
+
+        StubbornNetwork.standard.ephemeralStubSource = EphemeralStubSource()
     }
 
     func testPreparesRequestBodyBeforeStorage() throws {
@@ -73,10 +75,13 @@ class BodyDataProcessorTests: XCTestCase {
         StubbornNetwork.standard.ephemeralStubSource?.store(requestStub)
 
         // when
-        session.dataTask(with: try XCTUnwrap(URL(string: "127.0.0.1"))) { (data, _, _) in
+        session.dataTask(with: request) { (data, _, _) in
 
             // then
-            XCTAssertEqual(self.bodyDataProcessor.collector.dataForDeliveringResponseBody, data)
+            let actualResponseBody = String(data: data!, encoding:
+                .utf8)
+            XCTAssertEqual(actualResponseBody,
+                           "🐻🐞 dataForDeliveringResponseBody 🐻🐞")
             exp.fulfill()
         }.resume()
 

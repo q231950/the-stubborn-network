@@ -93,6 +93,15 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         XCTAssertEqual(recorder.recordCount, 1)
     }
 
+    func test_StubbedSessionURLProtocol_hasDefaultStubRecorder() throws {
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let task = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let client = URLProtocolClientStub()
+        let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: nil)
+
+        XCTAssertNotNil(objectUnderTest.recorder)
+    }
+
     static var allTests = [
         ("test_StubbedSessionURLProtocol_canInitialize_withHTTPRequests",
          test_StubbedSessionURLProtocol_canInitialize_withHTTPRequests),
@@ -137,5 +146,6 @@ class StubRecorderMock: StubRecording {
 
     func record(_ task: URLSessionTask?, processor: BodyDataProcessor?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         recordCount += 1
+        completion("⚡️".data(using: .utf8), URLResponse(), nil)
     }
 }

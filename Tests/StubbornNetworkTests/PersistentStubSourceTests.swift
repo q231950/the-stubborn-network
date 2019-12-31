@@ -18,6 +18,7 @@ class StubSourceTests: XCTestCase {
         let configuration: URLSessionConfiguration = .ephemeral
 
         StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
+        StubbornNetwork.standard.removeBodyDataProcessor()
 
         session = URLSession(configuration: configuration)
     }
