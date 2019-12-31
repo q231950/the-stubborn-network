@@ -23,15 +23,15 @@ class StubSourceTests: XCTestCase {
         session = URLSession(configuration: configuration)
     }
 
-    func testPath() {
+    func test_persistentStubSource_canBeInitialized_givenAPathAndName() {
         let stubSource = PersistentStubSource(name: "a name", path: stubSourceUrl)
-        XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.path)/a_name.json")
+        XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.absoluteString)/a_name.json")
     }
 
-    func test_persistentStubSource_findsLocation_inProcessInfo() throws {
+    func test_persistentStubSource_canBeInitialized_givenAProcessInfo() throws {
         let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: TestHelper.testingStubSourcePath())
-        let location = StubSourceLocation(processInfo: processInfo)
-        XCTAssertNotNil(PersistentStubSource(with: try XCTUnwrap(location)))
+        let location = try XCTUnwrap(StubSourceLocation(processInfo: processInfo))
+        XCTAssertNotNil(PersistentStubSource(with: location))
     }
 
     func test_persistentStubSource_loadsStub_forRequestWithBodyData() {
@@ -61,7 +61,7 @@ class StubSourceTests: XCTestCase {
         XCTAssertNotNil(loadedStub)
     }
 
-    func testStoresStubResponse() {
+    func test_persistentStubSource_storesStub() {
         let url = URL(string: "127.0.0.1/abc")!
 
         let stubSource = PersistentStubSource(path: url)
@@ -96,12 +96,22 @@ class StubSourceTests: XCTestCase {
 
     func test_persistentStubSource_clearsStubs() {
         let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+        stubSource.clear()
         stubSource.setupStubs(from: prerecordedStubMockData)
         XCTAssertEqual(stubSource.stubs.count, 3)
 
         stubSource.clear()
 
         XCTAssertEqual(stubSource.stubs.count, 0)
+    }
+
+    func test_persistentStubSource_savesToDisk() {
+        let stubSource = PersistentStubSource(name: "the stubborn network testing", path: stubSourceUrl)
+        stubSource.setupStubs(from: prerecordedStubMockData)
+        stubSource.save(stubSource.stubs)
+
+        let secondStubSource = PersistentStubSource(name: "the stubborn network testing", path: stubSourceUrl)
+        XCTAssertEqual(secondStubSource.stubs.count, 3)
     }
 
     var prerecordedStubMockData: Data {
@@ -159,12 +169,19 @@ class StubSourceTests: XCTestCase {
     }
 
     static var allTests = [
-        ("test_persistentStubSource_findsLocation_inProcessInfo",
-        test_persistentStubSource_findsLocation_inProcessInfo),
+        ("test_persistentStubSource_canBeInitialized_givenAPathAndName",
+        test_persistentStubSource_canBeInitialized_givenAPathAndName),
+        ("test_persistentStubSource_canBeInitialized_givenAProcessInfo",
+        test_persistentStubSource_canBeInitialized_givenAProcessInfo),
         ("test_persistentStubSource_loadsStub_forRequestWithBodyData",
          test_persistentStubSource_loadsStub_forRequestWithBodyData),
         ("test_persistentStubSource_loadsStub_forRequestWithoutBodyData",
          test_persistentStubSource_loadsStub_forRequestWithoutBodyData),
-        ("testStoresStubResponse", testStoresStubResponse),
+        ("test_persistentStubSource_storesStub",
+        test_persistentStubSource_storesStub),
+        ("test_persistentStubSource_storesNoDuplicateRequests",
+        test_persistentStubSource_storesNoDuplicateRequests),
+        ("test_persistentStubSource_clearsStubs",
+        test_persistentStubSource_clearsStubs)
     ]
 }
