@@ -41,17 +41,58 @@ class StubbedSessionURLProtocolTests: XCTestCase {
     func test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld() throws {
         let url = try XCTUnwrap(URL(string: "ftp://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientStub()
+        let client = URLProtocolClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
 
         XCTAssertNoThrow(objectUnderTest.stopLoading())
+    }
+
+    func test_StubbedSessionURLProtocol_playsBackDataAndResponse_whenItFindsMatchingStub() throws {
+        // given there is a stub for the given request
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let task = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let client = URLProtocolClientStub()
+        let recorder = StubRecorderMock()
+        let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
+        let ephemeralStubSource = EphemeralStubSource()
+        let expectedData = "🌈".data(using: .utf8)
+        let expectedResponse = URLResponse()
+        let stub = RequestStub(request: task.originalRequest!, data: expectedData, response: expectedResponse, error: nil)
+
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
+        ephemeralStubSource.store(stub)
+        objectUnderTest.startLoading()
+
+        XCTAssertEqual(client.didLoadData, expectedData)
+        XCTAssertEqual(client.didReceiveResponse, expectedResponse)
+    }
+
+    func test_StubbedSessionURLProtocol_playsBackError_whenItFindsMatchingStub() throws {
+        // given there is a stub for the given request
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let task = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let client = URLProtocolClientStub()
+        let recorder = StubRecorderMock()
+        let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
+        let ephemeralStubSource = EphemeralStubSource()
+        let stub = RequestStub(request: task.originalRequest!,
+                               data: nil,
+                               response: nil,
+                               error: TestError.expected)
+
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
+        ephemeralStubSource.store(stub)
+        objectUnderTest.startLoading()
+
+        XCTAssertEqual(client.didFailWithError?.localizedDescription,
+                       TestError.expected.localizedDescription)
     }
 
     func test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading() throws {
         // given there is a stub for the given request
         let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientStub()
+        let client = URLProtocolClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
         let ephemeralStubSource = EphemeralStubSource()
         let stub = RequestStub(request: task.originalRequest!)
@@ -67,7 +108,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         // given there is a stub for the given request
         let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientStub()
+        let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
         let ephemeralStubSource = EphemeralStubSource()
@@ -84,10 +125,11 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         // given there is no stub for the given request
         let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
-        let client = ClientStub()
+        let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
 
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), EphemeralStubSource())
         objectUnderTest.startLoading()
 
         XCTAssertEqual(recorder.recordCount, 1)
@@ -115,26 +157,37 @@ class StubbedSessionURLProtocolTests: XCTestCase {
          test_StubbedSessionURLProtocol_returnsACanonicalRequest),
         ("test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld",
          test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld),
+        ("test_StubbedSessionURLProtocol_playsBackDataAndResponse_whenItFindsMatchingStub",
+         test_StubbedSessionURLProtocol_playsBackDataAndResponse_whenItFindsMatchingStub),
         ("test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading",
          test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading),
         ("test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub", test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub)
     ]
 }
 
-class ClientStub: NSObject, URLProtocolClient {
+class URLProtocolClientStub: NSObject, URLProtocolClient {
     var didFinishLoadingCount = 0
+    var didLoadData: Data?
+    var didReceiveResponse: URLResponse?
+    var didFailWithError: Error?
 
     func urlProtocol(_ protocol: URLProtocol, wasRedirectedTo request: URLRequest, redirectResponse: URLResponse) { }
 
     func urlProtocol(_ protocol: URLProtocol, cachedResponseIsValid cachedResponse: CachedURLResponse) { }
 
-    func urlProtocol(_ protocol: URLProtocol, didReceive response: URLResponse, cacheStoragePolicy policy: URLCache.StoragePolicy) { }
+    func urlProtocol(_ protocol: URLProtocol, didReceive response: URLResponse, cacheStoragePolicy policy: URLCache.StoragePolicy) {
+        didReceiveResponse = response
+    }
 
-    func urlProtocol(_ protocol: URLProtocol, didLoad data: Data) { }
+    func urlProtocol(_ protocol: URLProtocol, didLoad data: Data) {
+        didLoadData = data
+    }
 
     func urlProtocolDidFinishLoading(_ protocol: URLProtocol) { didFinishLoadingCount += 1 }
 
-    func urlProtocol(_ protocol: URLProtocol, didFailWithError error: Error) { }
+    func urlProtocol(_ protocol: URLProtocol, didFailWithError error: Error) {
+        didFailWithError = error
+    }
 
     func urlProtocol(_ protocol: URLProtocol, didReceive challenge: URLAuthenticationChallenge) { }
 
