@@ -25,7 +25,9 @@ struct TestHelper {
         if let path = exportedDirectoryPath {
             stubDirectoryPath = path
         } else {
-            stubDirectoryPath = testProcessInfo.environment["XCTestConfigurationFilePath"]
+            let tmpDirectory = NSURL(fileURLWithPath: NSTemporaryDirectory())
+            let uuid = ProcessInfo().globallyUniqueString
+            stubDirectoryPath = tmpDirectory.appendingPathComponent(uuid)?.absoluteString
         }
 
         assert(stubDirectoryPath != nil,
