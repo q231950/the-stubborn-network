@@ -9,7 +9,13 @@ import Foundation
 
 extension URLRequest {
 
-    /// Verifies if this request and matches the other one.
+    /// Matches this request against the other one.
+    ///
+    /// The matching criteria are:
+    /// - url matches
+    /// - headers match
+    /// - http method matches
+    /// - http body matches
     func matches(otherRequest: URLRequest) -> Bool {
         let sortedA = allHTTPHeaderFields?.map({ (key, value) -> String in
             return key.lowercased() + value
@@ -19,9 +25,15 @@ extension URLRequest {
             return key.lowercased() + value
         }).sorted(by: <)
 
-        return url == otherRequest.url &&
-            httpMethod == otherRequest.httpMethod &&
-            (httpBody == otherRequest.httpBody || httpBody == nil && otherRequest.httpBody == nil) &&
-            sortedA == sortedB
+        let headersMatch = sortedA == sortedB
+        let urlMatches = url == otherRequest.url
+        let httpMethodMatches = httpMethod == otherRequest.httpMethod
+        let httpBodyMatches = (httpBody == otherRequest.httpBody ||
+            httpBody == nil && otherRequest.httpBody == nil)
+
+        return urlMatches &&
+            headersMatch &&
+            httpMethodMatches &&
+        httpBodyMatches
     }
 }
