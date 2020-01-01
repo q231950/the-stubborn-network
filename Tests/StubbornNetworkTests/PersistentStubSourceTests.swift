@@ -39,7 +39,7 @@ class StubSourceTests: XCTestCase {
         let stubSource = PersistentStubSource(path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
-        let url = URL(string: "https://api.abc.com")
+        let url = URL(string: "https://api.elbedev.com")
         var request = URLRequest(url: url!)
         request.httpBody = "abc".data(using: .utf8)
         request.httpMethod = "POST"
@@ -54,7 +54,7 @@ class StubSourceTests: XCTestCase {
         let stubSource = PersistentStubSource(path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
-        let url = URL(string: "https://api.abc.com")
+        let url = URL(string: "https://api.elbedev.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["D": "DDD"]
@@ -122,7 +122,7 @@ class StubSourceTests: XCTestCase {
             [
                 {
                     "request": {
-                        "url": "https://api.abc.com",
+                        "url": "https://api.elbedev.com",
                         "requestData": null,
                         "headerFields": [
                             "A[:::]AAA"
@@ -134,7 +134,7 @@ class StubSourceTests: XCTestCase {
                 },
                 {
                     "request": {
-                        "url": "https://api.abc.com",
+                        "url": "https://api.elbedev.com",
                         "requestData": "YWJj",
                         "headerFields": [
                             "B[:::]BBB"
@@ -151,7 +151,7 @@ class StubSourceTests: XCTestCase {
                 },
                 {
                     "request": {
-                        "url": "https://api.abc.com",
+                        "url": "https://api.elbedev.com",
                         "requestData": null,
                         "headerFields": [
                             "D[:::]DDD"
