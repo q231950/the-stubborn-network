@@ -53,4 +53,14 @@ class URLRequestMatcherTests: XCTestCase {
 
         XCTAssertFalse(requestWithDuplicatedHeader.matches(otherRequest: requestWithDuplicatedHeaderOtherOrder))
     }
+
+    func test_URLRequestMatcher_matchesBodies() {
+        var requestWithHttpBody = URLRequest(url: URL(string: "https://elbedev.com")!)
+        requestWithHttpBody.httpBody = "🍏".data(using: .utf8)
+
+        var requestWithDifferentHttpBody = URLRequest(url: URL(string: "https://elbedev.com")!)
+        requestWithDifferentHttpBody.httpBody = "🍐".data(using: .utf8)
+
+        XCTAssertFalse(requestWithHttpBody.matches(otherRequest: requestWithDifferentHttpBody))
+    }
 }
