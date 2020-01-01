@@ -16,11 +16,6 @@ struct StubRecorder: StubRecording {
     /// for the `URLSessionTask`s which are recorded.
     let urlSession: URLSession
 
-    init(urlSession: URLSession, stubSource: StubSourceProtocol) {
-        self.urlSession = urlSession
-        self.stubSource = stubSource
-    }
-
     func record(_ task: URLSessionTask?,
                 processor: BodyDataProcessor?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) {

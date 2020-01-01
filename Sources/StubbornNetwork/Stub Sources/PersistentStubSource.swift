@@ -28,16 +28,6 @@ class PersistentStubSource: StubSourceProtocol {
         }
     }
 
-    // TODO: Remove this when the StubSourceProtocol gets cleaned up
-    func dataTask(with request: URLRequest, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTask {
-        let requestStub = stub(forRequest: request)
-        precondition(requestStub != nil, "\(request.preconditionFailureDescription) - Path: \(path.absoluteString)")
-        return URLSessionDataTaskStub(data: requestStub?.data,
-                                      response: requestStub?.response,
-                                      error: requestStub?.error,
-                                      resumeCompletion: completionHandler)
-    }
-
     func setupStubs(from data: Data) {
         do {
             let decoder = JSONDecoder()
@@ -59,11 +49,15 @@ class PersistentStubSource: StubSourceProtocol {
     }
 
     func store(_ stub: RequestStub) {
-        print("Storing stub: \(stub) at \(path.absoluteString).")
+        if hasStub(stub.request) {
+            print("Not storing stub because its request has already been stubbed.")
+        } else {
+            print("Storing stub: \(stub) at \(path.absoluteString).")
 
-        stubs.append(stub)
+            stubs.append(stub)
 
-        save(stubs)
+            save(stubs)
+        }
     }
 
     func clear() {
@@ -72,7 +66,7 @@ class PersistentStubSource: StubSourceProtocol {
         save(stubs)
     }
 
-    private func save(_ stubs: [RequestStub]) {
+    func save(_ stubs: [RequestStub]) {
         do {
             let encoder = JSONEncoder()
             let json = try encoder.encode(stubs)
@@ -87,12 +81,6 @@ class PersistentStubSource: StubSourceProtocol {
 
     func hasStub(_ request: URLRequest) -> Bool {
         stub(forRequest: request) != nil
-    }
-}
-
-extension URLRequest {
-    var preconditionFailureDescription: String {
-        "Unable to find a request stub for the given request: \(url?.absoluteString ?? "")."
     }
 }
 

@@ -36,6 +36,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
         internalClient = client
         internalTask = task
         internalRecorder = recorder
+        queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue", qos: .utility)
     }
 
     override public func startLoading() {
@@ -51,8 +52,6 @@ public class StubbedSessionURLProtocol: URLProtocol {
                     self.playback(data: data, response: response, error: error) { notifyFinished() }
                 }
             }
-        } else {
-            notifyFinished()
         }
     }
 
@@ -68,12 +67,12 @@ public class StubbedSessionURLProtocol: URLProtocol {
         internalStubbornNetwork ?? StubbornNetwork.standard
     }
 
-    private var recorder: StubRecording {
+    var recorder: StubRecording {
         if let internalRecorder = internalRecorder {
             return internalRecorder
         } else {
             let urlSession = URLSession(configuration: .ephemeral)
-            return StubRecorder(urlSession: urlSession, stubSource: stubbornNetwork.stubSource)
+            return StubRecorder(stubSource: stubbornNetwork.stubSource, urlSession: urlSession)
         }
     }
 
@@ -81,6 +80,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
     private var internalTask: URLSessionTask?
     private var internalClient: URLProtocolClient?
     private var internalRecorder: StubRecording?
+    var queue: DispatchQueue?
 }
 
 extension StubbedSessionURLProtocol {
@@ -90,16 +90,21 @@ extension StubbedSessionURLProtocol {
     }
 
     fileprivate func playback(data: Data?, response: URLResponse?, error: Error?, completion: @escaping () -> Void) {
-        if let data = data {
-            client?.urlProtocol(self, didLoad: data)
+
+        if let error = error {
+            client?.urlProtocol(self, didFailWithError: error)
+        } else {
+            if let data = data {
+                let processedData = stubbornNetwork.bodyDataProcessor?.dataForDeliveringResponseBody(data: data, of: internalTask!.originalRequest!) ?? data
+                client?.urlProtocol(self, didLoad: processedData)
+            }
+
+            if let response = response {
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
+            }
         }
 
-        if let response = response {
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
-        }
-
-        let queue = DispatchQueue(label: "StubbornNetwork URLSession dispatch queue")
-        queue.async {
+        queue?.sync {
             completion()
         }
     }

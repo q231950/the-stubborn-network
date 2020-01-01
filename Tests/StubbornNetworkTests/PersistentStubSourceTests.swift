@@ -11,10 +11,27 @@ import XCTest
 class StubSourceTests: XCTestCase {
 
     var stubSourceUrl = TestHelper.testingStubSourceUrl()
+    var session: URLSession!
 
-    func testPath() {
+    override func setUp() {
+        super.setUp()
+        let configuration: URLSessionConfiguration = .ephemeral
+
+        StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
+        StubbornNetwork.standard.removeBodyDataProcessor()
+
+        session = URLSession(configuration: configuration)
+    }
+
+    func test_persistentStubSource_canBeInitialized_givenAPathAndName() {
         let stubSource = PersistentStubSource(name: "a name", path: stubSourceUrl)
-        XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.path)/a_name.json")
+        XCTAssertEqual(stubSource.path.absoluteString, "\(stubSourceUrl.absoluteString)/a_name.json")
+    }
+
+    func test_persistentStubSource_canBeInitialized_givenAProcessInfo() throws {
+        let processInfo = ProcessInfoStub(stubName: "Stub", stubPath: TestHelper.testingStubSourcePath())
+        let location = try XCTUnwrap(StubSourceLocation(processInfo: processInfo))
+        XCTAssertNotNil(PersistentStubSource(with: location))
     }
 
     func test_persistentStubSource_loadsStub_forRequestWithBodyData() {
@@ -44,7 +61,7 @@ class StubSourceTests: XCTestCase {
         XCTAssertNotNil(loadedStub)
     }
 
-    func testStoresStubResponse() {
+    func test_persistentStubSource_storesStub() {
         let url = URL(string: "127.0.0.1/abc")!
 
         let stubSource = PersistentStubSource(path: url)
@@ -61,10 +78,8 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stub, loadedStub)
     }
 
-    func testDataTaskStub() {
-        let asyncExpectation = expectation(description: "Wait for async completion")
-
-        let url = URL(string: "\(stubSourceUrl.path)/123")!
+    func test_persistentStubSource_storesNoDuplicateRequests() throws {
+        let url = URL(string: "127.0.0.1/abc")!
 
         let stubSource = PersistentStubSource(path: url)
 
@@ -72,17 +87,31 @@ class StubSourceTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: prerecordedStubMockData, response: URLResponse(), error: nil)
+        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        stubSource.store(stub)
         stubSource.store(stub)
 
-        let task = stubSource.dataTask(with: request) { (data, response, error) in
-            XCTAssertEqual(self.prerecordedStubMockData, data)
-            XCTAssertNotNil(response)
-            XCTAssertNil(error)
-            asyncExpectation.fulfill()
-        }
-        task.resume()
-        wait(for: [asyncExpectation], timeout: 0.001)
+        XCTAssertEqual(stubSource.stubs.count, 1)
+    }
+
+    func test_persistentStubSource_clearsStubs() {
+        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+        stubSource.clear()
+        stubSource.setupStubs(from: prerecordedStubMockData)
+        XCTAssertEqual(stubSource.stubs.count, 3)
+
+        stubSource.clear()
+
+        XCTAssertEqual(stubSource.stubs.count, 0)
+    }
+
+    func test_persistentStubSource_savesToDisk() {
+        let stubSource = PersistentStubSource(name: "the stubborn network testing", path: stubSourceUrl)
+        stubSource.setupStubs(from: prerecordedStubMockData)
+        stubSource.save(stubSource.stubs)
+
+        let secondStubSource = PersistentStubSource(name: "the stubborn network testing", path: stubSourceUrl)
+        XCTAssertEqual(secondStubSource.stubs.count, 3)
     }
 
     var prerecordedStubMockData: Data {
@@ -140,10 +169,19 @@ class StubSourceTests: XCTestCase {
     }
 
     static var allTests = [
+        ("test_persistentStubSource_canBeInitialized_givenAPathAndName",
+        test_persistentStubSource_canBeInitialized_givenAPathAndName),
+        ("test_persistentStubSource_canBeInitialized_givenAProcessInfo",
+        test_persistentStubSource_canBeInitialized_givenAProcessInfo),
         ("test_persistentStubSource_loadsStub_forRequestWithBodyData",
          test_persistentStubSource_loadsStub_forRequestWithBodyData),
         ("test_persistentStubSource_loadsStub_forRequestWithoutBodyData",
          test_persistentStubSource_loadsStub_forRequestWithoutBodyData),
-        ("testStoresStubResponse", testStoresStubResponse),
+        ("test_persistentStubSource_storesStub",
+        test_persistentStubSource_storesStub),
+        ("test_persistentStubSource_storesNoDuplicateRequests",
+        test_persistentStubSource_storesNoDuplicateRequests),
+        ("test_persistentStubSource_clearsStubs",
+        test_persistentStubSource_clearsStubs)
     ]
 }
