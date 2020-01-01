@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// The Stub Recorder records stubs by making an actual request and storing the response in a Stub Source.
 struct StubRecorder: StubRecording {
 
     /// The _Stub Source_ dictates how the stub will be stored and where
@@ -25,11 +26,10 @@ struct StubRecorder: StubRecording {
         if task.self.isKind(of: URLSessionDataTask.self) {
             urlSession.dataTask(with: request) { (data, response, error) in
 
-                let body = request.httpBody
-                let (prepRequestBodyData, prepResponseBodyData) = self.prepareBodyData(requestData: body,
-                                                                                       responseData: data,
-                                                                                       request: request,
-                                                                                       processor: processor)
+                let (prepRequestBodyData, prepResponseBodyData) = self.prepare(requestData: request.httpBody,
+                                                                               responseData: data,
+                                                                               request: request,
+                                                                               processor: processor)
 
                 var preparedRequest = request
                 preparedRequest.httpBody = prepRequestBodyData
@@ -46,11 +46,11 @@ struct StubRecorder: StubRecording {
         }
     }
 
-    private func prepareBodyData(requestData: Data?,
-                                 responseData: Data?,
-                                 request: URLRequest,
-                                 processor: BodyDataProcessor?) ->
-                                 (preparedRequestBodyData: Data?, preparedResponseBodyData: Data?) {
+    private func prepare(requestData: Data?,
+                         responseData: Data?,
+                         request: URLRequest,
+                         processor: BodyDataProcessor?) ->
+        (preparedRequestBodyData: Data?, preparedResponseBodyData: Data?) {
 
             let prepRequestBodyData, prepResponseBodyData: Data?
             if let bodyDataProcessor = processor {

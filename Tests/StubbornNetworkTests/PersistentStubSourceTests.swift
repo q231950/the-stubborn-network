@@ -34,8 +34,9 @@ class StubSourceTests: XCTestCase {
         XCTAssertNotNil(PersistentStubSource(with: location))
     }
 
-    func test_persistentStubSource_loadsStub_forRequestWithBodyData() {
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+    func test_persistentStubSource_loadsStub_forRequestWithBodyData() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         let url = URL(string: "https://api.abc.com")
@@ -48,8 +49,9 @@ class StubSourceTests: XCTestCase {
         XCTAssertNotNil(loadedStub)
     }
 
-    func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() {
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+    func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         let url = URL(string: "https://api.abc.com")
@@ -70,7 +72,7 @@ class StubSourceTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        let stub = RequestStub(request: request)
         stubSource.store(stub)
 
         let loadedStub = stubSource.stub(forRequest: request)
@@ -87,15 +89,16 @@ class StubSourceTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        let stub = RequestStub(request: request)
         stubSource.store(stub)
         stubSource.store(stub)
 
         XCTAssertEqual(stubSource.stubs.count, 1)
     }
 
-    func test_persistentStubSource_clearsStubs() {
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+    func test_persistentStubSource_clearsStubs() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
         stubSource.clear()
         stubSource.setupStubs(from: prerecordedStubMockData)
         XCTAssertEqual(stubSource.stubs.count, 3)
