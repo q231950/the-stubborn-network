@@ -54,7 +54,17 @@ class URLRequestMatcherTests: XCTestCase {
         XCTAssertFalse(requestWithDuplicatedHeader.matches(otherRequest: requestWithDuplicatedHeaderOtherOrder))
     }
 
-    func test_URLRequestMatcher_matchesBodies() {
+    func test_URLRequestMatcher_matchesBody() {
+        var requestWithHttpBody = URLRequest(url: URL(string: "https://elbedev.com")!)
+        requestWithHttpBody.httpBody = "🐡".data(using: .utf8)
+
+        var requestWithDifferentHttpBody = URLRequest(url: URL(string: "https://elbedev.com")!)
+        requestWithDifferentHttpBody.httpBody = "🐡".data(using: .utf8)
+
+        XCTAssertTrue(requestWithHttpBody.matches(otherRequest: requestWithDifferentHttpBody))
+    }
+
+    func test_URLRequestMatcher_BodyMismatches() {
         var requestWithHttpBody = URLRequest(url: URL(string: "https://elbedev.com")!)
         requestWithHttpBody.httpBody = "🍏".data(using: .utf8)
 
@@ -63,4 +73,5 @@ class URLRequestMatcherTests: XCTestCase {
 
         XCTAssertFalse(requestWithHttpBody.matches(otherRequest: requestWithDifferentHttpBody))
     }
+
 }
