@@ -74,6 +74,21 @@ class URLRequestMatcherTests: XCTestCase {
         XCTAssertFalse(requestA.matches(otherRequest: requestB))
     }
 
+    static var allTests = [
+        ("test_URLRequestMatcher_matchesHeadersCaseSensitively",
+        test_URLRequestMatcher_matchesHeadersCaseSensitively),
+        ("test_URLRequestMatcher_doesNotMatch_whenHeadersDiffer",
+        test_URLRequestMatcher_doesNotMatch_whenHeadersDiffer),
+        ("test_URLRequestMatcher_matchesDuplicateHeaders_inSameOrder",
+        test_URLRequestMatcher_matchesDuplicateHeaders_inSameOrder),
+        ("test_URLRequestMatcher_doesNotMatchDuplicateHeaders_inDifferentOrder",
+        test_URLRequestMatcher_doesNotMatchDuplicateHeaders_inDifferentOrder),
+        ("test_URLRequestMatcher_matches_withEqualBodies",
+        test_URLRequestMatcher_matches_withEqualBodies),
+        ("test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer",
+        test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer)
+    ]
+
 }
 
 extension URLRequestMatcherTests {
