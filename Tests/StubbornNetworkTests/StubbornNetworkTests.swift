@@ -55,10 +55,14 @@ final class StubbornNetworkTests: XCTestCase {
         let exp = expectation(description: "Wait for data task completion")
         let expectedData = "abc".data(using: .utf8)
 
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
 
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
-        let expectedResponse: URLResponse? = URLResponse(url: url, mimeType: "text/html", expectedContentLength: 3, textEncodingName: "utf-8")
+        let expectedResponse: URLResponse? = URLResponse(url: url,
+                                                         mimeType: "text/html",
+                                                         expectedContentLength: 3,
+                                                         textEncodingName: "utf-8")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
@@ -89,7 +93,10 @@ final class StubbornNetworkTests: XCTestCase {
         let stubSource = EphemeralStubSource()
 
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
-        let expectedResponse: URLResponse? = URLResponse(url: url, mimeType: "text/html", expectedContentLength: 3, textEncodingName: "utf-8")
+        let expectedResponse: URLResponse? = URLResponse(url: url,
+                                                         mimeType: "text/html",
+                                                         expectedContentLength: 3,
+                                                         textEncodingName: "utf-8")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]

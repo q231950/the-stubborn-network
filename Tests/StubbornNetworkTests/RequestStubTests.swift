@@ -56,7 +56,7 @@ final class RequestStubTests: XCTestCase {
         """
         {
             "request": {
-                "url": "https://api.abc.com",
+                "url": "https://api.elbedev.com",
                 "requestData": "c29tZSBkYXRh",
                 "headerFields": [
                     "A[:::]AAA",

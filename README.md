@@ -58,9 +58,6 @@ Instead of passing a standard `URLSession` to your network client a stubbed vari
 if processInfo.testing == true {
     /// The session is persistent, which means that stubs are stored
     let urlSession = StubbornNetwork.makePersistentSession()
-
-    /// `.playback` is the default, so after recording you can remove the following line or set it to .playback
-    urlSession.recordMode = .record
 }
 
 let networkClient = NetworkClient(urlSession: urlSession)
@@ -116,8 +113,6 @@ A SwiftUI Preview utilizes **The Stubborn Network** mostly like a cache. You rec
 ```swift
 static var previews: some View {
     let urlSession = StubbornNetwork.makePersistentSession(withName: "ContentView_Previews", path: "\(ProcessInfo().environment["PROJECT_DIR"] ?? "")/stubs")
-    /// `.playback` is the default, so after recording you can remove the following line or set it to .playback
-    urlSession.recordMode = .record
 
     let networkClient = NetworkClient(urlSession: urlSession)
     /// Use the stubbed `networkClient`...

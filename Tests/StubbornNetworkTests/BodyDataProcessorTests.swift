@@ -80,8 +80,7 @@ class BodyDataProcessorTests: XCTestCase {
             // then
             let actualResponseBody = String(data: data!, encoding:
                 .utf8)
-            XCTAssertEqual(actualResponseBody,
-                           "🐻🐞 dataForDeliveringResponseBody 🐻🐞")
+            XCTAssertEqual(actualResponseBody, "🐻🐞 dataForDeliveringResponseBody 🐻🐞")
             exp.fulfill()
         }.resume()
 

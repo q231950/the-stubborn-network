@@ -9,48 +9,93 @@ import XCTest
 @testable import StubbornNetwork
 
 class URLRequestMatcherTests: XCTestCase {
-    func testMatchesRequestHeadersCaseSensitively() {
-        var requestWithCapitalHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithCapitalHeader.setValue("alphabet", forHTTPHeaderField: "ABC")
 
-        var requestWithLowercaseHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithLowercaseHeader.setValue("alphabet", forHTTPHeaderField: "abc")
+    var requestA: URLRequest!
+    var requestB: URLRequest!
 
-        XCTAssertTrue(requestWithCapitalHeader.matches(otherRequest: requestWithLowercaseHeader, options: .strict))
+    override func setUp() {
+        super.setUp()
+
+        do {
+            requestA = try request()
+            requestB = try request()
+        } catch {
+            XCTFail("Cannot set up test without requests A and B.")
+        }
+}
+
+    func test_URLRequestMatcher_matchesHeadersCaseSensitively() throws {
+        requestA.setValue("alphabet", forHTTPHeaderField: "ABC")
+        requestB.setValue("alphabet", forHTTPHeaderField: "abc")
+
+        XCTAssertTrue(requestA.matches(otherRequest: requestB, options: .strict))
     }
 
-    func testHeaderDuplicateMismatches() {
-        var requestWithDuplicatedHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithDuplicatedHeader.setValue("alphabet", forHTTPHeaderField: "ABC")
-        requestWithDuplicatedHeader.addValue("алфавит", forHTTPHeaderField: "ABC")
+    func test_URLRequestMatcher_doesNotMatch_whenHeadersDiffer() throws {
+        requestA.setValue("alphabet", forHTTPHeaderField: "ABC")
+        requestA.addValue("алфавит", forHTTPHeaderField: "ABC")
 
-        var requestWithSingleHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithSingleHeader.setValue("alphabet", forHTTPHeaderField: "abc")
+        requestB.setValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestWithDuplicatedHeader.matches(otherRequest: requestWithSingleHeader, options: .strict))
+        XCTAssertFalse(requestA.matches(otherRequest: requestB, options: .strict))
     }
 
-    func testHeaderDuplicateMatches() {
-        var requestWithDuplicatedHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithDuplicatedHeader.addValue("alphabet", forHTTPHeaderField: "ABC")
-        requestWithDuplicatedHeader.addValue("алфавит", forHTTPHeaderField: "ABC")
+    func test_URLRequestMatcher_matchesDuplicateHeaders_inSameOrder() throws {
+        requestA.addValue("alphabet", forHTTPHeaderField: "abc")
+        requestA.addValue("алфавит", forHTTPHeaderField: "abc")
 
-        var requestWithDuplicatedLowercaseHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithDuplicatedLowercaseHeader.addValue("alphabet", forHTTPHeaderField: "abc")
-        requestWithDuplicatedLowercaseHeader.addValue("алфавит", forHTTPHeaderField: "abc")
+        requestB.addValue("alphabet", forHTTPHeaderField: "abc")
+        requestB.addValue("алфавит", forHTTPHeaderField: "abc")
 
-        XCTAssertTrue(requestWithDuplicatedHeader.matches(otherRequest: requestWithDuplicatedLowercaseHeader, options: .strict))
+        XCTAssertTrue(requestA.matches(otherRequest: requestB, options: .strict))
     }
 
-    func testHeaderOrderMismatches() {
-        var requestWithDuplicatedHeader = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithDuplicatedHeader.addValue("alphabet", forHTTPHeaderField: "abc")
-        requestWithDuplicatedHeader.addValue("алфавит", forHTTPHeaderField: "abc")
+    func test_URLRequestMatcher_doesNotMatchDuplicateHeaders_inDifferentOrder() throws {
+        requestA.addValue("alphabet", forHTTPHeaderField: "abc")
+        requestA.addValue("алфавит", forHTTPHeaderField: "abc")
 
-        var requestWithDuplicatedHeaderOtherOrder = URLRequest(url: URL(string: "127.0.0.1")!)
-        requestWithDuplicatedHeaderOtherOrder.addValue("алфавит", forHTTPHeaderField: "abc")
-        requestWithDuplicatedHeaderOtherOrder.addValue("alphabet", forHTTPHeaderField: "abc")
+        requestB.addValue("алфавит", forHTTPHeaderField: "abc")
+        requestB.addValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestWithDuplicatedHeader.matches(otherRequest: requestWithDuplicatedHeaderOtherOrder, options: .strict))
+        XCTAssertFalse(requestA.matches(otherRequest: requestB, options: .strict))
     }
+
+    func test_URLRequestMatcher_matches_withEqualBodies() throws {
+        requestA.httpBody = "🐡".data(using: .utf8)
+        requestB.httpBody = "🐡".data(using: .utf8)
+
+        XCTAssertTrue(requestA.matches(otherRequest: requestB, options: .strict))
+    }
+
+    func test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer() throws {
+        requestA.httpBody = "🍏".data(using: .utf8)
+        requestB.httpBody = "🍐".data(using: .utf8)
+
+        XCTAssertFalse(requestA.matches(otherRequest: requestB, options: .strict))
+    }
+
+    static var allTests = [
+        ("test_URLRequestMatcher_matchesHeadersCaseSensitively",
+        test_URLRequestMatcher_matchesHeadersCaseSensitively),
+        ("test_URLRequestMatcher_doesNotMatch_whenHeadersDiffer",
+        test_URLRequestMatcher_doesNotMatch_whenHeadersDiffer),
+        ("test_URLRequestMatcher_matchesDuplicateHeaders_inSameOrder",
+        test_URLRequestMatcher_matchesDuplicateHeaders_inSameOrder),
+        ("test_URLRequestMatcher_doesNotMatchDuplicateHeaders_inDifferentOrder",
+        test_URLRequestMatcher_doesNotMatchDuplicateHeaders_inDifferentOrder),
+        ("test_URLRequestMatcher_matches_withEqualBodies",
+        test_URLRequestMatcher_matches_withEqualBodies),
+        ("test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer",
+        test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer)
+    ]
+
+}
+
+extension URLRequestMatcherTests {
+
+    fileprivate func request() throws -> URLRequest {
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        return URLRequest(url: url)
+    }
+
 }

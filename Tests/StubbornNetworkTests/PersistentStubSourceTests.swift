@@ -34,11 +34,12 @@ class StubSourceTests: XCTestCase {
         XCTAssertNotNil(PersistentStubSource(with: location))
     }
 
-    func test_persistentStubSource_loadsStub_forRequestWithBodyData() {
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+    func test_persistentStubSource_loadsStub_forRequestWithBodyData() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
-        let url = URL(string: "https://api.abc.com")
+        let url = URL(string: "https://api.elbedev.com")
         var request = URLRequest(url: url!)
         request.httpBody = "abc".data(using: .utf8)
         request.httpMethod = "POST"
@@ -48,11 +49,12 @@ class StubSourceTests: XCTestCase {
         XCTAssertNotNil(loadedStub)
     }
 
-    func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() {
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+    func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
-        let url = URL(string: "https://api.abc.com")
+        let url = URL(string: "https://api.elbedev.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["D": "DDD"]
@@ -70,7 +72,7 @@ class StubSourceTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        let stub = RequestStub(request: request)
         stubSource.store(stub, options: .strict)
 
         let loadedStub = stubSource.stub(forRequest: request, options: .strict)
@@ -87,15 +89,16 @@ class StubSourceTests: XCTestCase {
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
+        let stub = RequestStub(request: request)
         stubSource.store(stub, options: .strict)
         stubSource.store(stub, options: .strict)
 
         XCTAssertEqual(stubSource.stubs.count, 1)
     }
 
-    func test_persistentStubSource_clearsStubs() {
-        let stubSource = PersistentStubSource(path: URL(string: "127.0.0.1")!)
+    func test_persistentStubSource_clearsStubs() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+        let stubSource = PersistentStubSource(path: path)
         stubSource.clear()
         stubSource.setupStubs(from: prerecordedStubMockData)
         XCTAssertEqual(stubSource.stubs.count, 3)
@@ -119,7 +122,7 @@ class StubSourceTests: XCTestCase {
             [
                 {
                     "request": {
-                        "url": "https://api.abc.com",
+                        "url": "https://api.elbedev.com",
                         "requestData": null,
                         "headerFields": [
                             "A[:::]AAA"
@@ -131,7 +134,7 @@ class StubSourceTests: XCTestCase {
                 },
                 {
                     "request": {
-                        "url": "https://api.abc.com",
+                        "url": "https://api.elbedev.com",
                         "requestData": "YWJj",
                         "headerFields": [
                             "B[:::]BBB"
@@ -148,7 +151,7 @@ class StubSourceTests: XCTestCase {
                 },
                 {
                     "request": {
-                        "url": "https://api.abc.com",
+                        "url": "https://api.elbedev.com",
                         "requestData": null,
                         "headerFields": [
                             "D[:::]DDD"

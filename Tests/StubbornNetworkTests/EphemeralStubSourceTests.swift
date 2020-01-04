@@ -12,7 +12,10 @@ class EphemeralStubSourceTests: XCTestCase {
 
     func test_ephemeralStubSource_storesStubs() throws {
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
-        let expectedResponse: URLResponse? = URLResponse(url: url, mimeType: "text/html", expectedContentLength: 3, textEncodingName: "utf-8")
+        let expectedResponse: URLResponse? = URLResponse(url: url,
+                                                         mimeType: "text/html",
+                                                         expectedContentLength: 3,
+                                                         textEncodingName: "utf-8")
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -32,7 +35,10 @@ class EphemeralStubSourceTests: XCTestCase {
 
     func test_ephemeralStubSource_storesNoDuplicateRequests() throws {
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
-        let expectedResponse: URLResponse? = URLResponse(url: url, mimeType: "text/html", expectedContentLength: 0, textEncodingName: "utf-8")
+        let expectedResponse: URLResponse? = URLResponse(url: url,
+                                                         mimeType: "text/html",
+                                                         expectedContentLength: 0,
+                                                         textEncodingName: "utf-8")
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -52,8 +58,8 @@ class EphemeralStubSourceTests: XCTestCase {
 
     static var allTests = [
         ("test_ephemeralStubSource_storesStubs",
-        test_ephemeralStubSource_storesStubs),
+         test_ephemeralStubSource_storesStubs),
         ("test_ephemeralStubSource_storesNoDuplicateRequests",
-        test_ephemeralStubSource_storesNoDuplicateRequests)
+         test_ephemeralStubSource_storesNoDuplicateRequests)
     ]
 }
