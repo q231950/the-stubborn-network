@@ -16,6 +16,9 @@ extension URLRequest {
     /// - headers match
     /// - http method matches
     /// - http body matches
+    /// - Parameters:
+    ///   - otherRequest: The request to match against
+    ///   - options: These options define what should be taken into consideration for matching the requests
     func matches(otherRequest: URLRequest, options: RequestMatcherOptions? = .lenient) -> Bool {
         guard let options = options else { return false }
 
