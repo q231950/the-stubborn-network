@@ -16,24 +16,37 @@ extension URLRequest {
     /// - headers match
     /// - http method matches
     /// - http body matches
-    func matches(otherRequest: URLRequest) -> Bool {
-        let sortedA = allHTTPHeaderFields?.map({ (key, value) -> String in
-            return key.lowercased() + value
-        }).sorted(by: <)
+    func matches(otherRequest: URLRequest, options: RequestMatcherOptions? = .lenient) -> Bool {
+        guard let options = options else { return false }
 
-        let sortedB = otherRequest.allHTTPHeaderFields?.map({ (key, value) -> String in
-            return key.lowercased() + value
-        }).sorted(by: <)
+        if options.contains(.url) && url != otherRequest.url {
+            return false
+        }
 
-        let headersMatch = sortedA == sortedB
-        let urlMatches = url == otherRequest.url
-        let httpMethodMatches = httpMethod == otherRequest.httpMethod
-        let httpBodyMatches = (httpBody == otherRequest.httpBody ||
-            httpBody == nil && otherRequest.httpBody == nil)
+        if options.contains(.headers) {
+            let sortedA = allHTTPHeaderFields?.map({ (key, value) -> String in
+                return key.lowercased() + value
+            }).sorted(by: <)
 
-        return urlMatches &&
-            headersMatch &&
-            httpMethodMatches &&
-        httpBodyMatches
+            let sortedB = otherRequest.allHTTPHeaderFields?.map({ (key, value) -> String in
+                return key.lowercased() + value
+            }).sorted(by: <)
+
+            if sortedA != sortedB {
+                return false
+            }
+        }
+
+        if options.contains(.httpMethod) && httpMethod != otherRequest.httpMethod {
+            return false
+        }
+
+        if options.contains(.body) {
+            if httpBody != otherRequest.httpBody && httpBody != nil && otherRequest.httpBody != nil {
+                return false
+            }
+        }
+
+        return true
     }
 }

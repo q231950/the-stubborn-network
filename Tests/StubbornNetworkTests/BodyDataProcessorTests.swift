@@ -37,7 +37,7 @@ class BodyDataProcessorTests: XCTestCase {
         let requestStub = RequestStub(request: request, data: data, response: nil, error: nil)
 
         // when
-        StubbornNetwork.standard.ephemeralStubSource?.store(requestStub)
+        StubbornNetwork.standard.ephemeralStubSource?.store(requestStub, options: .strict)
 
         // then
         session.dataTask(with: try XCTUnwrap(URL(string: "127.0.0.1"))) { (data, _, _) in
@@ -56,7 +56,7 @@ class BodyDataProcessorTests: XCTestCase {
         let requestStub = RequestStub(request: request, data: data, response: nil, error: nil)
 
         // when
-        StubbornNetwork.standard.ephemeralStubSource?.store(requestStub)
+        StubbornNetwork.standard.ephemeralStubSource?.store(requestStub, options: .strict)
 
         // then
         session.dataTask(with: try XCTUnwrap(URL(string: "127.0.0.1"))) { (data, _, _) in
@@ -72,7 +72,7 @@ class BodyDataProcessorTests: XCTestCase {
         let exp = expectation(description: "Wait for session")
         let data = "123".data(using: .utf8)
         let requestStub = RequestStub(request: request, data: data, response: nil, error: nil)
-        StubbornNetwork.standard.ephemeralStubSource?.store(requestStub)
+        StubbornNetwork.standard.ephemeralStubSource?.store(requestStub, options: .strict)
 
         // when
         session.dataTask(with: request) { (data, _, _) in

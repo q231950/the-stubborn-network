@@ -60,7 +60,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let stub = RequestStub(request: task.originalRequest!, data: expectedData, response: expectedResponse, error: nil)
 
         objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
-        ephemeralStubSource.store(stub)
+        ephemeralStubSource.store(stub, options: .strict)
         objectUnderTest.startLoading()
 
         XCTAssertEqual(client.didLoadData, expectedData)
@@ -81,7 +81,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
                                error: TestError.expected)
 
         objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
-        ephemeralStubSource.store(stub)
+        ephemeralStubSource.store(stub, options: .strict)
         objectUnderTest.startLoading()
 
         XCTAssertEqual(client.didFailWithError?.localizedDescription,
@@ -98,7 +98,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let stub = RequestStub(request: task.originalRequest!)
 
         objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
-        ephemeralStubSource.store(stub)
+        ephemeralStubSource.store(stub, options: .strict)
         objectUnderTest.startLoading()
 
         XCTAssertEqual(client.didFinishLoadingCount, 1)
@@ -115,7 +115,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let stub = RequestStub(request: task.originalRequest!)
 
         objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
-        ephemeralStubSource.store(stub)
+        ephemeralStubSource.store(stub, options: .strict)
         objectUnderTest.startLoading()
 
         XCTAssertEqual(recorder.recordCount, 0)
@@ -197,7 +197,10 @@ class URLProtocolClientStub: NSObject, URLProtocolClient {
 class StubRecorderMock: StubRecording {
     var recordCount = 0
 
-    func record(_ task: URLSessionTask?, processor: BodyDataProcessor?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
+    func record(_ task: URLSessionTask?,
+                processor: BodyDataProcessor?,
+                options: RequestMatcherOptions?,
+                completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         recordCount += 1
         completion("⚡️".data(using: .utf8), URLResponse(), nil)
     }

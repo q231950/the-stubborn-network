@@ -34,7 +34,7 @@ class StubRecorderTests: XCTestCase {
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
 
-        recorder.record(task, processor: nil) { (data, response, _) in
+        recorder.record(task, processor: nil, options: .strict) { (data, response, _) in
             XCTAssertEqual(data, self.expectedData)
             XCTAssertEqual(response, self.expectedResponse)
         }
@@ -49,7 +49,7 @@ class StubRecorderTests: XCTestCase {
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
 
-        recorder.record(task, processor: nil) { (_, _, error) in
+        recorder.record(task, processor: nil, options: .strict) { (_, _, error) in
             XCTAssertEqual(error?.localizedDescription, TestError.expected.localizedDescription)
         }
     }
@@ -65,7 +65,7 @@ class StubRecorderTests: XCTestCase {
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
 
-        recorder.record(task, processor: nil) { (_, _, _) in }
+        recorder.record(task, processor: nil, options: .strict) { (_, _, _) in }
 
         XCTAssertEqual(self.stubSource.stubs.first?.data, self.expectedData)
         XCTAssertEqual(self.stubSource.stubs.first?.response, self.expectedResponse)
@@ -80,7 +80,7 @@ class StubRecorderTests: XCTestCase {
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
 
-        recorder.record(task, processor: nil) { (_, _, _) in }
+        recorder.record(task, processor: nil, options: .strict) { (_, _, _) in }
 
         let stub = try XCTUnwrap(self.stubSource.stubs.first)
         XCTAssertEqual(stub.error?.localizedDescription, TestError.expected.localizedDescription)
@@ -98,7 +98,7 @@ class StubRecorderTests: XCTestCase {
         let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
 
         let bodyDataProcessorStub = BodyDataProcessorStub()
-        recorder.record(task, processor: bodyDataProcessorStub) { (_, _, _) in }
+        recorder.record(task, processor: bodyDataProcessorStub, options: .strict) { (_, _, _) in }
 
         let stub = try XCTUnwrap(self.stubSource.stubs.first)
         XCTAssertEqual(String(data: try XCTUnwrap(stub.data), encoding: .utf8), "🐠🐠🐠 dataForStoringResponseBody 🐠🐠🐠")

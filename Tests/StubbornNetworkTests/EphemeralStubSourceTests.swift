@@ -27,9 +27,9 @@ class EphemeralStubSourceTests: XCTestCase {
                                error: nil)
 
         let stubSource = EphemeralStubSource()
-        stubSource.store(stub)
+        stubSource.store(stub, options: .strict)
 
-        XCTAssertTrue(stubSource.hasStub(request))
+        XCTAssertTrue(stubSource.hasStub(request, options: .strict))
         XCTAssertEqual(stubSource.stubs.count, 1)
     }
 
@@ -50,8 +50,8 @@ class EphemeralStubSourceTests: XCTestCase {
                                error: nil)
 
         let stubSource = EphemeralStubSource()
-        stubSource.store(stub)
-        stubSource.store(stub)
+        stubSource.store(stub, options: .strict)
+        stubSource.store(stub, options: .strict)
 
         XCTAssertEqual(stubSource.stubs.count, 1)
     }
