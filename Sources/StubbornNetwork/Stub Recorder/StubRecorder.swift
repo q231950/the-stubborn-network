@@ -18,6 +18,7 @@ struct StubRecorder: StubRecording {
 
     func record(_ task: URLSessionTask?,
                 processor: BodyDataProcessor?,
+                options: RequestMatcherOptions?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
 
         guard let task = task, let request = task.originalRequest else { return }
@@ -39,7 +40,7 @@ struct StubRecorder: StubRecording {
                                        response: response,
                                        error: error)
 
-                self.stubSource.store(stub)
+                self.stubSource.store(stub, options: options)
 
                 completion(data, response, error)
             }.resume()

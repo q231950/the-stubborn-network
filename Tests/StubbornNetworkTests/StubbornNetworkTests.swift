@@ -67,7 +67,7 @@ final class StubbornNetworkTests: XCTestCase {
                                data: "abc".data(using: .utf8),
                                response: expectedResponse,
                                error: nil)
-        stubSource.store(stub)
+        stubSource.store(stub, options: .strict)
 
         StubbornNetwork.standard.ephemeralStubSource = stubSource
 
@@ -98,7 +98,7 @@ final class StubbornNetworkTests: XCTestCase {
                                data: "abc".data(using: .utf8),
                                response: expectedResponse,
                                error: nil)
-        stubSource.store(stub)
+        stubSource.store(stub, options: .strict)
 
         StubbornNetwork.standard.ephemeralStubSource = stubSource
 

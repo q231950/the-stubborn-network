@@ -15,15 +15,15 @@ protocol StubSourceProtocol {
 
     /// Store a stub into the _Stub Source_.
     /// - Parameter stub: The stub to store
-    func store(_ stub: RequestStub)
+    func store(_ stub: RequestStub, options: RequestMatcherOptions?)
 
     /// Get information about which requests have a stored stub
     /// - Parameter request: The request to check the availability of a stub for
-    func hasStub(_ request: URLRequest) -> Bool
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool
 
     /// Get a `RequestStub` if one has been previously recorded for the given request
     /// - Parameter request: the request to find and return a stub for
-    func stub(forRequest request: URLRequest) -> RequestStub?
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub?
 
     /// Clear the _Stub Source_. This ideally removes all stubs from the _Stub Source_.
     func clear()

@@ -1,5 +1,21 @@
 import Foundation
 
+public struct RequestMatcherOptions: OptionSet {
+ public let rawValue: Int
+
+ public init(rawValue: Int) {
+    self.rawValue = rawValue
+}
+
+ public static let url = RequestMatcherOptions(rawValue: 1 << 0)
+ public static let httpMethod = RequestMatcherOptions(rawValue: 1 << 1)
+ public static let headers = RequestMatcherOptions(rawValue: 1 << 2)
+ public static let body = RequestMatcherOptions(rawValue: 1 << 3)
+
+ public static let lenient: RequestMatcherOptions = [.url]
+ public static let strict: RequestMatcherOptions = [.url, .httpMethod, .headers, .body]
+}
+
 ///
 /// The Stubborn Network - a Swifty and Clean Stubbing Machine.
 ///
@@ -15,7 +31,26 @@ public class StubbornNetwork {
     private let processInfo: ProcessInfo
 
     /// The standard Stubborn Network used be all clients
-    public static let standard = StubbornNetwork()
+    public static var standard: StubbornNetwork! {
+        get {
+            if _standard == nil {
+                _standard = StubbornNetwork()
+            }
+
+            return _standard
+        }
+        set {
+            _standard = newValue
+        }
+    }
+    private static var _standard: StubbornNetwork?
+
+    /// The matcher options for requests.
+    ///
+    /// More options will result in the requirement of the stubbed requests being very much like
+    /// the actual requests. The `.lenient` option set for example only checks for the URL of a
+    /// stub to decide if it should playback that stub or check the next one.
+    public var requestMatcherOptions: RequestMatcherOptions = .strict
 
     /// The bodyDataProcessor allows modification of stubbed body data.
     ///  - modify the request body before storing a stub
@@ -36,8 +71,8 @@ public class StubbornNetwork {
 
     var ephemeralStubSource: StubSourceProtocol?
 
-    convenience init() {
-        self.init(processInfo: ProcessInfo(), nil)
+    public convenience init() {
+        self.init(processInfo: ProcessInfo())
     }
 
     init(processInfo: ProcessInfo? = ProcessInfo(),

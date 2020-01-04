@@ -14,19 +14,19 @@ class EphemeralStubSource: StubSourceProtocol {
 
     var stubs = [RequestStub]()
 
-    func store(_ stub: RequestStub) {
-        if !hasStub(stub.request) {
+    func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
+        if !hasStub(stub.request, options: options) {
             stubs.append(stub)
         }
     }
 
-    func hasStub(_ request: URLRequest) -> Bool {
-        stubs.contains(where: { $0.request.matches(otherRequest: request) })
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool {
+        stubs.contains(where: { $0.request.matches(otherRequest: request, options: options) })
     }
 
-    func stub(forRequest request: URLRequest) -> RequestStub? {
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
         stubs.first { (stub) -> Bool in
-            stub.request.matches(otherRequest: request)
+            stub.request.matches(otherRequest: request, options: options)
         }
     }
 

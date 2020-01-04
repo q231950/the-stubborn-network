@@ -20,10 +20,10 @@ class CombinedStubSourceTests: XCTestCase {
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
         let request = URLRequest(url: url)
         let requestStub = RequestStub(request: request)
-        combinedStubSource.store(requestStub)
+        combinedStubSource.store(requestStub, options: .strict)
 
-        XCTAssertTrue(source1.hasStub(request))
-        XCTAssertTrue(source2.hasStub(request))
+        XCTAssertTrue(source1.hasStub(request, options: .strict))
+        XCTAssertTrue(source2.hasStub(request, options: .strict))
     }
 
     func test_CombinedStubSource_returnsIfAnyOfItsSourcesHasAStub() throws {
@@ -36,9 +36,9 @@ class CombinedStubSourceTests: XCTestCase {
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
         let request = URLRequest(url: url)
         let requestStub = RequestStub(request: request)
-        source2.store(requestStub)
+        source2.store(requestStub, options: .strict)
 
-        XCTAssertTrue(combinedStubSource.hasStub(request))
+        XCTAssertTrue(combinedStubSource.hasStub(request, options: .strict))
     }
 
     func test_CombinedStubSource_clearsAllOfItsSources() throws {
@@ -51,13 +51,13 @@ class CombinedStubSourceTests: XCTestCase {
         let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
         let request = URLRequest(url: url)
         let requestStub = RequestStub(request: request)
-        source1.store(requestStub)
-        source2.store(requestStub)
+        source1.store(requestStub, options: .strict)
+        source2.store(requestStub, options: .strict)
 
         combinedStubSource.clear()
 
-        XCTAssertFalse(source1.hasStub(request))
-        XCTAssertFalse(source2.hasStub(request))
+        XCTAssertFalse(source1.hasStub(request, options: .strict))
+        XCTAssertFalse(source2.hasStub(request, options: .strict))
     }
 
     static var allTests = [

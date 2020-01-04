@@ -43,7 +43,7 @@ class StubSourceTests: XCTestCase {
         request.httpBody = "abc".data(using: .utf8)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
-        let loadedStub = stubSource.stub(forRequest: request)
+        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
 
         XCTAssertNotNil(loadedStub)
     }
@@ -56,7 +56,7 @@ class StubSourceTests: XCTestCase {
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["D": "DDD"]
-        let loadedStub = stubSource.stub(forRequest: request)
+        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
 
         XCTAssertNotNil(loadedStub)
     }
@@ -71,9 +71,9 @@ class StubSourceTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
-        stubSource.store(stub)
+        stubSource.store(stub, options: .strict)
 
-        let loadedStub = stubSource.stub(forRequest: request)
+        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
 
         XCTAssertEqual(stub, loadedStub)
     }
@@ -88,8 +88,8 @@ class StubSourceTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request, data: nil, response: nil, error: nil)
-        stubSource.store(stub)
-        stubSource.store(stub)
+        stubSource.store(stub, options: .strict)
+        stubSource.store(stub, options: .strict)
 
         XCTAssertEqual(stubSource.stubs.count, 1)
     }
