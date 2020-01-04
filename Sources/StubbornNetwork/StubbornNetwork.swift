@@ -30,7 +30,7 @@ public class StubbornNetwork {
 
     private let processInfo: ProcessInfo
 
-    /// The standard Stubborn Network used be all clients
+    /// The nil resettable standard Stubborn Network
     public static var standard: StubbornNetwork! {
         get {
             if _standard == nil {
@@ -57,6 +57,28 @@ public class StubbornNetwork {
     ///  - modify the response body before storing a stub
     ///  - modify the response body just before delivering a stub
     public var bodyDataProcessor: BodyDataProcessor?
+
+
+    /// Stubs a given request.
+    ///
+    /// When the client makes a request similar to the given `request`, data and response or error will be played back.
+    ///
+    /// - Parameters:
+    ///   - request: the request to be stubbed
+    ///   - data: this data will be played back.
+    ///   - response: this response will be played back.
+    ///   - error: this error will be played back. If an error is given it inhibits any data and response from
+    ///            being replayed.
+    public func stub(request: URLRequest,
+                     data: Data? = nil,
+                     response: URLResponse? = nil,
+                     error: Error? = nil) {
+        let stub = RequestStub(request: request,
+                               data: data,
+                               response: response,
+                               error: error)
+        stubSource.store(stub, options: requestMatcherOptions)
+    }
 
     /// Removes the body data processor
     func removeBodyDataProcessor() {
