@@ -58,7 +58,6 @@ public class StubbornNetwork {
     ///  - modify the response body just before delivering a stub
     public var bodyDataProcessor: BodyDataProcessor?
 
-
     /// Stubs a given request.
     ///
     /// When the client makes a request similar to the given `request`, data and response or error will be played back.

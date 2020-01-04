@@ -36,7 +36,7 @@ extension URLRequest {
         }
 
         if options.contains(.body) {
-            if (httpBody != otherRequest.httpBody && httpBody != nil && otherRequest.httpBody != nil) {
+            if httpBody != otherRequest.httpBody && httpBody != nil && otherRequest.httpBody != nil {
                 return false
             }
         }
