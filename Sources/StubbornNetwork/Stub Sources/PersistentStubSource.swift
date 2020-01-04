@@ -43,13 +43,13 @@ class PersistentStubSource: StubSourceProtocol {
         return try Data(contentsOf: url)
     }
 
-    func stub(forRequest request: URLRequest) -> RequestStub? {
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
         print("Loading stub for request \(request.url?.absoluteString ?? "unknown")")
-        return stubs.first(where: { request.matches(otherRequest: $0.request) })
+        return stubs.first(where: { request.matches(otherRequest: $0.request, options: options) })
     }
 
-    func store(_ stub: RequestStub) {
-        if hasStub(stub.request) {
+    func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
+        if hasStub(stub.request, options: options) {
             print("Not storing stub because its request has already been stubbed.")
         } else {
             print("Storing stub: \(stub) at \(path.absoluteString).")
@@ -79,8 +79,8 @@ class PersistentStubSource: StubSourceProtocol {
         }
     }
 
-    func hasStub(_ request: URLRequest) -> Bool {
-        stub(forRequest: request) != nil
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool {
+        stub(forRequest: request, options: options) != nil
     }
 }
 

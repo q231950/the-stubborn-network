@@ -14,18 +14,18 @@ import Foundation
 struct CombinedStubSource: StubSourceProtocol {
     let sources: [StubSourceProtocol]
 
-    func store(_ stub: RequestStub) {
-        sources.forEach { $0.store(stub) }
+    func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
+        sources.forEach { $0.store(stub, options: options) }
     }
 
-    func hasStub(_ request: URLRequest) -> Bool {
-        sources.contains { $0.hasStub(request) }
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool {
+        sources.contains { $0.hasStub(request, options: options) }
     }
 
-    func stub(forRequest request: URLRequest) -> RequestStub? {
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
         sources.first { (source) -> Bool in
-            source.hasStub(request)
-        }?.stub(forRequest: request)
+            source.hasStub(request, options: options)
+        }?.stub(forRequest: request, options: options)
     }
 
     func clear() {
