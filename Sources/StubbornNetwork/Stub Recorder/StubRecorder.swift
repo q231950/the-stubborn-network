@@ -36,8 +36,9 @@ struct StubRecorder: StubRecording {
                 preparedRequest.httpBody = prepRequestBodyData
 
                 let stub = RequestStub(request: preparedRequest,
-                                       data: prepResponseBodyData,
+                                       requestData: prepRequestBodyData,
                                        response: response,
+                                       responseData: prepResponseBodyData,
                                        error: error)
 
                 self.stubSource.store(stub, options: options)
