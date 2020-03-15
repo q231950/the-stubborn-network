@@ -19,7 +19,7 @@ extension URLRequest {
     /// - Parameters:
     ///   - otherRequest: The request to match against
     ///   - options: These options define what should be taken into consideration for matching the requests
-    func matches(otherRequest: URLRequest, options: RequestMatcherOptions? = .lenient) -> Bool {
+    func matches(otherRequest: URLRequest, options: RequestMatcherOptions? = .strict) -> Bool {
         guard let options = options else { return false }
 
         if options.contains(.url) && url != otherRequest.url {
@@ -35,7 +35,8 @@ extension URLRequest {
                 return key.lowercased() + value
             }).sorted(by: <)
 
-            if sortedA != sortedB {
+            if (sortedA != sortedB) &&
+                !((sortedB?.count == 0 && sortedA == nil) || (sortedA?.count == 0 && sortedB == nil)) {
                 return false
             }
         }

@@ -12,6 +12,18 @@ import Foundation
 /// `EphemeralStubSource` is normally not used to stub a multitude of requests.
 class EphemeralStubSource: StubSourceProtocol {
 
+    func cache(response: CachedResponse) {
+        // TODO ...
+    }
+
+    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
+        nil
+    }
+
+    func hasCachedResponse(_ request: URLRequest) -> Bool {
+        false
+    }
+
     var stubs = [RequestStub]()
 
     func store(_ stub: RequestStub, options: RequestMatcherOptions?) {

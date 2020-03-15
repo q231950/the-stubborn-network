@@ -45,18 +45,26 @@ public class StubbedSessionURLProtocol: URLProtocol {
 
         if let request = task?.originalRequest {
 
-            if let stub = stubbornNetwork.stubSource.stub(forRequest: request,
+            if let response = stubbornNetwork.stubSource.cachedResponse(forRequest: request) {
+                self.playback(data: response.data, response: response.originalResponse, error: response.error) { notifyFinished() }
+            } else if let stub = stubbornNetwork.stubSource.stub(forRequest: request,
                                                           options: stubbornNetwork.requestMatcherOptions) {
                 playback(stub) { notifyFinished() }
             } else {
                 record(task) { data, response, error in
+                    let cachedResponse = CachedResponse(originalRequest: request,
+                                                        originalResponse: response,
+                                                        data: data,
+                                                        error: error)
+                    self.stubbornNetwork.stubSource.cache(response: cachedResponse)
+
                     self.playback(data: data, response: response, error: error) { notifyFinished() }
                 }
             }
         }
     }
 
-    override public func stopLoading() { /** Do nothing when asked to stop. */ }
+    override public func stopLoading() { /* Do nothing when asked to stop. */ }
 
     override public class func canonicalRequest(for request: URLRequest) -> URLRequest {
         request
