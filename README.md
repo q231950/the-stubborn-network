@@ -2,7 +2,7 @@
 
 # The Stubborn Network
 
-> A Swifty and clean stubbing machine.
+> An opiniated stubbing machine.
 
 **The Stubborn Network** makes your _SwiftUI development more efficient_ and _UI tests more reliable_ by stubbing responses of your network requests. It makes it _easy to record new stubs_ and it speeds things up! You can find usage examples in [The Stubborn Network Demo](https://github.com/q231950/the-stubborn-network-demo) and below.
 
