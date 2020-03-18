@@ -9,11 +9,11 @@ import XCTest
 @testable import StubbornNetwork
 
 final class RequestStubTests: XCTestCase {
-    
+
     func test_httpHeadersFromStrings() {
         let headersAsStrings = ["a[:::]A", "b[:::]B"]
-        let expectedHeaders = ["a":"A", "b":"B"]
-        
+        let expectedHeaders = ["a": "A", "b": "B"]
+
         let headers = RequestStub.httpHeaders(from: headersAsStrings)
         XCTAssertEqual(expectedHeaders, headers)
     }
@@ -32,8 +32,11 @@ final class RequestStubTests: XCTestCase {
         let result = try encoder.encode(requestStub)
         let json = String(data: result, encoding: .utf8)
 
-        XCTAssertEqual(json, """
-        {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"},\"requestData\":null,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"],\"responseData\":null,\"url\":\"123.4.5.6\"}}
+        XCTAssertEqual(json,
+        """
+        {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"}\
+        ,\"requestData\":null,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"],\"responseData\":null,\
+        \"url\":\"123.4.5.6\"}}
         """)
     }
 

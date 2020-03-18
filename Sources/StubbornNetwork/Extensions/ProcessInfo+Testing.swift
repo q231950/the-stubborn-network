@@ -10,8 +10,6 @@ import Foundation
 public extension ProcessInfo {
     /// Returns `true` if the `ProcessInfo` contains a `THE_STUBBORN_NETWORK_UI_TESTING` environment variable.
     var isUITesting: Bool {
-        get {
-            return environment["THE_STUBBORN_NETWORK_UI_TESTING"] != nil
-        }
+        environment["THE_STUBBORN_NETWORK_UI_TESTING"] != nil
     }
 }
