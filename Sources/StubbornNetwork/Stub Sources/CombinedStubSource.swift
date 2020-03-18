@@ -24,11 +24,11 @@ struct CombinedStubSource: StubSourceProtocol {
             source.hasCachedResponse(request)
         }
     }
-    
+
     func cache(response: CachedResponse) {
         sources.forEach { $0.cache(response: response) }
     }
-    
+
     let sources: [StubSourceProtocol]
 
     func store(_ stub: RequestStub, options: RequestMatcherOptions?) {

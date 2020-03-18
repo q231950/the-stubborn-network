@@ -13,18 +13,23 @@ import Foundation
 class EphemeralStubSource: StubSourceProtocol {
 
     func cache(response: CachedResponse) {
-        // TODO ...
-    }
-
-    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
-        nil
+        cachedResponses.append(response)
     }
 
     func hasCachedResponse(_ request: URLRequest) -> Bool {
-        false
+        cachedResponses.contains { (cachedResponse) -> Bool in
+            cachedResponse.originalRequest.matches(otherRequest: request)
+        }
+    }
+
+    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
+        let response = cachedResponses.first(where: { request.matches(otherRequest: $0.originalRequest) })
+
+        return response
     }
 
     var stubs = [RequestStub]()
+    var cachedResponses = [CachedResponse]()
 
     func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
         if !hasStub(stub.request, options: options) {

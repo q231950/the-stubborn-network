@@ -74,7 +74,7 @@ final class StubbornNetworkTests: XCTestCase {
                                error: nil)
         stubSource.store(stub, options: .strict)
 
-        StubbornNetwork.standard._stubSource = nil
+        StubbornNetwork.standard.internalStubSource = nil
         StubbornNetwork.standard.ephemeralStubSource = stubSource
 
         session.dataTask(with: request) { (data, response, error) in
@@ -108,7 +108,7 @@ final class StubbornNetworkTests: XCTestCase {
                                responseData: "abc".data(using: .utf8))
         stubSource.store(stub, options: .strict)
 
-        StubbornNetwork.standard._stubSource = nil
+        StubbornNetwork.standard.internalStubSource = nil
         StubbornNetwork.standard.ephemeralStubSource = stubSource
 
         session.dataTask(with: request) { (data, response, error) in

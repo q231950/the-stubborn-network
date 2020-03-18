@@ -16,7 +16,8 @@ enum RequestStubCodableError: Error {
 ///
 /// The http version of any stubbed response is `HTTP/1.1`.
 ///
-/// Header fields are stringified in the process of converting them to a `Codable` data format. Each header value will be concatenated with the key with `HeaderEncoding.separator` as their infix.
+/// Header fields are stringified in the process of converting them to a `Codable` data format. Each header
+/// value will be concatenated with the key with `HeaderEncoding.separator` as their infix.
 ///
 struct RequestStub: CustomDebugStringConvertible, Codable {
 

@@ -46,15 +46,15 @@ public class StubbornNetwork {
     private static var _standard: StubbornNetwork?
 
     var stubSource: StubSourceProtocol! {
-        if _stubSource == nil {
+        if internalStubSource == nil {
             let sources = [ephemeralStubSource, persistentStubSource].compactMap { $0 }
-            _stubSource = CombinedStubSource(sources: sources)
+            internalStubSource = CombinedStubSource(sources: sources)
         }
 
-        return _stubSource
+        return internalStubSource
     }
 
-    var _stubSource: StubSourceProtocol?
+    var internalStubSource: StubSourceProtocol?
 
     /// The matcher options for requests.
     ///
