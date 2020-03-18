@@ -10,6 +10,14 @@ import XCTest
 
 final class RequestStubTests: XCTestCase {
 
+    func test_httpHeadersFromStrings() {
+        let headersAsStrings = ["a[:::]A", "b[:::]B"]
+        let expectedHeaders = ["a": "A", "b": "B"]
+
+        let headers = RequestStub.httpHeaders(from: headersAsStrings)
+        XCTAssertEqual(expectedHeaders, headers)
+    }
+
     func test_requestStub_properlyEncodesRequests() throws {
         let url = try XCTUnwrap(URL(string: "123.4.5.6"))
         var request = URLRequest(url: url)
@@ -24,20 +32,18 @@ final class RequestStubTests: XCTestCase {
         let result = try encoder.encode(requestStub)
         let json = String(data: result, encoding: .utf8)
 
-        XCTAssertEqual(json, """
-        {\"request\":{\"headerFields\":[],\
-        \"method\":\"POST\",\
-        \"requestData\":\"c29tZSBkYXRh\",\
-        \"url\":\"123.4.5.6\"},\
-        \"data\":null,\
-        \"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"]}}
+        XCTAssertEqual(json,
+        """
+        {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"}\
+        ,\"requestData\":null,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"],\"responseData\":null,\
+        \"url\":\"123.4.5.6\"}}
         """)
     }
 
     func testDecodesData() throws {
         let decoder = JSONDecoder()
         let stub = try decoder.decode(RequestStub.self, from: jsonMockData)
-        XCTAssertEqual(stub.data, "abc".data(using: .utf8)!)
+        XCTAssertEqual(stub.responseData, "abc".data(using: .utf8)!)
     }
 
     func testDecodesRequestBodyData() throws {
@@ -67,13 +73,19 @@ final class RequestStubTests: XCTestCase {
                 ],
                 "method": "POST"
             },
-            "data": "YWJj",
-            "response": {}
+            "response": {
+                "responseData": "YWJj",
+                "url": "https://api.q231950.com",
+                "statusCode": 200,
+                "headerFields": []
+            }
         }
         """.data(using: .utf8)!
     }
 
     static var allTests = [
+        ("test_httpHeadersFromStrings",
+        test_httpHeadersFromStrings),
         ("test_requestStub_properlyEncodesRequests",
         test_requestStub_properlyEncodesRequests),
         ("testDecodesData",

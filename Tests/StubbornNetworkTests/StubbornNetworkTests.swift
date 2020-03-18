@@ -68,8 +68,9 @@ final class StubbornNetworkTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               data: "abc".data(using: .utf8),
+                               requestData: nil,
                                response: expectedResponse,
+                               responseData: "abc".data(using: .utf8),
                                error: nil)
         stubSource.store(stub, options: .strict)
 
@@ -102,9 +103,8 @@ final class StubbornNetworkTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               data: "abc".data(using: .utf8),
                                response: expectedResponse,
-                               error: nil)
+                               responseData: "abc".data(using: .utf8))
         stubSource.store(stub, options: .strict)
 
         StubbornNetwork.standard.ephemeralStubSource = stubSource

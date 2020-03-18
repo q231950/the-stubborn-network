@@ -73,8 +73,8 @@ public class StubbornNetwork {
                      response: URLResponse? = nil,
                      error: Error? = nil) {
         let stub = RequestStub(request: request,
-                               data: data,
                                response: response,
+                               responseData: data,
                                error: error)
         stubSource.store(stub, options: requestMatcherOptions)
     }

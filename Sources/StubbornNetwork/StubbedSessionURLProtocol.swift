@@ -87,7 +87,7 @@ public class StubbedSessionURLProtocol: URLProtocol {
 extension StubbedSessionURLProtocol {
 
     fileprivate func playback(_ stub: RequestStub, completion: @escaping () -> Void) {
-        playback(data: stub.data, response: stub.response, error: stub.error, completion: completion)
+        playback(data: stub.responseData, response: stub.response, error: stub.error, completion: completion)
     }
 
     fileprivate func playback(data: Data?, response: URLResponse?, error: Error?, completion: @escaping () -> Void) {
