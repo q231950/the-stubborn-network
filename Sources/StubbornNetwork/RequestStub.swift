@@ -131,7 +131,9 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
     static func httpHeaders(from headers: [String]) -> [String: String] {
         let httpHeaders = headers.reduce(into: [String: String]()) { (result, field) in
+
             let keyValue = field.components(separatedBy: HeaderEncoding.separator)
+
             if let key = keyValue.first, let value = keyValue.last {
                 result[key] = value
             }
