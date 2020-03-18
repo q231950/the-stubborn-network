@@ -26,11 +26,9 @@ The custom `URLProtocol` will make your standard `URLSession` of your network cl
 let configuration = URLSessionConfiguration.default
 
 if ProcessInfo().isUITesting {
-    #if DEBUG
     StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
     StubbornNetwork.standard.bodyDataProcessor = SensitiveDataProcessor()
     StubbornNetwork.standard.requestMatcherOptions = [.url, .headers]
-    #endif
 }
 
 let urlSession = URLSession(configuration: configuration)
