@@ -22,8 +22,9 @@ class EphemeralStubSourceTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               data: "abc".data(using: .utf8),
+                               requestData: "abc".data(using: .utf8),
                                response: expectedResponse,
+                               responseData: nil,
                                error: nil)
 
         let stubSource = EphemeralStubSource()
@@ -45,8 +46,9 @@ class EphemeralStubSourceTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               data: nil,
+                               requestData: nil,
                                response: expectedResponse,
+                               responseData: nil,
                                error: nil)
 
         let stubSource = EphemeralStubSource()

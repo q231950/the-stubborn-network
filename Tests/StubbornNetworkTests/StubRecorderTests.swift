@@ -67,7 +67,7 @@ class StubRecorderTests: XCTestCase {
 
         recorder.record(task, processor: nil, options: .strict) { (_, _, _) in }
 
-        XCTAssertEqual(self.stubSource.stubs.first?.data, self.expectedData)
+        XCTAssertEqual(self.stubSource.stubs.first?.responseData, self.expectedData)
         XCTAssertEqual(self.stubSource.stubs.first?.response, self.expectedResponse)
     }
 
@@ -101,7 +101,7 @@ class StubRecorderTests: XCTestCase {
         recorder.record(task, processor: bodyDataProcessorStub, options: .strict) { (_, _, _) in }
 
         let stub = try XCTUnwrap(self.stubSource.stubs.first)
-        XCTAssertEqual(String(data: try XCTUnwrap(stub.data), encoding: .utf8), "🐠🐠🐠 dataForStoringResponseBody 🐠🐠🐠")
+        XCTAssertEqual(String(data: try XCTUnwrap(stub.responseData), encoding: .utf8), "🐠🐠🐠 dataForStoringResponseBody 🐠🐠🐠")
         XCTAssertEqual(String(data: try XCTUnwrap(stub.request.httpBody), encoding: .utf8), "⚡️⚡️⚡️ dataForStoringRequestBody ⚡️⚡️⚡️")
     }
 

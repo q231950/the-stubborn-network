@@ -129,8 +129,13 @@ class StubSourceTests: XCTestCase {
                         ],
                         "method": "GET"
                     },
-                    "data": "YWJj",
-                    "response": {}
+                    "requestData": "YWJj",
+                    "response": {
+                        "responseData": "YWJj",
+                        "url": "https://api.q231950.com",
+                        "statusCode": 200,
+                        "headerFields": []
+                    }
                 },
                 {
                     "request": {
@@ -141,12 +146,14 @@ class StubSourceTests: XCTestCase {
                         ],
                         "method": "POST"
                     },
-                    "data": "YWJj",
                     "response": {
                         "statusCode": 200,
                         "headerFields": [
                             "C[:::]CCC"
-                        ]
+                        ],
+                        "responseData": "YWJj",
+                        "url": "https://api.q231950.com",
+                        "statusCode": 200
                     }
                 },
                 {
@@ -158,12 +165,14 @@ class StubSourceTests: XCTestCase {
                         ],
                         "method": "POST"
                     },
-                    "data": "YWJj",
                     "response": {
                         "statusCode": 200,
                         "headerFields": [
                             "E[:::]EEE"
-                        ]
+                        ],
+                        "responseData": "YWJj",
+                        "url": "https://api.q231950.com",
+                        "statusCode": 200
                     }
                 }
             ]
