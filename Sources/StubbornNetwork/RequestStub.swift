@@ -43,7 +43,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         var requestContainer = container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
         try requestContainer.encode(request.url?.absoluteString, forKey: .url)
         let requestHeaderFieldsAsStrings = request.allHTTPHeaderFields?.compactMap({ (key, value) in
@@ -52,9 +52,9 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         try requestContainer.encode(requestHeaderFieldsAsStrings, forKey: .headerFields)
         try requestContainer.encode(request.httpMethod, forKey: .method)
         try requestContainer.encode(request.httpBody, forKey: .requestData)
-        
+
         try container.encode(requestData, forKey: .requestData)
-        
+
         var responseContainer = container.nestedContainer(keyedBy: ResponseCodingKeys.self, forKey: .response)
         if let response = response as? HTTPURLResponse {
             if let responseUrl = response.url?.absoluteString {
@@ -85,7 +85,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         }
         var request = URLRequest(url: decodedURL)
         request.httpMethod = try requestContainer.decode(String.self, forKey: .method)
-        
+
         let headers = try requestContainer.decode([String].self, forKey: .headerFields)
         request.allHTTPHeaderFields = RequestStub.httpHeaders(from: headers)
         let requestBodyData = try requestContainer.decode(Data?.self, forKey: .requestData)
@@ -107,7 +107,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
                                        statusCode: responseStatusCode,
                                        httpVersion: "HTTP/1.1",
                                        headerFields: responseHeaders)
-        
+
         self.init(request: request, requestData: requestBodyData, response: response, responseData: responseBodyData)
     }
 
@@ -117,7 +117,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         return "[RequestStub] \(requestDescription) \(dataDescription) \(response.debugDescription)"
     }
 
-    static func httpHeaders(from headers: [String]) -> [String:String] {
+    static func httpHeaders(from headers: [String]) -> [String: String] {
         let httpHeaders = headers.reduce(into: [String: String]()) { (result, field) in
             let keyValue = field.components(separatedBy: "[:::]")
             if let key = keyValue.first, let value = keyValue.last {
