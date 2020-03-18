@@ -54,7 +54,7 @@ public class StubbornNetwork {
         return _stubSource
     }
 
-    fileprivate var _stubSource: StubSourceProtocol?
+    var _stubSource: StubSourceProtocol?
 
     /// The matcher options for requests.
     ///
