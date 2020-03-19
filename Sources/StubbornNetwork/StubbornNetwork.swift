@@ -45,6 +45,17 @@ public class StubbornNetwork {
     }
     private static var _standard: StubbornNetwork?
 
+    var stubSource: StubSourceProtocol! {
+        if internalStubSource == nil {
+            let sources = [ephemeralStubSource, persistentStubSource].compactMap { $0 }
+            internalStubSource = CombinedStubSource(sources: sources)
+        }
+
+        return internalStubSource
+    }
+
+    var internalStubSource: StubSourceProtocol?
+
     /// The matcher options for requests.
     ///
     /// More options will result in the requirement of the stubbed requests being very much like
@@ -113,10 +124,5 @@ extension StubbornNetwork {
     /// of `URLSession` - otherwise the protocol will not be used by _Foundation_'s URL Loading System.
     public func insertStubbedSessionURLProtocol(into configuration: URLSessionConfiguration) {
         configuration.protocolClasses?.insert(StubbedSessionURLProtocol.self, at: 0)
-    }
-
-    var stubSource: StubSourceProtocol {
-        let sources = [ephemeralStubSource, persistentStubSource].compactMap { $0 }
-        return CombinedStubSource(sources: sources)
     }
 }

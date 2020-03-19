@@ -1,5 +1,5 @@
 //
-//  StubSource.swift
+//  PersistentStubSource.swift
 //  
 //
 //  Created by Martin Kim Dung-Pham on 22.07.19.
@@ -8,8 +8,26 @@
 import Foundation
 
 class PersistentStubSource: StubSourceProtocol {
+
+    func cache(response: CachedResponse) {
+        cachedResponses.append(response)
+    }
+
+    func hasCachedResponse(_ request: URLRequest) -> Bool {
+        cachedResponses.contains { (cachedResponse) -> Bool in
+            cachedResponse.originalRequest.matches(otherRequest: request)
+        }
+    }
+
+    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
+        let response = cachedResponses.first(where: { request.matches(otherRequest: $0.originalRequest) })
+
+        return response
+    }
+
     let path: URL
     var stubs = [RequestStub]()
+    var cachedResponses = [CachedResponse]()
 
     convenience init(with location: StubSourceLocation) {
         let url = URL(string: location.stubSourcePath)
