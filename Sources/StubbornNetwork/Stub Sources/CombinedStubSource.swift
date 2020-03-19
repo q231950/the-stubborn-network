@@ -12,6 +12,23 @@ import Foundation
 /// return some value, the first source wins and its value is represented
 /// by the _Combined Stub Source_.
 struct CombinedStubSource: StubSourceProtocol {
+
+    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
+        sources.first { (source) -> Bool in
+            source.hasCachedResponse(request)
+            }?.cachedResponse(forRequest: request)
+    }
+
+    func hasCachedResponse(_ request: URLRequest) -> Bool {
+        sources.contains { (source) -> Bool in
+            source.hasCachedResponse(request)
+        }
+    }
+
+    func cache(response: CachedResponse) {
+        sources.forEach { $0.cache(response: response) }
+    }
+
     let sources: [StubSourceProtocol]
 
     func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
@@ -25,7 +42,7 @@ struct CombinedStubSource: StubSourceProtocol {
     func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
         sources.first { (source) -> Bool in
             source.hasStub(request, options: options)
-        }?.stub(forRequest: request, options: options)
+            }?.stub(forRequest: request, options: options)
     }
 
     func clear() {

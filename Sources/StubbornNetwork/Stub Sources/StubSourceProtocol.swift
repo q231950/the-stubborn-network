@@ -25,6 +25,10 @@ protocol StubSourceProtocol {
     /// - Parameter request: the request to find and return a stub for
     func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub?
 
+    func cache(response: CachedResponse)
+    func hasCachedResponse(_ request: URLRequest) -> Bool
+    func cachedResponse(forRequest request: URLRequest) -> CachedResponse?
+
     /// Clear the _Stub Source_. This ideally removes all stubs from the _Stub Source_.
     func clear()
 
