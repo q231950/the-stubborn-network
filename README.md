@@ -4,63 +4,34 @@
 
 > An opiniated stubbing machine.
 
-**The Stubborn Network** makes your _SwiftUI development more efficient_ and _UI tests more reliable_ by stubbing responses of your network requests. It makes it _easy to record new stubs_ and it speeds things up! You can find usage examples in [The Stubborn Network Demo](https://github.com/q231950/the-stubborn-network-demo) and below.
+**The Stubborn Network** makes your _SwiftUI development more efficient_ and _UI tests more reliable_ by stubbing responses of your network requests. It makes it _easy to record new stubs_ and it speeds things up!
 
-You can stub:
+## 👩🏻‍🎨 Stubbed UI Tests
 
-- 👮🏻‍♀️ [Unit Tests](https://github.com/q231950/the-stubborn-network/tree/master#unit-tests)
-- 🕵🏽‍♂️ [UI Tests](https://github.com/q231950/the-stubborn-network/tree/master#ui-tests)
-- 👩🏻‍🎨 [SwiftUI Previews](https://github.com/q231950/the-stubborn-network/tree/master#swiftui-preview)
+UI tests benefit from **The Stubborn Network**'s ability to easily record actual network requests and then play them back. This makes your tests more stable and the backend won't interfere with you testing the flow of your application. 
 
-## 👮🏻‍♀️ Unit Tests
+In order to record and playback stubs you need to
 
-Unit tests use "plain" stubs where each stub only lives for the duration of the test. This is called the _ephemeral_ configuration.
-
-<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoTests/DemoTests.swift'>Unit Test Example</a></summary>
-<p>
-
-```swift
-/// given we create an ephemeral stubbed session (the scope of the stubs stays within this test)
-let session = StubbornNetwork.makeEphemeralSession()
-
-/// and stub individual requests
-session.stub(NetworkClient.request, data: self.stubData, response: HTTPURLResponse(), error: nil)
-
-let networkClient = NetworkClient(urlSession: session)
-
-/// when
-networkClient.post()
-
-/// then
-completion = networkClient.objectDidChange.sink { networkClient in
-    XCTAssertEqual(networkClient.text, "417 bytes")
-    exp.fulfill()
-}
-```
-</p>
-</details>
-
-## 🕵🏽‍♂️ UI Tests
-
-UI tests benefit from **The Stubborn Network**'s ability to easily record actual network requests and then play them back. This is done via the _persistent_ configuration and a recording mode. In order to record and playback stubs you need to
-
-- configure your app to use a stubbed `URLSession` in its network layer when running tests
+- configure your `URLSession` to use **The Stubborn Network**'s  `URLProtocol` in your network layer when running tests
 - the tests on the other hand are required to inform **The Stubborn Network** which _stub sources_, in other words - which stubs to use for which test case
 
 ### App Configuration
 
-Instead of passing a standard `URLSession` to your network client a stubbed variant will be passed during UI test execution. This happens inside your application, for example a `SceneDelegate.swift`:
+The custom `URLProtocol` will make your standard `URLSession` of your network client a stubbed variant during UI test execution. This happens inside your application:
 
-<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/Demo/SceneDelegate.swift'>Example App Configuration</a></summary>
+<details><summary>Example how to set the custom URL protocol</summary>
 <p>
 
 ```swift
-if processInfo.testing == true {
-    /// The session is persistent, which means that stubs are stored
-    let urlSession = StubbornNetwork.makePersistentSession()
+let configuration = URLSessionConfiguration.default
+
+if ProcessInfo().isUITesting {
+    StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
+    StubbornNetwork.standard.bodyDataProcessor = SensitiveDataProcessor()
+    StubbornNetwork.standard.requestMatcherOptions = [.url, .headers]
 }
 
-let networkClient = NetworkClient(urlSession: urlSession)
+let urlSession = URLSession(configuration: configuration)
 ```
 
 </p>
@@ -70,57 +41,49 @@ let networkClient = NetworkClient(urlSession: urlSession)
 
 There are 3 parameters passed in as environment variables to the application under test in order to specify that we want to stub network responses, what to stub, where to find/place them. Some of these will be handled more elegantly in the future:
 
-1. each test assigns its function name like `testBytesText` to create a dedicated stub source with stubs for network requests of each individual test case
-2. the _stub path_ points to the directory where the stub source with the stubs is stored for `.playback` / where stubs will be recorded to when `.record`
-3. the _TESTING_ parameter simply indicates to the application (see _App Configuration_ above) that we are in a test environment
+1. each test assigns its function name to `STUB_NAME` to create a dedicated stub source with stubs for network requests of each individual test case
+2. the `"STUB_PATH"` points to the directory where the stub source with the stubs is stored
+3. the `THE_STUBBORN_NETWORK_UI_TESTING` parameter simply indicates to the application (see _App Configuration_ above) that we are in a test environment. This is useful to separate between testing and debug/release modes on the other hand 
 
-<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/DemoUITests/DemoUITests.swift'>UI Test Configuration</a></summary>
+<details><summary>Example UI Test</summary>
 <p>
 
 ```swift
 override func setUp() {
     super.setUp()
 
-    /// tell the app that we are executing tests right now
-    app.launchEnvironment["TESTING"] = "TESTING"
+    app = XCUIApplication()
+    setupSnapshot(app)
 
-    /// ... each stub's name will be the name of the test case
-    app.launchEnvironment["STUB_NAME"] = self.name
-
-    ///  .. and path to the stubs will be set to the project's directory
     let processInfo = ProcessInfo()
-    app.launchEnvironment["STUB_PATH"] = "\(processInfo.environment["PROJECT_DIR"] ?? "")/stubs"
+    app.launchEnvironment["STUB_NAME"] = self.name
+    app.launchEnvironment["STUB_PATH"] = "\(processInfo.environment["PROJECT_DIR"] ?? "")/BTLBUITests/Stubs"
+    app.launchEnvironment["THE_STUBBORN_NETWORK_UI_TESTING"] = "YES"
+
     app.launch()
 }
 
 func testBytesText() {
-    /// In the test itself everything happens like with an untempered URLSession
+    /// In the test itself nothing needs to be changed
+    app.buttons["Download"].tap()
+
     let bytesText = app.staticTexts["417 bytes"]
-    wait(forElement:bytesText, timeout:2)
+    wait(forElement:bytesText, timeout:1)
 }
 ```
 
 </p>
 </details>
 
-## 👩🏻‍🎨 SwiftUI Preview
+## Re-record Stubs
 
-A SwiftUI Preview utilizes **The Stubborn Network** mostly like a cache. You record and persist all network calls required to present a Preview and then have the responses available immediately for any successive Preview. This means you can record network calls and later show Previews without internet connection 🛩
+If a stub needs to be re-recorded it's as easy as just deleting it!
 
-<details><summary><a href='https://github.com/q231950/the-stubborn-network-demo/blob/master/Demo/ContentView.swift'>SwiftUI Example</a></summary>
-<p>
+You can find your stubs at the path defined in the test cases and they typically look similar to this this:
 
-```swift
-static var previews: some View {
-    let urlSession = StubbornNetwork.makePersistentSession(withName: "ContentView_Previews", path: "\(ProcessInfo().environment["PROJECT_DIR"] ?? "")/stubs")
+`XZYUITests_testABC.json`
 
-    let networkClient = NetworkClient(urlSession: urlSession)
-    /// Use the stubbed `networkClient`...
-}
-```
-
-</p>
-</details>
+`XZYUITests` is the name of your test case (`XCTestCase`) and `testABC` the name of the test (the test function).
 
 ## Contribute
 
