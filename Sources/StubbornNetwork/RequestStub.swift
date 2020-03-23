@@ -61,7 +61,8 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         try requestContainer.encode(request.url?.absoluteString, forKey: .url)
         let requestHeaderFieldsAsStrings = request.allHTTPHeaderFields?.compactMap({ (key, value) in
             "\(key)\(HeaderEncoding.separator)\(value)"
-        })
+        }).sorted(by: <)
+
         try requestContainer.encode(requestHeaderFieldsAsStrings, forKey: .headerFields)
         try requestContainer.encode(request.httpMethod, forKey: .method)
         try requestContainer.encode(request.httpBody, forKey: .requestData)
@@ -74,7 +75,9 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
                 try responseContainer.encode(responseUrl, forKey: .url)
             }
             try responseContainer.encode(response.statusCode, forKey: .statusCode)
-            try responseContainer.encode(response.allHeaderFields.map({ (key, value) in "\(key)\(HeaderEncoding.separator)\(value)"}),
+            let responseHeaderFields = response.allHeaderFields.map({ (key, value) in "\(key)\(HeaderEncoding.separator)\(value)"
+            }).sorted(by: <)
+            try responseContainer.encode(responseHeaderFields,
                                          forKey: .headerFields)
         }
         try responseContainer.encode(responseData, forKey: .responseData)
