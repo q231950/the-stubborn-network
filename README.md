@@ -1,6 +1,7 @@
 ![Travis](https://travis-ci.org/q231950/the-stubborn-network.svg?branch=master) [![SourceLevel](https://app.sourcelevel.io/github/q231950/the-stubborn-network.svg)](https://app.sourcelevel.io/github/q231950/the-stubborn-network)
 
-# The Stubborn Network
+<img width=800 src="the-stubborn-network-logo.png" alt="The Stubborn Network Logo"> 
+
 
 > An opiniated stubbing machine.
 
