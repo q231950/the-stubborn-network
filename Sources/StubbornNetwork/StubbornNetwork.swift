@@ -21,13 +21,30 @@ import Foundation
 public struct RequestMatcherOptions {
 
     let matchers: [RequestMatcher]
+    var customMatchers: [RequestMatcher] {
+        matchersByKind.custom
+    }
+
+    var nonCustomMatchers: [RequestMatcher] {
+        matchersByKind.nonCustom
+    }
 
     public init(_ matchers: [RequestMatcher]) {
         self.matchers = matchers
+
+        self.matchersByKind = matchers.reduce((custom: [RequestMatcher](), nonCustom: [RequestMatcher]())) { result, matcher in
+            if matcher.isCustom {
+                return (result.custom + [matcher], result.nonCustom)
+            } else {
+                return (result.custom, result.nonCustom + [matcher])
+            }
+        }
     }
 
     public static let lenient: RequestMatcherOptions = RequestMatcherOptions([.url])
     public static let strict: RequestMatcherOptions = RequestMatcherOptions([.url, .httpMethod, .headers, .requestBody])
+
+    private let matchersByKind: (custom: [RequestMatcher], nonCustom: [RequestMatcher])
 }
 
 /// A closure that allows to compare 2 requests and decide if they are supposed to match.
@@ -35,7 +52,7 @@ public typealias Comparator = ((_ a: URLRequest, _ b: URLRequest) -> Bool)
 
 /// Defines parts of a request that can be used for matching two requests
 public enum RequestMatcher {
-    case custom(comparator: Comparator)
+    case custom(match: Comparator)
     case headers
     case httpMethod
     case requestBody

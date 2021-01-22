@@ -21,20 +21,9 @@ extension URLRequest {
     ///   - options: These options define what should be taken into consideration for matching the requests
     func matches(_ otherRequest: URLRequest, options: RequestMatcherOptions = .strict) -> Bool {
 
-        let matchers = options.matchers.reduce((custom: [RequestMatcher](), nonCustom: [RequestMatcher]())) { result, matcher in
-            if matcher.isCustom {
-                return (result.custom + [matcher], result.nonCustom)
-            } else {
-                return (result.custom, result.nonCustom + [matcher])
-            }
-        }
-
-        let customMatches: [Bool] = matchers.custom.map({ matcher in
-            switch matcher {
-            case .custom(comparator: let comparator):
-                let matches = comparator(self, otherRequest)
-                if matches { return true }
-            default: break
+        let customMatches: [Bool] = options.customMatchers.map({ matcher in
+            if case .custom(let match) = matcher {
+                return match(self, otherRequest)
             }
 
             return false
@@ -42,7 +31,7 @@ extension URLRequest {
 
         guard !customMatches.contains(true) else { return true }
 
-        let nonCustomMatches: [Bool] = matchers.nonCustom.map { matcher in
+        let nonCustomMatches: [Bool] = options.nonCustomMatchers.map { matcher in
             switch matcher {
             case .headers:
                 return headersMatch(otherRequest)
