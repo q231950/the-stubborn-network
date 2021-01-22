@@ -91,3 +91,5 @@ You can find your stubs at the path defined in the test cases and they typically
 ### Run Tests
 
 You can run tests either from within Xcode (`cmd+U`) or from the command line: `export STUB_DIR='./stubs' && swift test`.
+
+Stubs are stored and read during test execution. They can be found in a temporary directory, for example: `cat /private/tmp/stubs/8DE9DF3B-38E7-4618-9E5A-AD80F655CAB4.json` 

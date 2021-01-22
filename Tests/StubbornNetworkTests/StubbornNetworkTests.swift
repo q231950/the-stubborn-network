@@ -68,14 +68,11 @@ final class StubbornNetworkTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               requestData: nil,
                                response: expectedResponse,
                                responseData: "abc".data(using: .utf8),
                                error: nil)
         stubSource.store(stub, options: .strict)
 
-        StubbornNetwork.standard.internalStubSource = nil
-        StubbornNetwork.standard.ephemeralStubSource = stubSource
 
         session.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(expectedData, data)

@@ -20,9 +20,9 @@ class EphemeralStubSourceTests: XCTestCase {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
+        request.httpBody = "abc".data(using: .utf8)
 
         let stub = RequestStub(request: request,
-                               requestData: "abc".data(using: .utf8),
                                response: expectedResponse,
                                responseData: nil,
                                error: nil)
@@ -46,7 +46,6 @@ class EphemeralStubSourceTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               requestData: nil,
                                response: expectedResponse,
                                responseData: nil,
                                error: nil)

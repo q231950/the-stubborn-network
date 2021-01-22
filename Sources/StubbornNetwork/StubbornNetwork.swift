@@ -1,19 +1,52 @@
 import Foundation
 
-public struct RequestMatcherOptions: OptionSet {
- public let rawValue: Int
+/// Defines the options to be used for matching two requests.
+///
+/// Two requests which have the same properties for the given options are considered as a match.
+///
+/// **Example**
+///
+/// ```
+/// let request = URLRequest()
+/// request.url = "abc.com"
+///
+/// let other = URLRequest()
+/// other.url = "abc.com"
+///
+/// let options = RequestMatcherOptions([.url]
+///
+/// XCTAssertTrue(request.matches(other, options: options)))
+///
+/// ```
+public struct RequestMatcherOptions {
 
- public init(rawValue: Int) {
-    self.rawValue = rawValue
+    let matchers: [RequestMatcher]
+
+    public init(_ matchers: [RequestMatcher]) {
+        self.matchers = matchers
+    }
+
+    public static let lenient: RequestMatcherOptions = RequestMatcherOptions([.url])
+    public static let strict: RequestMatcherOptions = RequestMatcherOptions([.url, .httpMethod, .headers, .requestBody])
 }
 
- public static let url = RequestMatcherOptions(rawValue: 1 << 0)
- public static let httpMethod = RequestMatcherOptions(rawValue: 1 << 1)
- public static let headers = RequestMatcherOptions(rawValue: 1 << 2)
- public static let body = RequestMatcherOptions(rawValue: 1 << 3)
+/// A closure that allows to compare 2 requests and decide if they are supposed to match.
+public typealias Comparator = ((_ a: URLRequest, _ b: URLRequest) -> Bool)
 
- public static let lenient: RequestMatcherOptions = [.url]
- public static let strict: RequestMatcherOptions = [.url, .httpMethod, .headers, .body]
+/// Defines parts of a request that can be used for matching two requests
+public enum RequestMatcher {
+    case custom(comparator: Comparator)
+    case headers
+    case httpMethod
+    case requestBody
+    case url
+
+    var isCustom: Bool {
+        if case .custom = self {
+            return true
+        }
+        return false
+    }
 }
 
 ///
@@ -62,6 +95,7 @@ public class StubbornNetwork {
     /// the actual requests. The `.lenient` option set for example only checks for the URL of a
     /// stub to decide if it should playback that stub or check the next one.
     public var requestMatcherOptions: RequestMatcherOptions = .strict
+    public var matcher: ((_ a: URLRequest, _ b: URLRequest) -> Bool)?
 
     /// The bodyDataProcessor allows modification of stubbed body data.
     ///  - modify the request body before storing a stub

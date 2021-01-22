@@ -28,7 +28,7 @@ class URLRequestMatcherTests: XCTestCase {
         requestA.setValue("alphabet", forHTTPHeaderField: "ABC")
         requestB.setValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertTrue(requestA.matches(otherRequest: requestB, options: .strict))
+        XCTAssertTrue(requestA.matches(requestB, options: .strict))
     }
 
     func test_URLRequestMatcher_doesNotMatch_whenHeadersDiffer() throws {
@@ -37,7 +37,7 @@ class URLRequestMatcherTests: XCTestCase {
 
         requestB.setValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestA.matches(otherRequest: requestB, options: .strict))
+        XCTAssertFalse(requestA.matches(requestB, options: .strict))
     }
 
     func test_URLRequestMatcher_matchesDuplicateHeaders_inSameOrder() throws {
@@ -47,7 +47,7 @@ class URLRequestMatcherTests: XCTestCase {
         requestB.addValue("alphabet", forHTTPHeaderField: "abc")
         requestB.addValue("алфавит", forHTTPHeaderField: "abc")
 
-        XCTAssertTrue(requestA.matches(otherRequest: requestB, options: .strict))
+        XCTAssertTrue(requestA.matches(requestB, options: .strict))
     }
 
     func test_URLRequestMatcher_doesNotMatchDuplicateHeaders_inDifferentOrder() throws {
@@ -57,21 +57,21 @@ class URLRequestMatcherTests: XCTestCase {
         requestB.addValue("алфавит", forHTTPHeaderField: "abc")
         requestB.addValue("alphabet", forHTTPHeaderField: "abc")
 
-        XCTAssertFalse(requestA.matches(otherRequest: requestB, options: .strict))
+        XCTAssertFalse(requestA.matches(requestB, options: .strict))
     }
 
     func test_URLRequestMatcher_matches_withEqualBodies() throws {
         requestA.httpBody = "🐡".data(using: .utf8)
         requestB.httpBody = "🐡".data(using: .utf8)
 
-        XCTAssertTrue(requestA.matches(otherRequest: requestB, options: .strict))
+        XCTAssertTrue(requestA.matches(requestB, options: .strict))
     }
 
     func test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer() throws {
         requestA.httpBody = "🍏".data(using: .utf8)
         requestB.httpBody = "🍐".data(using: .utf8)
 
-        XCTAssertFalse(requestA.matches(otherRequest: requestB, options: .strict))
+        XCTAssertFalse(requestA.matches(requestB, options: .strict))
     }
 
     static var allTests = [

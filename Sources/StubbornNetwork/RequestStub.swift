@@ -28,14 +28,12 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
     let error: Error?
     let request: URLRequest
-    let requestData: Data?
     let response: URLResponse?
     let responseData: Data?
 
     enum CodingKeys: String, CodingKey {
         case error
         case request
-        case requestData
         case response
         case responseData
     }
@@ -59,14 +57,15 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
         var requestContainer = container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
         try requestContainer.encode(request.url?.absoluteString, forKey: .url)
-        let requestHeaderFieldsAsStrings = request.allHTTPHeaderFields?.compactMap({ (key, value) in
+        let requestHeaderFieldsAsStrings = request.allHTTPHeaderFields?.compactMap { key, value in
             "\(key)\(HeaderEncoding.separator)\(value)"
-        })
+        }
+        .sorted(by: <)
+
         try requestContainer.encode(requestHeaderFieldsAsStrings, forKey: .headerFields)
         try requestContainer.encode(request.httpMethod, forKey: .method)
-        try requestContainer.encode(request.httpBody, forKey: .requestData)
 
-        try container.encode(requestData, forKey: .requestData)
+        try requestContainer.encode(request.httpBody, forKey: .requestData)
 
         var responseContainer = container.nestedContainer(keyedBy: ResponseCodingKeys.self, forKey: .response)
         if let response = response as? HTTPURLResponse {
@@ -74,15 +73,20 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
                 try responseContainer.encode(responseUrl, forKey: .url)
             }
             try responseContainer.encode(response.statusCode, forKey: .statusCode)
-            try responseContainer.encode(response.allHeaderFields.map({ (key, value) in "\(key)\(HeaderEncoding.separator)\(value)"}),
+            let responseHeaderFieldsAsStrings = response.allHeaderFields.map { key, value in
+                "\(key)\(HeaderEncoding.separator)\(value)"
+            }
+            .sorted(by: <)
+
+            try responseContainer.encode(responseHeaderFieldsAsStrings,
                                          forKey: .headerFields)
         }
+
         try responseContainer.encode(responseData, forKey: .responseData)
     }
 
-    init(request: URLRequest, requestData: Data? = nil, response: URLResponse? = nil, responseData: Data? = nil, error: Error? = nil) {
+    init(request: URLRequest, response: URLResponse? = nil, responseData: Data? = nil, error: Error? = nil) {
         self.request = request
-        self.requestData = requestData
         self.response = response
         self.responseData = responseData
         self.error = error
@@ -93,6 +97,7 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
 
         let requestContainer = try container.nestedContainer(keyedBy: RequestCodingKeys.self, forKey: .request)
         let requestUrl = try requestContainer.decode(String.self, forKey: .url)
+
         guard let decodedURL = URL(string: requestUrl) else {
             throw RequestStubCodableError.missingRequestURLError("Unable to decode URL")
         }
@@ -100,12 +105,13 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         request.httpMethod = try requestContainer.decode(String.self, forKey: .method)
 
         let headers = try requestContainer.decode([String].self, forKey: .headerFields)
+
         request.allHTTPHeaderFields = RequestStub.httpHeaders(from: headers)
         let requestBodyData = try requestContainer.decode(Data?.self, forKey: .requestData)
         request.httpBody = requestBodyData
 
         let responseContainer = try container.nestedContainer(keyedBy: ResponseCodingKeys.self, forKey: .response)
-        let responseBodyData = try responseContainer.decode(Data.self, forKey: .responseData)
+        let responseBodyData = try responseContainer.decode(Data?.self, forKey: .responseData)
         let responseUrlString = try responseContainer.decode(String.self, forKey: .url)
         let resHeaders = try responseContainer.decode([String].self, forKey: .headerFields)
         let responseHeaders = RequestStub.httpHeaders(from: resHeaders)
@@ -120,17 +126,17 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
                                        httpVersion: "HTTP/1.1",
                                        headerFields: responseHeaders)
 
-        self.init(request: request, requestData: requestBodyData, response: response, responseData: responseBodyData)
+        self.init(request: request, response: response, responseData: responseBodyData)
     }
 
     var debugDescription: String {
         let requestDescription = String(describing: request.debugDescription)
-        let dataDescription = String(describing: requestData?.count)
+        let dataDescription = String(describing: request.httpBody?.count)
         return "[RequestStub] \(requestDescription) \(dataDescription) \(response.debugDescription)"
     }
 
     static func httpHeaders(from headers: [String]) -> [String: String] {
-        let httpHeaders = headers.reduce(into: [String: String]()) { (result, field) in
+        let httpHeaders = headers.reduce(into: [String: String]()) { result, field in
 
             let keyValue = field.components(separatedBy: HeaderEncoding.separator)
 
@@ -140,14 +146,5 @@ struct RequestStub: CustomDebugStringConvertible, Codable {
         }
 
         return httpHeaders
-    }
-}
-
-extension RequestStub: Equatable {
-    static func == (lhs: RequestStub, rhs: RequestStub) -> Bool {
-        return lhs.requestData == rhs.requestData &&
-            lhs.request.matches(otherRequest: rhs.request) &&
-            lhs.error?.localizedDescription == rhs.error?.localizedDescription &&
-            lhs.response == rhs.response
     }
 }

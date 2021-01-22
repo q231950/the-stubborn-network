@@ -57,7 +57,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let ephemeralStubSource = EphemeralStubSource()
         let expectedData = "🌈".data(using: .utf8)
         let expectedResponse = URLResponse()
-        let stub = RequestStub(request: task.originalRequest!, requestData: nil, response: expectedResponse, responseData: expectedData, error: nil)
+        let stub = RequestStub(request: task.originalRequest!, response: expectedResponse, responseData: expectedData, error: nil)
 
         objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
         ephemeralStubSource.store(stub, options: .strict)
@@ -76,7 +76,6 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
         let ephemeralStubSource = EphemeralStubSource()
         let stub = RequestStub(request: task.originalRequest!,
-                               requestData: nil,
                                response: nil,
                                responseData: nil,
                                error: TestError.expected)
@@ -200,7 +199,7 @@ class StubRecorderMock: StubRecording {
 
     func record(_ task: URLSessionTask?,
                 processor: BodyDataProcessor?,
-                options: RequestMatcherOptions?,
+                options: RequestMatcherOptions,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
         recordCount += 1
         completion("⚡️".data(using: .utf8), URLResponse(), nil)

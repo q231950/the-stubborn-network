@@ -12,43 +12,26 @@ import Foundation
 /// `EphemeralStubSource` is normally not used to stub a multitude of requests.
 class EphemeralStubSource: StubSourceProtocol {
 
-    func cache(response: CachedResponse) {
-        cachedResponses.append(response)
-    }
-
-    func hasCachedResponse(_ request: URLRequest) -> Bool {
-        cachedResponses.contains { (cachedResponse) -> Bool in
-            cachedResponse.originalRequest.matches(otherRequest: request)
-        }
-    }
-
-    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
-        let response = cachedResponses.first(where: { request.matches(otherRequest: $0.originalRequest) })
-
-        return response
-    }
-
     var stubs = [RequestStub]()
     var cachedResponses = [CachedResponse]()
 
-    func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
+    func store(_ stub: RequestStub, options: RequestMatcherOptions) {
         if !hasStub(stub.request, options: options) {
             stubs.append(stub)
         }
     }
 
-    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool {
-        stubs.contains(where: { $0.request.matches(otherRequest: request, options: options) })
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions) -> Bool {
+        stubs.contains { $0.request.matches(request, options: options) }
     }
 
-    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
-        stubs.first { (stub) -> Bool in
-            stub.request.matches(otherRequest: request, options: options)
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions) -> RequestStub? {
+        stubs.first { stub -> Bool in
+            stub.request.matches(request, options: options)
         }
     }
 
     func clear() {
         stubs.removeAll()
     }
-
 }
