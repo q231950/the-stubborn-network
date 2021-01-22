@@ -25,7 +25,6 @@ extension URLRequest {
             if case .custom(let match) = matcher {
                 return match(self, otherRequest)
             }
-
             return false
         })
 

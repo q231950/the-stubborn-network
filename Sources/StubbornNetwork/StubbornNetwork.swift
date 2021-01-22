@@ -48,11 +48,11 @@ public struct RequestMatcherOptions {
 }
 
 /// A closure that allows to compare 2 requests and decide if they are supposed to match.
-public typealias Comparator = ((_ a: URLRequest, _ b: URLRequest) -> Bool)
+public typealias RequestComparator = ((_ a: URLRequest, _ b: URLRequest) -> Bool)
 
 /// Defines parts of a request that can be used for matching two requests
 public enum RequestMatcher {
-    case custom(match: Comparator)
+    case custom(match: RequestComparator)
     case headers
     case httpMethod
     case requestBody

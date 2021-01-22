@@ -119,6 +119,14 @@ final class StubbornNetworkTests: XCTestCase {
         wait(for: [exp], timeout: 0.01)
     }
 
+    func test_stubbornNetwork_setter() {
+        let s = StubbornNetwork()
+
+        StubbornNetwork.standard = s
+
+        XCTAssertTrue(s === StubbornNetwork.standard)
+    }
+
     static var allTests = [
         ("test_stubbornNetwork_deliversStoredStubs_usingPersistentStubSource",
          test_stubbornNetwork_deliversStoredStubs_usingPersistentStubSource),
@@ -131,6 +139,8 @@ final class StubbornNetworkTests: XCTestCase {
         ("testPersistentStubbedURLSessionFromProcessInfoNotNil",
          testPersistentStubbedURLSessionFromProcessInfoNotNil),
         ("test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime",
-         test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime)
+         test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime),
+         ("test_stubbornNetwork_setter",
+         test_stubbornNetwork_setter)
     ]
 }

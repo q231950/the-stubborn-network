@@ -74,6 +74,40 @@ class URLRequestMatcherTests: XCTestCase {
         XCTAssertFalse(requestA.matches(requestB, options: .strict))
     }
 
+    func test_customMatcherMatches_beforeOtherMatchers() {
+        requestA.httpBody = "🍏".data(using: .utf8)
+        requestA.httpMethod = "POST"
+
+        requestB.httpBody = "🍐".data(using: .utf8)
+        requestB.httpMethod = "GET"
+
+        let comparator: RequestComparator = { (a, b) -> Bool in
+            a.url?.absoluteString == b.url?.absoluteString
+        }
+
+        let matches = requestA.matches(requestB, options: RequestMatcherOptions([.requestBody, .custom(match: comparator), .httpMethod]))
+        XCTAssertTrue(matches)
+    }
+
+    func test_customMatcher_allowsNonCustomMismatches() {
+        requestA.httpBody = "🍏".data(using: .utf8)
+        requestB.httpBody = "🍐".data(using: .utf8)
+
+        let matchingCustomComparator: RequestComparator = { (a, b) -> Bool in
+            false
+        }
+
+        let matches = requestA.matches(requestB, options: RequestMatcherOptions([.requestBody, .custom(match: matchingCustomComparator)]))
+        XCTAssertFalse(matches)
+    }
+
+    func test_unsortedUrlParameterMatches() {
+        requestA.url = URL(string: "http://elbedev.com?a=1&b=2")
+        requestB.url = URL(string: "http://elbedev.com?b=2&a=1")
+
+        XCTAssertTrue(requestA.matches(requestB))
+    }
+
     static var allTests = [
         ("test_URLRequestMatcher_matchesHeadersCaseSensitively",
         test_URLRequestMatcher_matchesHeadersCaseSensitively),
@@ -86,7 +120,13 @@ class URLRequestMatcherTests: XCTestCase {
         ("test_URLRequestMatcher_matches_withEqualBodies",
         test_URLRequestMatcher_matches_withEqualBodies),
         ("test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer",
-        test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer)
+        test_URLRequestMatcher_doesNotMatch_whenBodiesDiffer),
+        ("test_customMatcherMatches_beforeOtherMatchers",
+        test_customMatcherMatches_beforeOtherMatchers),
+        ("test_customMatcher_allowsNonCustomMismatches",
+        test_customMatcher_allowsNonCustomMismatches),
+        ("test_unsortedUrlParameterMatches",
+        test_unsortedUrlParameterMatches)
     ]
 
 }
