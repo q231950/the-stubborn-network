@@ -10,7 +10,10 @@ import XCTest
 
 class StubSourceTests: XCTestCase {
 
-    var stubSourceUrl = TestHelper.testingStubSourceUrl()
+    var stubSourceUrl: URL = {
+        TestHelper.testingStubSourceUrl()
+    }()
+
     var session: URLSession!
 
     override func setUp() {
@@ -35,36 +38,36 @@ class StubSourceTests: XCTestCase {
     }
 
     func test_persistentStubSource_loadsStub_forRequestWithBodyData() throws {
-        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
-
-        FileManager.default.createFile(atPath: path.appendingPathComponent("aaa.json").absoluteString, contents: nil, attributes: nil)
-
-        let stubSource = PersistentStubSource(path: path.appendingPathComponent("aaa.json"))
+        let path = try XCTUnwrap(URL(string: stubSourceUrl.absoluteString))
+        let stubSource = PersistentStubSource(name: "aaa", path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
+        stubSource.save(stubSource.stubs)
 
-        let url = URL(string: "https://api.elbedev.com")
-        var request = URLRequest(url: url!)
+        let url = try XCTUnwrap(URL(string: "https://api.elbedev.com"))
+        var request = URLRequest(url: url)
         request.httpBody = "abc".data(using: .utf8)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
-        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
+
+        let stubSource2 = PersistentStubSource(name: "aaa", path: path)
+        let loadedStub = stubSource2.stub(forRequest: request, options: .strict)
 
         XCTAssertNotNil(loadedStub)
     }
 
     func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() throws {
-        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
-
-        FileManager.default.createFile(atPath: path.appendingPathComponent("aaa.json").absoluteString, contents: nil, attributes: nil)
-
-        let stubSource = PersistentStubSource(path: path.appendingPathComponent("aaa.json"))
+        let path = try XCTUnwrap(URL(string: stubSourceUrl.absoluteString))
+        let stubSource = PersistentStubSource(name: "aaa", path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
+        stubSource.save(stubSource.stubs)
 
         let url = URL(string: "https://api.elbedev.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["D": "DDD"]
-        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
+
+        let stubSource2 = PersistentStubSource(name: "aaa", path: path)
+        let loadedStub = stubSource2.stub(forRequest: request, options: .strict)
 
         XCTAssertNotNil(loadedStub)
     }
@@ -72,8 +75,8 @@ class StubSourceTests: XCTestCase {
     func test_persistentStubSource_storesStub() throws {
         let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
 
-        let filename = "\(UUID().uuidString).json"
-        let stubSource = PersistentStubSource(path: path.appendingPathComponent(filename))
+        let filename = UUID().uuidString
+        let stubSource = PersistentStubSource(name: filename, path: path)
 
         let url = try XCTUnwrap(URL(string: "127.0.0.1/abc"))
         var request = URLRequest(url: url)
@@ -88,7 +91,7 @@ class StubSourceTests: XCTestCase {
         let stub = RequestStub(request: request, response: response)
         stubSource.store(stub, options: .strict)
 
-        let secondStubSource = PersistentStubSource(path: path.appendingPathComponent(filename))
+        let secondStubSource = PersistentStubSource(name: filename, path: path)
 
         let loadedStub = secondStubSource.stub(forRequest: request, options: .strict)
 
@@ -129,7 +132,7 @@ class StubSourceTests: XCTestCase {
 
         FileManager.default.createFile(atPath: path.appendingPathComponent("aaa.json").absoluteString, contents: nil, attributes: nil)
 
-        let stubSource = PersistentStubSource(path: path.appendingPathComponent("aaa.json"))
+        let stubSource = PersistentStubSource(name: "aaa", path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
 
         stubSource.save(stubSource.stubs)

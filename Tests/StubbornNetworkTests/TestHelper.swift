@@ -25,9 +25,11 @@ struct TestHelper {
         if let path = exportedDirectoryPath {
             stubDirectoryPath = path
         } else {
-            let tmpDirectory = NSURL(fileURLWithPath: NSTemporaryDirectory())
+            let tmpDirectory = NSURL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             let uuid = ProcessInfo().globallyUniqueString
-            stubDirectoryPath = tmpDirectory.appendingPathComponent(uuid)?.absoluteString
+            stubDirectoryPath = tmpDirectory
+                                    .appendingPathComponent("StubbornNetworkTests")?
+                                    .appendingPathComponent(uuid).absoluteString
         }
 
         assert(stubDirectoryPath != nil,
