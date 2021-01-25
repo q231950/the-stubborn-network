@@ -19,13 +19,13 @@ struct StubRecorder: StubRecording {
 
     func record(_ task: URLSessionTask?,
                 processor: BodyDataProcessor?,
-                options: RequestMatcherOptions?,
+                options: RequestMatcherOptions,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
 
         guard let task = task, let request = task.originalRequest else { return }
 
         if task.self.isKind(of: URLSessionDataTask.self) {
-            urlSession.dataTask(with: request) { (data, response, error) in
+            urlSession.dataTask(with: request) { data, response, error in
 
                 let (prepRequestBodyData, prepResponseBodyData) = self.prepare(requestData: request.httpBody,
                                                                                responseData: data,
@@ -36,7 +36,6 @@ struct StubRecorder: StubRecording {
                 preparedRequest.httpBody = prepRequestBodyData
 
                 let stub = RequestStub(request: preparedRequest,
-                                       requestData: prepRequestBodyData,
                                        response: response,
                                        responseData: prepResponseBodyData,
                                        error: error)
@@ -44,7 +43,10 @@ struct StubRecorder: StubRecording {
                 self.stubSource.store(stub, options: options)
 
                 completion(data, response, error)
-            }.resume()
+            }
+            .resume()
+        } else {
+         assertionFailure("Only supporting URLSessionDataTask atm.")
         }
     }
 
@@ -64,5 +66,4 @@ struct StubRecorder: StubRecording {
             }
             return (prepRequestBodyData, prepResponseBodyData)
     }
-
 }

@@ -10,7 +10,10 @@ import XCTest
 
 class StubSourceTests: XCTestCase {
 
-    var stubSourceUrl = TestHelper.testingStubSourceUrl()
+    var stubSourceUrl: URL = {
+        TestHelper.testingStubSourceUrl()
+    }()
+
     var session: URLSession!
 
     override func setUp() {
@@ -35,52 +38,68 @@ class StubSourceTests: XCTestCase {
     }
 
     func test_persistentStubSource_loadsStub_forRequestWithBodyData() throws {
-        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
-        let stubSource = PersistentStubSource(path: path)
+        let path = try XCTUnwrap(URL(string: stubSourceUrl.absoluteString))
+        let stubSource = PersistentStubSource(name: "aaa", path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
+        stubSource.save(stubSource.stubs)
 
-        let url = URL(string: "https://api.elbedev.com")
-        var request = URLRequest(url: url!)
+        let url = try XCTUnwrap(URL(string: "https://api.elbedev.com"))
+        var request = URLRequest(url: url)
         request.httpBody = "abc".data(using: .utf8)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
-        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
+
+        let stubSource2 = PersistentStubSource(name: "aaa", path: path)
+        let loadedStub = stubSource2.stub(forRequest: request, options: .strict)
 
         XCTAssertNotNil(loadedStub)
     }
 
     func test_persistentStubSource_loadsStub_forRequestWithoutBodyData() throws {
-        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
-        let stubSource = PersistentStubSource(path: path)
+        let path = try XCTUnwrap(URL(string: stubSourceUrl.absoluteString))
+        let stubSource = PersistentStubSource(name: "aaa", path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
+        stubSource.save(stubSource.stubs)
 
         let url = URL(string: "https://api.elbedev.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["D": "DDD"]
-        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
+
+        let stubSource2 = PersistentStubSource(name: "aaa", path: path)
+        let loadedStub = stubSource2.stub(forRequest: request, options: .strict)
 
         XCTAssertNotNil(loadedStub)
     }
 
-    func test_persistentStubSource_storesStub() {
-        let url = URL(string: "127.0.0.1/abc")!
+    func test_persistentStubSource_storesStub() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
 
-        let stubSource = PersistentStubSource(path: url)
+        let filename = UUID().uuidString
+        let stubSource = PersistentStubSource(name: filename, path: path)
 
+        let url = try XCTUnwrap(URL(string: "127.0.0.1/abc"))
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["B": "BBB"]
 
-        let stub = RequestStub(request: request)
+        let response = HTTPURLResponse(url: url,
+                                       mimeType: "text/html",
+                                       expectedContentLength: 3,
+                                       textEncodingName: "utf-8")
+
+        let stub = RequestStub(request: request, response: response)
         stubSource.store(stub, options: .strict)
 
-        let loadedStub = stubSource.stub(forRequest: request, options: .strict)
+        let secondStubSource = PersistentStubSource(name: filename, path: path)
 
-        XCTAssertEqual(stub, loadedStub)
+        let loadedStub = secondStubSource.stub(forRequest: request, options: .strict)
+
+        XCTAssertEqual(loadedStub?.request, request)
+        XCTAssertEqual(loadedStub?.response?.url, response.url)
     }
 
-    func test_persistentStubSource_storesNoDuplicateRequests() throws {
+    func test_persistentStubSource_storesDuplicateRequests() throws {
         let url = URL(string: "127.0.0.1/abc")!
 
         let stubSource = PersistentStubSource(path: url)
@@ -93,7 +112,7 @@ class StubSourceTests: XCTestCase {
         stubSource.store(stub, options: .strict)
         stubSource.store(stub, options: .strict)
 
-        XCTAssertEqual(stubSource.stubs.count, 1)
+        XCTAssertEqual(stubSource.stubs.count, 2)
     }
 
     func test_persistentStubSource_clearsStubs() throws {
@@ -108,12 +127,17 @@ class StubSourceTests: XCTestCase {
         XCTAssertEqual(stubSource.stubs.count, 0)
     }
 
-    func test_persistentStubSource_savesToDisk() {
-        let stubSource = PersistentStubSource(name: "the stubborn network testing", path: stubSourceUrl)
+    func test_persistentStubSource_savesToDisk() throws {
+        let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
+
+        FileManager.default.createFile(atPath: path.appendingPathComponent("aaa.json").absoluteString, contents: nil, attributes: nil)
+
+        let stubSource = PersistentStubSource(name: "aaa", path: path)
         stubSource.setupStubs(from: prerecordedStubMockData)
+
         stubSource.save(stubSource.stubs)
 
-        let secondStubSource = PersistentStubSource(name: "the stubborn network testing", path: stubSourceUrl)
+        let secondStubSource = PersistentStubSource(path: path.appendingPathComponent("aaa.json"))
         XCTAssertEqual(secondStubSource.stubs.count, 3)
     }
 
@@ -129,7 +153,6 @@ class StubSourceTests: XCTestCase {
                         ],
                         "method": "GET"
                     },
-                    "requestData": "YWJj",
                     "response": {
                         "responseData": "YWJj",
                         "url": "https://api.q231950.com",
@@ -191,8 +214,8 @@ class StubSourceTests: XCTestCase {
          test_persistentStubSource_loadsStub_forRequestWithoutBodyData),
         ("test_persistentStubSource_storesStub",
         test_persistentStubSource_storesStub),
-        ("test_persistentStubSource_storesNoDuplicateRequests",
-        test_persistentStubSource_storesNoDuplicateRequests),
+        ("test_persistentStubSource_storesDuplicateRequests",
+        test_persistentStubSource_storesDuplicateRequests),
         ("test_persistentStubSource_clearsStubs",
         test_persistentStubSource_clearsStubs)
     ]

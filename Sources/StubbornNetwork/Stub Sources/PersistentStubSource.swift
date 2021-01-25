@@ -9,33 +9,21 @@ import Foundation
 
 class PersistentStubSource: StubSourceProtocol {
 
-    func cache(response: CachedResponse) {
-        cachedResponses.append(response)
-    }
-
-    func hasCachedResponse(_ request: URLRequest) -> Bool {
-        cachedResponses.contains { (cachedResponse) -> Bool in
-            cachedResponse.originalRequest.matches(otherRequest: request)
-        }
-    }
-
-    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
-        let response = cachedResponses.first(where: { request.matches(otherRequest: $0.originalRequest) })
-
-        return response
-    }
-
     let path: URL
     var stubs = [RequestStub]()
     var cachedResponses = [CachedResponse]()
+    var recordMode = false
 
     convenience init(with location: StubSourceLocation) {
-        let url = URL(string: location.stubSourcePath)
-        assert(url != nil, """
-            The path to the stub source is not a valid path.
-            Choose a valid path in the stub source configuration.
-            """)
-        self.init(name: location.stubSourceName, path: url!)
+        guard let url = URL(string: location.stubSourcePath) else {
+            preconditionFailure(
+                """
+                The path to the stub source is not a valid path.
+                Choose a valid path in the stub source configuration.
+                """)
+        }
+
+        self.init(name: location.stubSourceName, path: url)
     }
 
     init(path: URL) {
@@ -43,6 +31,8 @@ class PersistentStubSource: StubSourceProtocol {
 
         if let data = try? stubRecordData() {
             setupStubs(from: data)
+        } else {
+            recordMode = true
         }
     }
 
@@ -61,21 +51,32 @@ class PersistentStubSource: StubSourceProtocol {
         return try Data(contentsOf: url)
     }
 
-    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
-        print("Loading stub for request \(request.url?.absoluteString ?? "unknown")")
-        return stubs.first(where: { request.matches(otherRequest: $0.request, options: options) })
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions) -> RequestStub? {
+        guard !recordMode else { return nil }
+
+        let stub = stubs.first { request.matches($0.request, options: options) }
+        if let index = stubs.firstIndex(where: { request.matches($0.request, options: options) }) {
+            stubs.remove(at: index)
+        }
+
+        if stub != nil {
+            print("Found stub for: \(request.url?.absoluteString ?? "")")
+        } else {
+            print("Did not find stub for: \(request.url?.absoluteString ?? "")")
+        }
+
+        return stub
     }
 
-    func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
-        if hasStub(stub.request, options: options) {
-            print("Not storing stub because its request has already been stubbed.")
-        } else {
-            print("Storing stub: \(stub) at \(path.absoluteString).")
-
-            stubs.append(stub)
-
-            save(stubs)
+    func store(_ stub: RequestStub, options: RequestMatcherOptions) {
+        guard recordMode else {
+            print("Won't record when not in record mode")
+            return
         }
+
+        print("Storing stub: \(stub.request.url?.absoluteString ?? "") (\(stub.request.httpBody?.count ?? 0)) at \(path.absoluteString).")
+
+        addAndSave(stub)
     }
 
     func clear() {
@@ -84,21 +85,30 @@ class PersistentStubSource: StubSourceProtocol {
         save(stubs)
     }
 
+    private func addAndSave(_ stub: RequestStub) {
+        stubs.append(stub)
+
+        save(stubs)
+    }
+
     func save(_ stubs: [RequestStub]) {
         do {
             let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+
             let json = try encoder.encode(stubs)
             let fileManager = FileManager.default
             fileManager.createFile(atPath: path.absoluteString,
                                    contents: json,
                                    attributes: [FileAttributeKey.type: "json"])
         } catch {
-            print("\(error)")
+            assertionFailure("\(error)")
         }
     }
 
-    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool {
-        stub(forRequest: request, options: options) != nil
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions) -> Bool {
+        let stub = stubs.first { request.matches($0.request, options: options) }
+        return stub != nil
     }
 }
 
@@ -112,6 +122,7 @@ extension PersistentStubSource {
     convenience init(name: String, path: URL) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path.absoluteString) {
+            print("File does not exist at path: \(path.absoluteString)")
             PersistentStubSource.createStubDirectory(at: path)
         }
 

@@ -13,40 +13,30 @@ import Foundation
 /// by the _Combined Stub Source_.
 struct CombinedStubSource: StubSourceProtocol {
 
-    func cachedResponse(forRequest request: URLRequest) -> CachedResponse? {
-        sources.first { (source) -> Bool in
-            source.hasCachedResponse(request)
-            }?.cachedResponse(forRequest: request)
-    }
-
-    func hasCachedResponse(_ request: URLRequest) -> Bool {
-        sources.contains { (source) -> Bool in
-            source.hasCachedResponse(request)
-        }
-    }
-
-    func cache(response: CachedResponse) {
-        sources.forEach { $0.cache(response: response) }
-    }
-
     let sources: [StubSourceProtocol]
 
-    func store(_ stub: RequestStub, options: RequestMatcherOptions?) {
+    var recordMode: Bool {
+        sources
+            .map { $0.recordMode }
+            .contains(true)
+    }
+
+    func store(_ stub: RequestStub, options: RequestMatcherOptions) {
         sources.forEach { $0.store(stub, options: options) }
     }
 
-    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool {
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions) -> Bool {
         sources.contains { $0.hasStub(request, options: options) }
     }
 
-    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub? {
-        sources.first { (source) -> Bool in
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions) -> RequestStub? {
+        sources.first { source -> Bool in
             source.hasStub(request, options: options)
-            }?.stub(forRequest: request, options: options)
+        }?
+        .stub(forRequest: request, options: options)
     }
 
     func clear() {
         sources.forEach { $0.clear() }
     }
-
 }

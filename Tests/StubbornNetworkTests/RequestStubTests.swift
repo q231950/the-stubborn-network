@@ -35,7 +35,7 @@ final class RequestStubTests: XCTestCase {
         XCTAssertEqual(json,
         """
         {\"request\":{\"headerFields\":[],\"method\":\"POST\",\"requestData\":\"c29tZSBkYXRh\",\"url\":\"123.4.5.6\"}\
-        ,\"requestData\":null,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"],\"responseData\":null,\
+        ,\"response\":{\"statusCode\":200,\"headerFields\":[\"A[:::]aaa\"],\"responseData\":null,\
         \"url\":\"123.4.5.6\"}}
         """)
     }

@@ -68,14 +68,10 @@ final class StubbornNetworkTests: XCTestCase {
         request.allHTTPHeaderFields = ["B": "BBB"]
 
         let stub = RequestStub(request: request,
-                               requestData: nil,
                                response: expectedResponse,
                                responseData: "abc".data(using: .utf8),
                                error: nil)
         stubSource.store(stub, options: .strict)
-
-        StubbornNetwork.standard.internalStubSource = nil
-        StubbornNetwork.standard.ephemeralStubSource = stubSource
 
         session.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(expectedData, data)
@@ -122,6 +118,14 @@ final class StubbornNetworkTests: XCTestCase {
         wait(for: [exp], timeout: 0.01)
     }
 
+    func test_stubbornNetwork_setter() {
+        let stubbornNetwork = StubbornNetwork()
+
+        StubbornNetwork.standard = stubbornNetwork
+
+        XCTAssertTrue(stubbornNetwork === StubbornNetwork.standard)
+    }
+
     static var allTests = [
         ("test_stubbornNetwork_deliversStoredStubs_usingPersistentStubSource",
          test_stubbornNetwork_deliversStoredStubs_usingPersistentStubSource),
@@ -134,6 +138,8 @@ final class StubbornNetworkTests: XCTestCase {
         ("testPersistentStubbedURLSessionFromProcessInfoNotNil",
          testPersistentStubbedURLSessionFromProcessInfoNotNil),
         ("test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime",
-         test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime)
+         test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime),
+        ("test_stubbornNetwork_setter",
+         test_stubbornNetwork_setter)
     ]
 }

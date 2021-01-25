@@ -13,23 +13,23 @@ typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 /// It is up to the _Stub Source_ to decide where to store its stubs.
 protocol StubSourceProtocol {
 
+    /// When the _Stub Source_ was initialised with a path to an existing stub file
+    /// this will be false. If no file existed, it will go into `recordMode` == true.
+    var recordMode: Bool { get }
+
     /// Store a stub into the _Stub Source_.
     /// - Parameter stub: The stub to store
-    func store(_ stub: RequestStub, options: RequestMatcherOptions?)
+    // possibly remove matcher and options here
+    func store(_ stub: RequestStub, options: RequestMatcherOptions)
 
     /// Get information about which requests have a stored stub
     /// - Parameter request: The request to check the availability of a stub for
-    func hasStub(_ request: URLRequest, options: RequestMatcherOptions?) -> Bool
+    func hasStub(_ request: URLRequest, options: RequestMatcherOptions) -> Bool
 
     /// Get a `RequestStub` if one has been previously recorded for the given request
     /// - Parameter request: the request to find and return a stub for
-    func stub(forRequest request: URLRequest, options: RequestMatcherOptions?) -> RequestStub?
-
-    func cache(response: CachedResponse)
-    func hasCachedResponse(_ request: URLRequest) -> Bool
-    func cachedResponse(forRequest request: URLRequest) -> CachedResponse?
+    func stub(forRequest request: URLRequest, options: RequestMatcherOptions) -> RequestStub?
 
     /// Clear the _Stub Source_. This ideally removes all stubs from the _Stub Source_.
     func clear()
-
 }

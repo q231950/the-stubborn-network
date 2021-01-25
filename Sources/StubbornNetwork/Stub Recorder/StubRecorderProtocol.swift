@@ -24,7 +24,6 @@ protocol StubRecording {
     ///                 request on a `URLSession`.
     func record(_ task: URLSessionTask?,
                 processor: BodyDataProcessor?,
-                options: RequestMatcherOptions?,
+                options: RequestMatcherOptions,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void)
-
 }

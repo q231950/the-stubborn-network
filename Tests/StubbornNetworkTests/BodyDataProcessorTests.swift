@@ -34,7 +34,7 @@ class BodyDataProcessorTests: XCTestCase {
         let exp = expectation(description: "Wait for session")
         let data = "123".data(using: .utf8)
         request.httpBody = data
-        let requestStub = RequestStub(request: request, requestData: data, response: nil, responseData: nil, error: nil)
+        let requestStub = RequestStub(request: request, response: nil, responseData: nil, error: nil)
 
         // when
         StubbornNetwork.standard.ephemeralStubSource?.store(requestStub, options: .strict)
@@ -53,7 +53,7 @@ class BodyDataProcessorTests: XCTestCase {
         // given
         let exp = expectation(description: "Wait for session")
         let data = "123".data(using: .utf8)
-        let requestStub = RequestStub(request: request, requestData: nil, response: nil, responseData: data, error: nil)
+        let requestStub = RequestStub(request: request, response: nil, responseData: data, error: nil)
 
         // when
         StubbornNetwork.standard.ephemeralStubSource?.store(requestStub, options: .strict)
