@@ -45,7 +45,7 @@ class BodyDataProcessorTests: XCTestCase {
             exp.fulfill()
         }.resume()
 
-        wait(for: [exp], timeout: 0.01)
+        wait(for: [exp], timeout: 0.1)
 
     }
 
@@ -64,7 +64,7 @@ class BodyDataProcessorTests: XCTestCase {
             exp.fulfill()
         }.resume()
 
-        wait(for: [exp], timeout: 0.01)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testPreparesResponseBodyBeforeDelivery() throws {
@@ -84,7 +84,7 @@ class BodyDataProcessorTests: XCTestCase {
             exp.fulfill()
         }.resume()
 
-        wait(for: [exp], timeout: 0.01)
+        wait(for: [exp], timeout: 0.1)
     }
 
     static var allTests = [
