@@ -13,6 +13,10 @@ typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 /// It is up to the _Stub Source_ to decide where to store its stubs.
 protocol StubSourceProtocol {
 
+    /// When the _Stub Source_ was initialised with a path to an existing stub file
+    /// this will be false. If no file existed, it will go into `recordMode` == true.
+    var recordMode: Bool { get }
+
     /// Store a stub into the _Stub Source_.
     /// - Parameter stub: The stub to store
     // possibly remove matcher and options here

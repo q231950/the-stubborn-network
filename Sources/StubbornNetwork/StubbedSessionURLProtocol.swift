@@ -49,8 +49,11 @@ public class StubbedSessionURLProtocol: URLProtocol {
                                                           options: stubbornNetwork.requestMatcherOptions) {
                 playback(stub) { notifyFinished() }
             } else {
-                record(task) { data, response, error in
-                    notifyFinished()
+                guard stubbornNetwork.stubSource.recordMode == true else { return }
+
+                recorder.record(task, processor: stubbornNetwork.bodyDataProcessor,
+                                options: stubbornNetwork.requestMatcherOptions) { (data, response, error) in
+                    self.playback(data: data, response: response, error: error) { notifyFinished() }
                 }
             }
         }
@@ -108,12 +111,6 @@ extension StubbedSessionURLProtocol {
         queue?.sync {
             completion()
         }
-    }
-
-    fileprivate func record(_ task: URLSessionTask?, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
-        recorder.record(task, processor: stubbornNetwork.bodyDataProcessor,
-                        options: stubbornNetwork.requestMatcherOptions,
-                        completion: completion)
     }
 
     /// Gets the information about whether or not a URL scheme is supported by this protocol.
