@@ -73,7 +73,6 @@ final class StubbornNetworkTests: XCTestCase {
                                error: nil)
         stubSource.store(stub, options: .strict)
 
-
         session.dataTask(with: request) { (data, response, error) in
             XCTAssertEqual(expectedData, data)
             XCTAssertEqual(expectedResponse?.url, response?.url)
@@ -120,11 +119,11 @@ final class StubbornNetworkTests: XCTestCase {
     }
 
     func test_stubbornNetwork_setter() {
-        let s = StubbornNetwork()
+        let stubbornNetwork = StubbornNetwork()
 
-        StubbornNetwork.standard = s
+        StubbornNetwork.standard = stubbornNetwork
 
-        XCTAssertTrue(s === StubbornNetwork.standard)
+        XCTAssertTrue(stubbornNetwork === StubbornNetwork.standard)
     }
 
     static var allTests = [
@@ -140,7 +139,7 @@ final class StubbornNetworkTests: XCTestCase {
          testPersistentStubbedURLSessionFromProcessInfoNotNil),
         ("test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime",
          test_stubbornNetwork_allowsPersistentAndEphemeralStubSources_atTheSameTime),
-         ("test_stubbornNetwork_setter",
+        ("test_stubbornNetwork_setter",
          test_stubbornNetwork_setter)
     ]
 }

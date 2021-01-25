@@ -81,8 +81,8 @@ class URLRequestMatcherTests: XCTestCase {
         requestB.httpBody = "🍐".data(using: .utf8)
         requestB.httpMethod = "GET"
 
-        let comparator: RequestComparator = { (a, b) -> Bool in
-            a.url?.absoluteString == b.url?.absoluteString
+        let comparator: RequestComparator = { request, other -> Bool in
+            request.url?.absoluteString == other.url?.absoluteString
         }
 
         let matches = requestA.matches(requestB, options: RequestMatcherOptions([.requestBody, .custom(match: comparator), .httpMethod]))
@@ -93,7 +93,7 @@ class URLRequestMatcherTests: XCTestCase {
         requestA.httpBody = "🍏".data(using: .utf8)
         requestB.httpBody = "🍐".data(using: .utf8)
 
-        let matchingCustomComparator: RequestComparator = { (a, b) -> Bool in
+        let matchingCustomComparator: RequestComparator = { _, _ -> Bool in
             false
         }
 

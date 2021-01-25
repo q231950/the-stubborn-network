@@ -53,13 +53,13 @@ extension URLRequest {
         guard let url = url?.absoluteString, let otherURL = otherRequest.url?.absoluteString else { return false }
 
         let components = URLComponents(string: url)
-        let queryItems = components?.queryItems?.sorted { (a: URLQueryItem, b: URLQueryItem) in
-            a.name < b.name || (a == b && a.value ?? "" < b.value ?? "")
+        let queryItems = components?.queryItems?.sorted { (item: URLQueryItem, other: URLQueryItem) in
+            item.name < other.name || (item == other && item.value ?? "" < other.value ?? "")
         }
 
         let otherComponents = URLComponents(string: otherURL)
-        let otherQueryItems = otherComponents?.queryItems?.sorted { (a: URLQueryItem, b: URLQueryItem) in
-            a.name < b.name || (a == b && a.value ?? "" < b.value ?? "")
+        let otherQueryItems = otherComponents?.queryItems?.sorted { (item: URLQueryItem, other: URLQueryItem) in
+            item.name < other.name || (item == other && item.value ?? "" < other.value ?? "")
         }
 
         return components?.path == otherComponents?.path && queryItems == otherQueryItems
