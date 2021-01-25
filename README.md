@@ -29,7 +29,7 @@ let configuration = URLSessionConfiguration.default
 if ProcessInfo().isUITesting {
     StubbornNetwork.standard.insertStubbedSessionURLProtocol(into: configuration)
     StubbornNetwork.standard.bodyDataProcessor = SensitiveDataProcessor()
-    StubbornNetwork.standard.requestMatcherOptions = [.url, .headers]
+    StubbornNetwork.standard.requestMatcherOptions = RequestMatcherOptions([.requestBody, .url, .httpMethod])
 }
 
 let urlSession = URLSession(configuration: configuration)
@@ -92,4 +92,4 @@ You can find your stubs at the path defined in the test cases and they typically
 
 You can run tests either from within Xcode (`cmd+U`) or from the command line: `export STUB_DIR='./stubs' && swift test`.
 
-Stubs are stored and read during test execution. They can be found in a temporary directory, for example: `cat /private/tmp/stubs/8DE9DF3B-38E7-4618-9E5A-AD80F655CAB4.json` 
+Stubs are stored and read during test execution. They can be found in a temporary directory, for example: `"file:///private/tmp/StubbornNetworkTests/67BED946-88E0-4F8C-98C7-7A23812D647A-3620-000001390930169C"`
