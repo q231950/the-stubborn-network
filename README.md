@@ -1,4 +1,4 @@
-![Travis](https://travis-ci.org/q231950/the-stubborn-network.svg?branch=master) [![SourceLevel](https://app.sourcelevel.io/github/q231950/the-stubborn-network.svg)](https://app.sourcelevel.io/github/q231950/the-stubborn-network)
+![Travis](https://travis-ci.org/q231950/the-stubborn-network.svg?branch=main) [![SourceLevel](https://app.sourcelevel.io/github/q231950/-/the-stubborn-network.svg)](https://app.sourcelevel.io/github/q231950/-/the-stubborn-network)
 
 <img width=800 src="the-stubborn-network-logo.png" alt="The Stubborn Network Logo"> 
 
