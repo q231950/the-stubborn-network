@@ -12,8 +12,7 @@ Pod::Spec.new do |spec|
     spec.author             = { "author" => "martinkim.pham@gmail.com" }
     spec.documentation_url = "https://github.com/q231950/the-stubborn-network#-stubbed-ui-tests"
     spec.platforms = { :ios => "13.0", :osx => "10.15", :watchos => "6.0" }
-    spec.swift_version = "5.1"
+    spec.swift_version = "5.2"
     spec.source       = { :git => "https://github.com/q231950/the-stubborn-network.git", :tag => "#{spec.version}" }
     spec.source_files  = "Sources/StubbornNetwork/**/*.swift"
-    spec.xcconfig = { "SWIFT_VERSION" => "5.1" }
     end
