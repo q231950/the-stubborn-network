@@ -17,8 +17,7 @@ struct CombinedStubSource: StubSourceProtocol {
 
     var recordMode: Bool {
         sources
-            .map { $0.recordMode }
-            .contains(true)
+            .allSatisfy { $0.recordMode }
     }
 
     func store(_ stub: RequestStub, options: RequestMatcherOptions) {
