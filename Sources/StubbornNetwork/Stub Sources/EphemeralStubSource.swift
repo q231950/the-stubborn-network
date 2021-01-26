@@ -15,7 +15,11 @@ class EphemeralStubSource: StubSourceProtocol {
     var stubs = [RequestStub]()
     var cachedResponses = [CachedResponse]()
 
-    var recordMode: Bool = true
+    var recordMode: Bool
+
+    init(recordMode: Bool = true) {
+        self.recordMode = recordMode
+    }
 
     func store(_ stub: RequestStub, options: RequestMatcherOptions) {
         if !hasStub(stub.request, options: options) {

@@ -26,6 +26,33 @@ class CombinedStubSourceTests: XCTestCase {
         XCTAssertTrue(source2.hasStub(request, options: .strict))
     }
 
+    func test_combinedStubSource_isNotInRecordMode_whenOneOfItsSourcesIsNotInRecordMode() {
+        // given
+        let source1 = EphemeralStubSource(recordMode: false)
+        let source2 = EphemeralStubSource()
+        let combinedStubSource = CombinedStubSource(sources: [source1, source2])
+
+        XCTAssertFalse(combinedStubSource.recordMode)
+    }
+
+    func test_combinedStubSource_isInRecordMode_whenAllItsSourcesAreInRecordMode() {
+        // given
+        let source1 = EphemeralStubSource(recordMode: true)
+        let source2 = EphemeralStubSource(recordMode: true)
+        let combinedStubSource = CombinedStubSource(sources: [source1, source2])
+
+        XCTAssertTrue(combinedStubSource.recordMode)
+    }
+
+    func test_combinedStubSource_isNotInRecordMode_whenNoneOfItsSourcesIsInRecordMode() {
+        // given
+        let source1 = EphemeralStubSource(recordMode: false)
+        let source2 = EphemeralStubSource(recordMode: false)
+        let combinedStubSource = CombinedStubSource(sources: [source1, source2])
+
+        XCTAssertFalse(combinedStubSource.recordMode)
+    }
+
     func test_CombinedStubSource_returnsIfAnyOfItsSourcesHasAStub() throws {
         // given
         let source1 = EphemeralStubSource()
@@ -61,9 +88,19 @@ class CombinedStubSourceTests: XCTestCase {
     }
 
     static var allTests = [
-        ("test_CombinedStubSource_storesToItsSources", test_CombinedStubSource_storesToItsSources),
-        ("test_CombinedStubSource_returnsIfAnyOfItsSourcesHasAStub", test_CombinedStubSource_returnsIfAnyOfItsSourcesHasAStub),
-        ("test_CombinedStubSource_clearsAllOfItsSources", test_CombinedStubSource_clearsAllOfItsSources),
-        ("test_CombinedStubSource_clearsAllOfItsSources", test_CombinedStubSource_clearsAllOfItsSources)
+        ("test_CombinedStubSource_storesToItsSources",
+        test_CombinedStubSource_storesToItsSources),
+        ("test_CombinedStubSource_returnsIfAnyOfItsSourcesHasAStub",
+        test_CombinedStubSource_returnsIfAnyOfItsSourcesHasAStub),
+        ("test_CombinedStubSource_clearsAllOfItsSources",
+        test_CombinedStubSource_clearsAllOfItsSources),
+        ("test_CombinedStubSource_clearsAllOfItsSources",
+        test_CombinedStubSource_clearsAllOfItsSources),
+        ("test_combinedStubSource_isNotInRecordMode_whenOneOfItsSourcesIsNotInRecordMode",
+         test_combinedStubSource_isNotInRecordMode_whenOneOfItsSourcesIsNotInRecordMode),
+         ("test_combinedStubSource_isInRecordMode_whenAllItsSourcesAreInRecordMode",
+         test_combinedStubSource_isInRecordMode_whenAllItsSourcesAreInRecordMode),
+         ("test_combinedStubSource_isNotInRecordMode_whenNoneOfItsSourcesIsInRecordMode",
+         test_combinedStubSource_isNotInRecordMode_whenNoneOfItsSourcesIsInRecordMode)
     ]
 }
