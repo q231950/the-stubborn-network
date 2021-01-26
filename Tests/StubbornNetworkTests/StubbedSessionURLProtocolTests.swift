@@ -121,6 +121,24 @@ class StubbedSessionURLProtocolTests: XCTestCase {
         XCTAssertEqual(recorder.recordCount, 0)
     }
 
+    func test_StubbedSessionURLProtocol_doesOnlyRecords_whenStubSourceIsInRecordMode() throws {
+        // given there is a stub for the given request
+        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let task = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let client = URLProtocolClientStub()
+        let recorder = StubRecorderMock()
+        let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: recorder)
+
+        // when StubSource is not in record mode and a request is incoming
+        let ephemeralStubSource = EphemeralStubSource(recordMode: false)
+
+        objectUnderTest.internalStubbornNetwork = StubbornNetwork(processInfo: ProcessInfo(), ephemeralStubSource)
+        objectUnderTest.startLoading()
+
+        // then it should not record
+        XCTAssertEqual(recorder.recordCount, 0)
+    }
+
     func test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub() throws {
         // given there is no stub for the given request
         let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
@@ -161,7 +179,9 @@ class StubbedSessionURLProtocolTests: XCTestCase {
          test_StubbedSessionURLProtocol_playsBackDataAndResponse_whenItFindsMatchingStub),
         ("test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading",
          test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading),
-        ("test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub", test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub)
+        ("test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub", test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub),
+        ("test_StubbedSessionURLProtocol_doesOnlyRecords_whenStubSourceIsInRecordMode",
+        test_StubbedSessionURLProtocol_doesOnlyRecords_whenStubSourceIsInRecordMode)
     ]
 }
 
