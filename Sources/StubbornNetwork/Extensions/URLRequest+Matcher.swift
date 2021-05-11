@@ -66,7 +66,17 @@ extension URLRequest {
     }
 
     private func requestBodyMatches(_ otherRequest: URLRequest) -> Bool {
-        httpBody == otherRequest.httpBody || httpBody == nil && otherRequest.httpBody == nil
+        if
+            let httpBody = httpBody,
+            let otherHttpBody = otherRequest.httpBody,
+            let JSON = try? JSONSerialization.jsonObject(with: httpBody, options: []) as? [String: Any],
+            let otherJSON = try? JSONSerialization.jsonObject(with: otherHttpBody, options: []) as? [String: Any] {
+
+            return (JSON as NSDictionary).isEqual(to: otherJSON)
+        }
+
+        return httpBody == otherRequest.httpBody
+            || httpBody == nil && otherRequest.httpBody == nil
     }
 
     private func httpMethodMatches(_ otherRequest: URLRequest) -> Bool {
