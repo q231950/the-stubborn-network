@@ -102,8 +102,24 @@ class URLRequestMatcherTests: XCTestCase {
     }
 
     func test_unsortedUrlParameterMatches() {
+        let JSONData: [String: Any] = [
+            "z": 1,
+            "a": 0,
+            "b": 3
+        ]
+
         requestA.url = URL(string: "http://elbedev.com?a=1&b=2")
+        requestA.httpBody = try? JSONSerialization.data(withJSONObject: JSONData, options: .sortedKeys)
         requestB.url = URL(string: "http://elbedev.com?b=2&a=1")
+        requestB.httpBody = try? JSONSerialization.data(withJSONObject: JSONData, options: .prettyPrinted)
+
+        XCTAssertNotEqual(requestA.httpBody, requestB.httpBody)
+        XCTAssertTrue(requestA.matches(requestB))
+    }
+
+    func test_matchesJSONBody() {
+        requestA.url = URL(string: "http://elbedev.com")
+        requestB.url = URL(string: "http://elbedev.com")
 
         XCTAssertTrue(requestA.matches(requestB))
     }
@@ -126,7 +142,9 @@ class URLRequestMatcherTests: XCTestCase {
         ("test_customMatcher_allowsNonCustomMismatches",
         test_customMatcher_allowsNonCustomMismatches),
         ("test_unsortedUrlParameterMatches",
-        test_unsortedUrlParameterMatches)
+        test_unsortedUrlParameterMatches),
+        ("test_matchesJSONBody",
+         test_matchesJSONBody)
     ]
 
 }
