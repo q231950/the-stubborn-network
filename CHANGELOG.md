@@ -1,3 +1,8 @@
+**0.1.2**
+_Body matcher comparison_
+
+This release fixes the `httpBody` comparison to address an issue when keys in JSON payload are sorted differently. 
+
 **0.1.1**
 
 _Proper CombinedStubSource_
