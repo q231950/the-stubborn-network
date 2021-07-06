@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name         = "StubbornNetwork"
-    spec.version      = "0.1.2"
+    spec.version      = "0.1.3"
     spec.summary      = "A Swifty and clean stubbing machine."
     spec.description  = <<-DESC
     The Stubborn Network makes your SwiftUI development more efficient and UI tests more reliable by stubbing responses of your network requests.

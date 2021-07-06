@@ -58,13 +58,7 @@ class PersistentStubSource: StubSourceProtocol {
         if let index = stubs.firstIndex(where: { request.matches($0.request, options: options) }) {
             stubs.remove(at: index)
         }
-
-        if stub != nil {
-            print("Found stub for: \(request.url?.absoluteString ?? "")")
-        } else {
-            print("Did not find stub for: \(request.url?.absoluteString ?? "")")
-        }
-
+ 
         return stub
     }
 
@@ -108,6 +102,11 @@ class PersistentStubSource: StubSourceProtocol {
 
     func hasStub(_ request: URLRequest, options: RequestMatcherOptions) -> Bool {
         let stub = stubs.first { request.matches($0.request, options: options) }
+        if stub != nil {
+            print("Found stub for: \(request.url?.absoluteString ?? "")")
+        } else {
+            print("Did not find stub for: \(request.url?.absoluteString ?? "")")
+        }
         return stub != nil
     }
 }
