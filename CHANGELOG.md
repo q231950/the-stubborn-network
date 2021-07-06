@@ -1,3 +1,8 @@
+**0.1.3**
+_Log info fixes_
+
+This release fixes the problem when one of the stubs doesn't match and the log is not printed in console.
+
 **0.1.2**
 _Body matcher comparison_
 
