@@ -58,7 +58,7 @@ class PersistentStubSource: StubSourceProtocol {
         if let index = stubs.firstIndex(where: { request.matches($0.request, options: options) }) {
             stubs.remove(at: index)
         }
- 
+
         return stub
     }
 
