@@ -1,3 +1,9 @@
+
+**1.0.0**
+_One_
+
+This release bumps the Swift Version (https://github.com/q231950/the-stubborn-network/pull/57).
+
 **0.1.3**
 _Log info fixes_
 
