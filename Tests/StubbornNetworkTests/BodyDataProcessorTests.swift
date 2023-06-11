@@ -17,7 +17,7 @@ class BodyDataProcessorTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        request = URLRequest(url: URL(string: "https://elbedev.com")!)
+        request = URLRequest(url: URL(string: "https://neoneon.dev")!)
         StubbornNetwork.standard.bodyDataProcessor = bodyDataProcessor
 
         let configuration: URLSessionConfiguration = .ephemeral

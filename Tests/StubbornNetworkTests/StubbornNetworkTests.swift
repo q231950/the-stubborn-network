@@ -20,7 +20,7 @@ final class StubbornNetworkTests: XCTestCase {
         session = URLSession(configuration: configuration)
 
         do {
-            url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+            url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         } catch {
             XCTFail("Test can't be set up with an incorrect url.")
         }
@@ -58,7 +58,7 @@ final class StubbornNetworkTests: XCTestCase {
         let path = try XCTUnwrap(URL(string: TestHelper.testingStubSourcePath()))
         let stubSource = PersistentStubSource(path: path)
 
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let expectedResponse: URLResponse? = URLResponse(url: url,
                                                          mimeType: "text/html",
                                                          expectedContentLength: 3,
@@ -90,7 +90,7 @@ final class StubbornNetworkTests: XCTestCase {
 
         let stubSource = EphemeralStubSource()
 
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let expectedResponse: URLResponse? = URLResponse(url: url,
                                                          mimeType: "text/html",
                                                          expectedContentLength: 3,

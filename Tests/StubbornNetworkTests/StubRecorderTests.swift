@@ -19,7 +19,7 @@ class StubRecorderTests: XCTestCase {
         super.setUp()
 
         expectedData = "abc".data(using: .utf8)
-        url = URL(string: "http://elbedev.com")!
+        url = URL(string: "http://neoneon.dev")!
         expectedResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "1.1", headerFields: ["a": "b"])
     }
 

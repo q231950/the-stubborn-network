@@ -11,7 +11,7 @@ import XCTest
 class EphemeralStubSourceTests: XCTestCase {
 
     func test_ephemeralStubSource_storesStubs() throws {
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let expectedResponse: URLResponse? = URLResponse(url: url,
                                                          mimeType: "text/html",
                                                          expectedContentLength: 3,
@@ -35,7 +35,7 @@ class EphemeralStubSourceTests: XCTestCase {
     }
 
     func test_ephemeralStubSource_storesNoDuplicateRequests() throws {
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let expectedResponse: URLResponse? = URLResponse(url: url,
                                                          mimeType: "text/html",
                                                          expectedContentLength: 0,

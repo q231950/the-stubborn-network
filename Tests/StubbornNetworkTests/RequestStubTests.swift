@@ -62,7 +62,7 @@ final class RequestStubTests: XCTestCase {
         """
         {
             "request": {
-                "url": "https://api.elbedev.com",
+                "url": "https://api.neoneon.dev",
                 "requestData": "c29tZSBkYXRh",
                 "headerFields": [
                     "A[:::]AAA",

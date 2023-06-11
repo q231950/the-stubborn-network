@@ -17,7 +17,7 @@ class CombinedStubSourceTests: XCTestCase {
         let combinedStubSource = CombinedStubSource(sources: [source1, source2])
 
         // when
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let request = URLRequest(url: url)
         let requestStub = RequestStub(request: request)
         combinedStubSource.store(requestStub, options: .strict)
@@ -60,7 +60,7 @@ class CombinedStubSourceTests: XCTestCase {
         let combinedStubSource = CombinedStubSource(sources: [source1, source2])
 
         // when
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let request = URLRequest(url: url)
         let requestStub = RequestStub(request: request)
         source2.store(requestStub, options: .strict)
@@ -75,7 +75,7 @@ class CombinedStubSourceTests: XCTestCase {
         let combinedStubSource = CombinedStubSource(sources: [source1, source2])
 
         // when
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let request = URLRequest(url: url)
         let requestStub = RequestStub(request: request)
         source1.store(requestStub, options: .strict)
