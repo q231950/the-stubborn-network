@@ -1,5 +1,3 @@
-![Travis](https://travis-ci.org/q231950/the-stubborn-network.svg?branch=main) [![SourceLevel](https://app.sourcelevel.io/github/q231950/-/the-stubborn-network.svg)](https://app.sourcelevel.io/github/q231950/-/the-stubborn-network)
-
 <img width=800 src="https://github.com/q231950/the-stubborn-network/blob/main/the-stubborn-network-logo.png?raw=true" alt="The Stubborn Network Logo"> 
 
 
