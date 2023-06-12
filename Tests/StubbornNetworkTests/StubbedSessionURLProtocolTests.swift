@@ -11,35 +11,35 @@ import XCTest
 class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_canInitialize_withHTTPRequests() throws {
-        let request = URLRequest(url: try XCTUnwrap(URL(string: "http://elbedev.com")))
+        let request = URLRequest(url: try XCTUnwrap(URL(string: "http://neoneon.dev")))
         XCTAssertTrue(StubbedSessionURLProtocol.canInit(with: request))
     }
 
     func test_StubbedSessionURLProtocol_cannotInitialize_withFTPRequests() throws {
-        let request = URLRequest(url: try XCTUnwrap(URL(string: "ftp://elbedev.com")))
+        let request = URLRequest(url: try XCTUnwrap(URL(string: "ftp://neoneon.dev")))
         XCTAssertFalse(StubbedSessionURLProtocol.canInit(with: request))
     }
 
     func test_StubbedSessionURLProtocol_canInitialize_withHTTPURLSessionTasks() throws {
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         XCTAssertTrue(StubbedSessionURLProtocol.canInit(with: task))
     }
 
     func test_StubbedSessionURLProtocol_cannotInitialize_withFTPURLSessionTasks() throws {
-        let url = try XCTUnwrap(URL(string: "ftp://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "ftp://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         XCTAssertFalse(StubbedSessionURLProtocol.canInit(with: task))
     }
 
     func test_StubbedSessionURLProtocol_returnsACanonicalRequest() throws {
-        let url = try XCTUnwrap(URL(string: "http://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "http://neoneon.dev"))
         let request = URLRequest(url: url)
         XCTAssertEqual(StubbedSessionURLProtocol.canonicalRequest(for: request), request)
     }
 
     func test_StubbedSessionURLProtocol_stopLoading_doesNotEndTheWorld() throws {
-        let url = try XCTUnwrap(URL(string: "ftp://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "ftp://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
@@ -49,7 +49,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_playsBackDataAndResponse_whenItFindsMatchingStub() throws {
         // given there is a stub for the given request
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
@@ -69,7 +69,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_playsBackError_whenItFindsMatchingStub() throws {
         // given there is a stub for the given request
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
@@ -90,7 +90,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_notifiesClient_whenFinishedLoading() throws {
         // given there is a stub for the given request
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client)
@@ -106,7 +106,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_doesNotRecord_whenItFindsMatchingStub() throws {
         // given there is a stub for the given request
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
@@ -123,7 +123,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_doesOnlyRecords_whenStubSourceIsInRecordMode() throws {
         // given there is a stub for the given request
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
@@ -141,7 +141,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
 
     func test_StubbedSessionURLProtocol_records_whenItFindsNoMatchingStub() throws {
         // given there is no stub for the given request
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let recorder = StubRecorderMock()
@@ -154,7 +154,7 @@ class StubbedSessionURLProtocolTests: XCTestCase {
     }
 
     func test_StubbedSessionURLProtocol_hasDefaultStubRecorder() throws {
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         let task = URLSession(configuration: .ephemeral).dataTask(with: url)
         let client = URLProtocolClientStub()
         let objectUnderTest = StubbedSessionURLProtocol(task: task, cachedResponse: nil, client: client, recorder: nil)

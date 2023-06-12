@@ -102,8 +102,8 @@ class URLRequestMatcherTests: XCTestCase {
     }
 
     func test_unsortedUrlParameterMatches() {
-        requestA.url = URL(string: "http://elbedev.com?a=1&b=2")
-        requestB.url = URL(string: "http://elbedev.com?b=2&a=1")
+        requestA.url = URL(string: "http://neoneon.dev?a=1&b=2")
+        requestB.url = URL(string: "http://neoneon.dev?b=2&a=1")
 
         XCTAssertTrue(requestA.matches(requestB))
     }
@@ -115,9 +115,9 @@ class URLRequestMatcherTests: XCTestCase {
             "b": 3
         ]
 
-        requestA.url = URL(string: "http://elbedev.com?a=1&b=2")
+        requestA.url = URL(string: "http://neoneon.dev?a=1&b=2")
         requestA.httpBody = try? JSONSerialization.data(withJSONObject: JSONData, options: .sortedKeys)
-        requestB.url = URL(string: "http://elbedev.com?b=2&a=1")
+        requestB.url = URL(string: "http://neoneon.dev?b=2&a=1")
         requestB.httpBody = try? JSONSerialization.data(withJSONObject: JSONData, options: .prettyPrinted)
 
         XCTAssertNotEqual(requestA.httpBody, requestB.httpBody)
@@ -152,7 +152,7 @@ class URLRequestMatcherTests: XCTestCase {
 extension URLRequestMatcherTests {
 
     fileprivate func request() throws -> URLRequest {
-        let url = try XCTUnwrap(URL(string: "https://elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://neoneon.dev"))
         return URLRequest(url: url)
     }
 

@@ -43,7 +43,7 @@ class StubSourceTests: XCTestCase {
         stubSource.setupStubs(from: prerecordedStubMockData)
         stubSource.save(stubSource.stubs)
 
-        let url = try XCTUnwrap(URL(string: "https://api.elbedev.com"))
+        let url = try XCTUnwrap(URL(string: "https://api.neoneon.dev"))
         var request = URLRequest(url: url)
         request.httpBody = "abc".data(using: .utf8)
         request.httpMethod = "POST"
@@ -61,7 +61,7 @@ class StubSourceTests: XCTestCase {
         stubSource.setupStubs(from: prerecordedStubMockData)
         stubSource.save(stubSource.stubs)
 
-        let url = URL(string: "https://api.elbedev.com")
+        let url = URL(string: "https://api.neoneon.dev")
         var request = URLRequest(url: url!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = ["D": "DDD"]
@@ -146,7 +146,7 @@ class StubSourceTests: XCTestCase {
             [
                 {
                     "request": {
-                        "url": "https://api.elbedev.com",
+                        "url": "https://api.neoneon.dev",
                         "requestData": null,
                         "headerFields": [
                             "A[:::]AAA"
@@ -162,7 +162,7 @@ class StubSourceTests: XCTestCase {
                 },
                 {
                     "request": {
-                        "url": "https://api.elbedev.com",
+                        "url": "https://api.neoneon.dev",
                         "requestData": "YWJj",
                         "headerFields": [
                             "B[:::]BBB"
@@ -181,7 +181,7 @@ class StubSourceTests: XCTestCase {
                 },
                 {
                     "request": {
-                        "url": "https://api.elbedev.com",
+                        "url": "https://api.neoneon.dev",
                         "requestData": null,
                         "headerFields": [
                             "D[:::]DDD"
