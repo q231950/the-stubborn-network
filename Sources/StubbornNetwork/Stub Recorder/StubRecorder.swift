@@ -7,15 +7,29 @@
 
 import Foundation
 
+extension URLSession: URLSessionLike {}
+
+/// A marker pseudo protocol to simplify testing by avoiding the concrete ``URLSession`` type.
+/// ``URLSession`` already conforms to this protocol as you can see in the _extension URLSession: URLSessionLike_.
+protocol URLSessionLike {
+    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, (any Error)?) -> Void) -> URLSessionDataTask
+}
+
 /// The Stub Recorder records stubs by making an actual request and storing the response in a Stub Source.
 struct StubRecorder: StubRecording {
 
     /// The _Stub Source_ dictates how the stub will be stored and where
     let stubSource: StubSourceProtocol
 
-    /// This `URLSession` is used to get the actual data, response and error
+    /// This `URLSessionLike`, commonly a `URLSession` is used to get the actual data, response and error
     /// for the `URLSessionTask`s which are recorded.
-    let urlSession: URLSession
+    /// `URLSessionLike` is used instead of a concrete ``URLSession`` here to simplify testing.
+    let urlSession: URLSessionLike
+
+    init(stubSource: StubSourceProtocol, urlSession: URLSessionLike) {
+        self.stubSource = stubSource
+        self.urlSession = urlSession
+    }
 
     func record(_ task: URLSessionTask?,
                 processor: BodyDataProcessor?,

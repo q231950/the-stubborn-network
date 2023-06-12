@@ -6,10 +6,10 @@
 //
 
 import Foundation
+@testable import StubbornNetwork
 
-/// Instances of this `URLSessionStub` can double as URL sessions.
-/// Some attributes of the _Foundation_ `URLSession` can be stubbed for testing purposes.
-class URLSessionStub: URLSession {
+/// This is Stub for testing purposes only.
+final class URLSessionStub {
 
     /// When requesting a data task from the `URLSessionStub` it will return one with a stubbed `originalRequest`
     let originalRequest: URLRequest?
@@ -26,9 +26,17 @@ class URLSessionStub: URLSession {
         self.response = response
         self.error = error
     }
+}
 
-    override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        return URLSessionDataTaskStub(originalRequest: originalRequest,
-                                      data: data, response: response, error: error, resumeCompletion: completionHandler)
+extension URLSessionStub: URLSessionLike {
+
+    /// This is the same function signature as in ``URLSession``
+    /// - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void (NS_SWIFT_SENDABLE ^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, (Error)?) -> Void) -> URLSessionDataTask {
+        defer {
+            completionHandler(data, response, error)
+        }
+
+        return URLSession(configuration: .ephemeral).dataTask(with: request)
     }
 }

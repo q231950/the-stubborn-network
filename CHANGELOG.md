@@ -1,4 +1,9 @@
 
+**1.0.1**
+_Test me_
+
+This release resolves warnings in test code related to subclassing of URLSession and URLSessionDataTask. These are not subclassed any more. Instead, StubRecorder accepts an URLSessionLike protocol in order to avoid the concrete URLSession type. URLSession already conforms to this protocol. Furthermore, a url has been updated in tests.
+
 **1.0.0**
 _One_
 
@@ -24,7 +29,7 @@ This release is a minor improvement that corrects the `CombinedStubSource` behav
 
 _Cocoapods and Multiple Similar Requests_
 
-This release incorporates support to record the same request multiple times. If the same request (a duplicate) gets send multiple times the `PersistentStubSource` will record it as 2 distinct entries in the resulting stub file.
+This release incorporates support to record the same request multiple times. If the same request (a duplicate) gets sent multiple times the `PersistentStubSource` will record it as 2 distinct entries in the resulting stub file.
 
 [Here is a test](https://github.com/q231950/the-stubborn-network/blob/main/Tests/StubbornNetworkTests/PersistentStubSourceTests.swift#L102-L116) that showcases the result of the change.
 

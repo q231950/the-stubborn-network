@@ -32,11 +32,13 @@ class StubRecorderTests: XCTestCase {
                                         error: nil)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-        let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+        let task = urlSession.dataTask(with: URLRequest(url: url), completionHandler: { _, _, _ in
+        })
 
-        recorder.record(task, processor: nil, options: .strict) { (data, response, _) in
+        recorder.record(task, processor: nil, options: .strict) { (data, response, error) in
             XCTAssertEqual(data, self.expectedData)
             XCTAssertEqual(response, self.expectedResponse)
+            XCTAssertNil(error)
         }
     }
 
@@ -47,7 +49,8 @@ class StubRecorderTests: XCTestCase {
                                         error: TestError.expected)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-        let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+        let task = urlSession.dataTask(with: URLRequest(url: url), completionHandler: { _, _, _ in
+        })
 
         recorder.record(task, processor: nil, options: .strict) { (_, _, error) in
             XCTAssertEqual(error?.localizedDescription, TestError.expected.localizedDescription)
@@ -63,7 +66,8 @@ class StubRecorderTests: XCTestCase {
                                         error: nil)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-        let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+        let task = urlSession.dataTask(with: URLRequest(url: url), completionHandler: { _, _, _ in
+        })
 
         recorder.record(task, processor: nil, options: .strict) { (_, _, _) in }
 
@@ -78,7 +82,8 @@ class StubRecorderTests: XCTestCase {
                                         error: TestError.expected)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-        let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+        let task = urlSession.dataTask(with: URLRequest(url: url), completionHandler: { _, _, _ in
+        })
 
         recorder.record(task, processor: nil, options: .strict) { (_, _, _) in }
 
@@ -95,7 +100,8 @@ class StubRecorderTests: XCTestCase {
                                         error: nil)
 
         let recorder = StubRecorder(stubSource: stubSource, urlSession: urlSession)
-        let task = URLSessionDataTaskStub(originalRequest: URLRequest(url: url))
+        let task = urlSession.dataTask(with: URLRequest(url: url), completionHandler: { _, _, _ in
+        })
 
         let bodyDataProcessorStub = BodyDataProcessorStub()
         recorder.record(task, processor: bodyDataProcessorStub, options: .strict) { (_, _, _) in }
